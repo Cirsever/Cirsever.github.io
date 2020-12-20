@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on 一二三水</title>
+    <link>https://cirsever.github.io/categories/</link>
+    <description>Recent content in Categories on 一二三水</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN </language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Sun, 20 Dec 2020 22:59:25 +0800</lastBuildDate><atom:link href="https://cirsever.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Git</title>
+      <link>https://cirsever.github.io/categories/git/</link>
+      <pubDate>Sun, 20 Dec 2020 22:59:25 +0800</pubDate>
+      
+      <guid>https://cirsever.github.io/categories/git/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Homebrew</title>
+      <link>https://cirsever.github.io/categories/homebrew/</link>
+      <pubDate>Sun, 20 Dec 2020 22:59:25 +0800</pubDate>
+      
+      <guid>https://cirsever.github.io/categories/homebrew/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mac</title>
+      <link>https://cirsever.github.io/categories/mac/</link>
+      <pubDate>Sun, 20 Dec 2020 22:59:25 +0800</pubDate>
+      
+      <guid>https://cirsever.github.io/categories/mac/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>工具</title>
+      <link>https://cirsever.github.io/categories/%E5%B7%A5%E5%85%B7/</link>
+      <pubDate>Sun, 20 Dec 2020 22:59:25 +0800</pubDate>
+      
+      <guid>https://cirsever.github.io/categories/%E5%B7%A5%E5%85%B7/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>产品日记</title>
+      <link>https://cirsever.github.io/categories/%E4%BA%A7%E5%93%81%E6%97%A5%E8%AE%B0/</link>
+      <pubDate>Mon, 26 Aug 2019 10:59:25 +0800</pubDate>
+      
+      <guid>https://cirsever.github.io/categories/%E4%BA%A7%E5%93%81%E6%97%A5%E8%AE%B0/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

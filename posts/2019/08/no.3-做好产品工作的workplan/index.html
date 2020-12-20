@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="Sanshui ">
+<meta name="description" content="学会提问，不要羞涩。 大胆表达，细致思考。 这可能是上一周工作里我开始思考的一部分内容。
+做好 Work Plan 如果让我对自己过去一个月的实习经历进行总结，我肯定会承认自己优秀的一面：
+ 能够迅速上手项目，入职第二天开始接手「岭南主数据」项目的一期剩余内容 花了几个晚上加班修改了原型，让这个项目步入开发流程； 主动要求接手了「智能标签」的项目，考虑开发二期，虽然有所波折但是目前还算顺利。  但是这些对我毫无裨益，我不该只看到这些 “能力范围内” 的事情，而要更在意我看不到的问题：
+ 同事推荐的《Web 界面设计》至今未看 对任务细节把控不到位，总是出现一边做，一边找人要资料的情况 没有一个细致到每日节点的 Work Plan，所以出现了各式各样的情况（我会在 👇 分析） 没有足够的总结和沉淀能力，工作日报写的不够走心，也无法沉淀工作中的获得 And so on&amp;hellip;  从 Work Plan 的角度来分析一下工作状态，我觉得是对我现状最好的切入口。
+Problem 1. 别让他人想法成为你张不开嘴的理由 这个问题我觉得许多新入职的同学都会有，大家会很在意自己 TL 对自己的评价，很努力地去留下一个好的印象。这样的想法本身没错，我们确实要留下好的印象来换取一份漂亮的“Offer”。 可要是日常的工作被其拖累，倒不如更洒脱点，“破罐破摔”了吧。
+在上一周中「智能标签」项目的二期开发中，我也出现这样的沟通问题。尽管结果不算太差，犯下的错误也可以弥补，但我衷心希望自己引以为戒，尽量不要再犯这种“低级问题”了。
+就以我自己设计的一个功能模块来举例：「单客群分析-关系图谱」
+最初，这个功能模块是 猫爸 给到我的需求，他的说法很简单：在现有的基础上更加”炫“一点。
+ 本身一期就有设计相关的功能
+ 那么我对于这个需求的理解就是：在第一期原有功能的基础上，增加不同的展现形式。
+所以我开始思考的角度变成了：
+ 如何在一个独立客群的分析中增加不同的展现形式？ 如何在基础数据量不变的前提下，让用户在单客群分析中获得更多的信息（从而支撑他们判断）？ 我应该如何从一个新的角度去诠释这个单客群内数据之间的关系？  其实从这一步开始，我对于这个需求的认知就已经是错误的了。
+猫爸想要的不是新的角度，他想要的是在原有功能模块的基础上，加强一些交互逻辑和展示的美观度。
+但是我冥思苦想在设计的，是如何给用户创建一个新的角度，这其实并不是需求所在。 除了一开始双方交流沟通的问题，可能还因为我存在这样的一些情况：
+ 不好意思开口多问，怕被 TL 认为是没有理解力的人 对自己的盲目信任：我能够瞬间 Get 到 TL 的想法 凭借之前的沟通，理所当然地替 TL 完善了想法（他的潜台词是想要更不一般的角度）  我当然信心满满，觉得自己知道 猫爸要什么了，所以大胆放手的去做。尽管创新不是那么容易，找到有价值的创新点也不是那么简单。但是聪明机灵的我还是用一个 带有权重和人群覆盖数量的关系图谱 建立了一个新的角度。去描述单客群内的数据关系。" />
+<meta name="keywords" content=", 产品经理, PM, 大数据" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+<link rel="canonical" href="https://cirsever.github.io/posts/2019/08/no.3-%E5%81%9A%E5%A5%BD%E4%BA%A7%E5%93%81%E5%B7%A5%E4%BD%9C%E7%9A%84workplan/" />
+
+
+    <title>
+        
+            No.3 做好产品工作的WorkPlan :: 一二三水  — 不懂不精 人神共奋
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="https://cirsever.github.io/main.393856bf2c430bb6c01d7af07c6fe966e7cce8073435cfbbc46e590bab7405ef.css">
+
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://cirsever.github.io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cirsever.github.io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cirsever.github.io/favicon-16x16.png">
+    <link rel="manifest" href="https://cirsever.github.io/site.webmanifest">
+    <link rel="mask-icon" href="https://cirsever.github.io/safari-pinned-tab.svg" color="#252627">
+    <link rel="shortcut icon" href="https://cirsever.github.io/favicon.ico">
+    <meta name="msapplication-TileColor" content="#252627">
+    <meta name="theme-color" content="#252627">
+
+
+
+<meta itemprop="name" content="No.3 做好产品工作的WorkPlan">
+<meta itemprop="description" content="学会提问，不要羞涩。 大胆表达，细致思考。 这可能是上一周工作里我开始思考的一部分内容。
+做好 Work Plan 如果让我对自己过去一个月的实习经历进行总结，我肯定会承认自己优秀的一面：
+ 能够迅速上手项目，入职第二天开始接手「岭南主数据」项目的一期剩余内容 花了几个晚上加班修改了原型，让这个项目步入开发流程； 主动要求接手了「智能标签」的项目，考虑开发二期，虽然有所波折但是目前还算顺利。  但是这些对我毫无裨益，我不该只看到这些 “能力范围内” 的事情，而要更在意我看不到的问题：
+ 同事推荐的《Web 界面设计》至今未看 对任务细节把控不到位，总是出现一边做，一边找人要资料的情况 没有一个细致到每日节点的 Work Plan，所以出现了各式各样的情况（我会在 👇 分析） 没有足够的总结和沉淀能力，工作日报写的不够走心，也无法沉淀工作中的获得 And so on&hellip;  从 Work Plan 的角度来分析一下工作状态，我觉得是对我现状最好的切入口。
+Problem 1. 别让他人想法成为你张不开嘴的理由 这个问题我觉得许多新入职的同学都会有，大家会很在意自己 TL 对自己的评价，很努力地去留下一个好的印象。这样的想法本身没错，我们确实要留下好的印象来换取一份漂亮的“Offer”。 可要是日常的工作被其拖累，倒不如更洒脱点，“破罐破摔”了吧。
+在上一周中「智能标签」项目的二期开发中，我也出现这样的沟通问题。尽管结果不算太差，犯下的错误也可以弥补，但我衷心希望自己引以为戒，尽量不要再犯这种“低级问题”了。
+就以我自己设计的一个功能模块来举例：「单客群分析-关系图谱」
+最初，这个功能模块是 猫爸 给到我的需求，他的说法很简单：在现有的基础上更加”炫“一点。
+ 本身一期就有设计相关的功能
+ 那么我对于这个需求的理解就是：在第一期原有功能的基础上，增加不同的展现形式。
+所以我开始思考的角度变成了：
+ 如何在一个独立客群的分析中增加不同的展现形式？ 如何在基础数据量不变的前提下，让用户在单客群分析中获得更多的信息（从而支撑他们判断）？ 我应该如何从一个新的角度去诠释这个单客群内数据之间的关系？  其实从这一步开始，我对于这个需求的认知就已经是错误的了。
+猫爸想要的不是新的角度，他想要的是在原有功能模块的基础上，加强一些交互逻辑和展示的美观度。
+但是我冥思苦想在设计的，是如何给用户创建一个新的角度，这其实并不是需求所在。 除了一开始双方交流沟通的问题，可能还因为我存在这样的一些情况：
+ 不好意思开口多问，怕被 TL 认为是没有理解力的人 对自己的盲目信任：我能够瞬间 Get 到 TL 的想法 凭借之前的沟通，理所当然地替 TL 完善了想法（他的潜台词是想要更不一般的角度）  我当然信心满满，觉得自己知道 猫爸要什么了，所以大胆放手的去做。尽管创新不是那么容易，找到有价值的创新点也不是那么简单。但是聪明机灵的我还是用一个 带有权重和人群覆盖数量的关系图谱 建立了一个新的角度。去描述单客群内的数据关系。">
+<meta itemprop="datePublished" content="2019-08-26T10:59:25+08:00" />
+<meta itemprop="dateModified" content="2019-08-26T10:59:25+08:00" />
+<meta itemprop="wordCount" content="126">
+<meta itemprop="image" content="https://cirsever.github.io"/>
+
+
+
+<meta itemprop="keywords" content="产品经理,PM,大数据," />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://cirsever.github.io"/>
+
+<meta name="twitter:title" content="No.3 做好产品工作的WorkPlan"/>
+<meta name="twitter:description" content="学会提问，不要羞涩。 大胆表达，细致思考。 这可能是上一周工作里我开始思考的一部分内容。
+做好 Work Plan 如果让我对自己过去一个月的实习经历进行总结，我肯定会承认自己优秀的一面：
+ 能够迅速上手项目，入职第二天开始接手「岭南主数据」项目的一期剩余内容 花了几个晚上加班修改了原型，让这个项目步入开发流程； 主动要求接手了「智能标签」的项目，考虑开发二期，虽然有所波折但是目前还算顺利。  但是这些对我毫无裨益，我不该只看到这些 “能力范围内” 的事情，而要更在意我看不到的问题：
+ 同事推荐的《Web 界面设计》至今未看 对任务细节把控不到位，总是出现一边做，一边找人要资料的情况 没有一个细致到每日节点的 Work Plan，所以出现了各式各样的情况（我会在 👇 分析） 没有足够的总结和沉淀能力，工作日报写的不够走心，也无法沉淀工作中的获得 And so on&hellip;  从 Work Plan 的角度来分析一下工作状态，我觉得是对我现状最好的切入口。
+Problem 1. 别让他人想法成为你张不开嘴的理由 这个问题我觉得许多新入职的同学都会有，大家会很在意自己 TL 对自己的评价，很努力地去留下一个好的印象。这样的想法本身没错，我们确实要留下好的印象来换取一份漂亮的“Offer”。 可要是日常的工作被其拖累，倒不如更洒脱点，“破罐破摔”了吧。
+在上一周中「智能标签」项目的二期开发中，我也出现这样的沟通问题。尽管结果不算太差，犯下的错误也可以弥补，但我衷心希望自己引以为戒，尽量不要再犯这种“低级问题”了。
+就以我自己设计的一个功能模块来举例：「单客群分析-关系图谱」
+最初，这个功能模块是 猫爸 给到我的需求，他的说法很简单：在现有的基础上更加”炫“一点。
+ 本身一期就有设计相关的功能
+ 那么我对于这个需求的理解就是：在第一期原有功能的基础上，增加不同的展现形式。
+所以我开始思考的角度变成了：
+ 如何在一个独立客群的分析中增加不同的展现形式？ 如何在基础数据量不变的前提下，让用户在单客群分析中获得更多的信息（从而支撑他们判断）？ 我应该如何从一个新的角度去诠释这个单客群内数据之间的关系？  其实从这一步开始，我对于这个需求的认知就已经是错误的了。
+猫爸想要的不是新的角度，他想要的是在原有功能模块的基础上，加强一些交互逻辑和展示的美观度。
+但是我冥思苦想在设计的，是如何给用户创建一个新的角度，这其实并不是需求所在。 除了一开始双方交流沟通的问题，可能还因为我存在这样的一些情况：
+ 不好意思开口多问，怕被 TL 认为是没有理解力的人 对自己的盲目信任：我能够瞬间 Get 到 TL 的想法 凭借之前的沟通，理所当然地替 TL 完善了想法（他的潜台词是想要更不一般的角度）  我当然信心满满，觉得自己知道 猫爸要什么了，所以大胆放手的去做。尽管创新不是那么容易，找到有价值的创新点也不是那么简单。但是聪明机灵的我还是用一个 带有权重和人群覆盖数量的关系图谱 建立了一个新的角度。去描述单客群内的数据关系。"/>
+
+
+
+    <meta property="og:title" content="No.3 做好产品工作的WorkPlan" />
+<meta property="og:description" content="学会提问，不要羞涩。 大胆表达，细致思考。 这可能是上一周工作里我开始思考的一部分内容。
+做好 Work Plan 如果让我对自己过去一个月的实习经历进行总结，我肯定会承认自己优秀的一面：
+ 能够迅速上手项目，入职第二天开始接手「岭南主数据」项目的一期剩余内容 花了几个晚上加班修改了原型，让这个项目步入开发流程； 主动要求接手了「智能标签」的项目，考虑开发二期，虽然有所波折但是目前还算顺利。  但是这些对我毫无裨益，我不该只看到这些 “能力范围内” 的事情，而要更在意我看不到的问题：
+ 同事推荐的《Web 界面设计》至今未看 对任务细节把控不到位，总是出现一边做，一边找人要资料的情况 没有一个细致到每日节点的 Work Plan，所以出现了各式各样的情况（我会在 👇 分析） 没有足够的总结和沉淀能力，工作日报写的不够走心，也无法沉淀工作中的获得 And so on&hellip;  从 Work Plan 的角度来分析一下工作状态，我觉得是对我现状最好的切入口。
+Problem 1. 别让他人想法成为你张不开嘴的理由 这个问题我觉得许多新入职的同学都会有，大家会很在意自己 TL 对自己的评价，很努力地去留下一个好的印象。这样的想法本身没错，我们确实要留下好的印象来换取一份漂亮的“Offer”。 可要是日常的工作被其拖累，倒不如更洒脱点，“破罐破摔”了吧。
+在上一周中「智能标签」项目的二期开发中，我也出现这样的沟通问题。尽管结果不算太差，犯下的错误也可以弥补，但我衷心希望自己引以为戒，尽量不要再犯这种“低级问题”了。
+就以我自己设计的一个功能模块来举例：「单客群分析-关系图谱」
+最初，这个功能模块是 猫爸 给到我的需求，他的说法很简单：在现有的基础上更加”炫“一点。
+ 本身一期就有设计相关的功能
+ 那么我对于这个需求的理解就是：在第一期原有功能的基础上，增加不同的展现形式。
+所以我开始思考的角度变成了：
+ 如何在一个独立客群的分析中增加不同的展现形式？ 如何在基础数据量不变的前提下，让用户在单客群分析中获得更多的信息（从而支撑他们判断）？ 我应该如何从一个新的角度去诠释这个单客群内数据之间的关系？  其实从这一步开始，我对于这个需求的认知就已经是错误的了。
+猫爸想要的不是新的角度，他想要的是在原有功能模块的基础上，加强一些交互逻辑和展示的美观度。
+但是我冥思苦想在设计的，是如何给用户创建一个新的角度，这其实并不是需求所在。 除了一开始双方交流沟通的问题，可能还因为我存在这样的一些情况：
+ 不好意思开口多问，怕被 TL 认为是没有理解力的人 对自己的盲目信任：我能够瞬间 Get 到 TL 的想法 凭借之前的沟通，理所当然地替 TL 完善了想法（他的潜台词是想要更不一般的角度）  我当然信心满满，觉得自己知道 猫爸要什么了，所以大胆放手的去做。尽管创新不是那么容易，找到有价值的创新点也不是那么简单。但是聪明机灵的我还是用一个 带有权重和人群覆盖数量的关系图谱 建立了一个新的角度。去描述单客群内的数据关系。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cirsever.github.io/posts/2019/08/no.3-%E5%81%9A%E5%A5%BD%E4%BA%A7%E5%93%81%E5%B7%A5%E4%BD%9C%E7%9A%84workplan/" />
+<meta property="og:image" content="https://cirsever.github.io"/>
+<meta property="article:published_time" content="2019-08-26T10:59:25+08:00" />
+<meta property="article:modified_time" content="2019-08-26T10:59:25+08:00" />
+
+
+
+
+    <meta property="article:section" content="产品日记" />
+
+
+
+    <meta property="article:published_time" content="2019-08-26 10:59:25 &#43;0800 CST" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="https://cirsever.github.io/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ 人神共奋</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://cirsever.github.io/categories/">Categories</a></li><li><a href="https://cirsever.github.io/posts/">Posts</a></li><li><a href="https://cirsever.github.io/tags/">Tags</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        One minute
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://cirsever.github.io/posts/2019/08/no.3-%E5%81%9A%E5%A5%BD%E4%BA%A7%E5%93%81%E5%B7%A5%E4%BD%9C%E7%9A%84workplan/">No.3 做好产品工作的WorkPlan</a>
+      </h1>
+
+      
+
+      <div class="post-content">
+        <h3 id="学会提问不要羞涩">学会提问，不要羞涩。</h3>
+<h3 id="大胆表达细致思考">大胆表达，细致思考。</h3>
+<p>这可能是上一周工作里我开始思考的一部分内容。</p>
+<h3 id="做好-work-plan">做好 Work Plan</h3>
+<p>如果让我对自己过去一个月的实习经历进行总结，我肯定会承认自己优秀的一面：</p>
+<ul>
+<li>能够迅速上手项目，入职第二天开始接手「岭南主数据」项目的一期剩余内容</li>
+<li>花了几个晚上加班修改了原型，让这个项目步入开发流程；</li>
+<li>主动要求接手了「智能标签」的项目，考虑开发二期，虽然有所波折但是目前还算顺利。</li>
+</ul>
+<p>但是这些对我毫无裨益，我不该只看到这些 <strong>“能力范围内”</strong> 的事情，而要更在意我看不到的问题：</p>
+<ul>
+<li>同事推荐的《Web 界面设计》至今未看</li>
+<li>对任务细节把控不到位，总是出现一边做，一边找人要资料的情况</li>
+<li>没有一个细致到每日节点的 Work Plan，所以出现了各式各样的情况（我会在 👇 分析）</li>
+<li>没有足够的总结和沉淀能力，工作日报写的不够走心，也无法沉淀工作中的获得</li>
+<li>And so on&hellip;</li>
+</ul>
+<p><strong>从 Work Plan 的角度来分析一下工作状态，我觉得是对我现状最好的切入口。</strong></p>
+<h3 id="problem-1-别让他人想法成为你张不开嘴的理由">Problem 1. 别让他人想法成为你张不开嘴的理由</h3>
+<p>这个问题我觉得许多新入职的同学都会有，大家会很在意自己 TL 对自己的评价，很努力地去留下一个好的印象。这样的想法本身没错，我们确实要留下好的印象来换取一份漂亮的“Offer”。
+可要是日常的工作被其拖累，倒不如更洒脱点，“破罐破摔”了吧。</p>
+<p>在上一周中「智能标签」项目的二期开发中，我也出现这样的沟通问题。尽管结果不算太差，犯下的错误也可以弥补，但我衷心希望自己引以为戒，尽量不要再犯这种“低级问题”了。</p>
+<p>就以我自己设计的一个功能模块来举例：<strong>「单客群分析-关系图谱」</strong></p>
+<p>最初，这个功能模块是 <strong>猫爸</strong> 给到我的需求，他的说法很简单：<strong>在现有的基础上更加”炫“一点。</strong></p>
+<blockquote>
+<p>本身一期就有设计相关的功能</p>
+</blockquote>
+<p>那么我对于这个需求的理解就是：<strong>在第一期原有功能的基础上，增加不同的展现形式。</strong></p>
+<p>所以我开始思考的角度变成了：</p>
+<ul>
+<li><em>如何在一个独立客群的分析中增加不同的展现形式？</em></li>
+<li><em>如何在基础数据量不变的前提下，让用户在单客群分析中获得更多的信息（从而支撑他们判断）？</em></li>
+<li><em>我应该如何从一个新的角度去诠释这个单客群内数据之间的关系？</em></li>
+</ul>
+<p>其实从这一步开始，我对于这个需求的认知就已经是错误的了。</p>
+<p><em>猫爸</em>想要的不是<strong>新的角度</strong>，他想要的是<strong>在原有功能模块的基础上，加强一些交互逻辑和展示的美观度。</strong></p>
+<p>但是我冥思苦想在设计的，是如何给用户创建一个新的角度，这其实并不是需求所在。
+除了一开始双方交流沟通的问题，可能还因为我存在这样的一些情况：</p>
+<ul>
+<li>不好意思开口多问，怕被 TL 认为是<strong>没有理解力</strong>的人</li>
+<li>对自己的盲目信任：我能够瞬间 Get 到 TL 的想法</li>
+<li>凭借之前的沟通，理所当然地替 TL 完善了想法（他的潜台词是想要更不一般的角度）</li>
+</ul>
+<p>我当然信心满满，觉得自己知道 <strong>猫爸</strong>要什么了，所以大胆放手的去做。尽管创新不是那么容易，找到有价值的创新点也不是那么简单。但是聪明机灵的我还是用一个 <strong>带有权重和人群覆盖数量的关系图谱</strong> 建立了一个新的角度。去描述单客群内的数据关系。</p>
+<p>我想结果你已经知道了：<strong>尽管关系图谱很好，也能作为二期的内容，但不是猫爸想要的。</strong></p>
+<p>这种错误地接收需求的方式，平白增加这个项目上的时间成本，使得我和猫爸不得不再次花时间在具体的项目细节沟通上，我也需要再其他项目内容的设计中重新抽身，回过头对这部分进行重整。</p>
+<p>相较之下，当初接收需求时候多问一两句的成本并不会更高，所以总结如下：</p>
+<p><strong>1.别让他人想法成为你张不开嘴的理由。做好一个产品，比这样一百个细节都有效。</strong></p>
+<p><strong>2.注重沟通的精准性，对于需求的提出，应当明确到具体的展示形式：</strong></p>
+<p>其实在我和<em>猫爸</em>后期就我的原型设计沟通的过程中，我发现<em>猫爸</em>能够很坦诚的说“这个我不是很懂” “这是什么意思” 。<!-- raw HTML omitted -->
+既然 猫爸 这种大牛都能够坦率表达自己的疑惑，我这种小菜鸟有什么不敢的呢？<!-- raw HTML omitted -->
+<strong>大胆表达，大胆提问，乐于分享</strong><br>
+没人会次次拒绝一个热情好学的新手，也别敝帚自珍。</p>
+<ul>
+<li>是功能性优化，还是交互性优化？</li>
+<li>有没有必要做独立页面绘制？能否在原基础上修改即可完成内容？
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted --></li>
+</ul>
+<hr>
+<h3 id="problem-2-做得了框架做不了细化">Problem 2. 做得了框架，做不了细化</h3>
+<p>这个问题挺尖锐，却也是我要面对的<strong>最重要</strong>的一点。</p>
+<p>正如这 12 个字所表达的，我过去一周内的工作可以说并没有落地到项目的具体实施上。它总是以我的一种想法出现，这个想法诞生的瞬间会让我觉得灵机一现，但是倘若没有其他人帮助碰撞它，它就会<strong>一直“飘”在那里</strong>，找不到落地的 Timing，也变不成原型上可以供别人参考的内容。</p>
+<p>让<strong>产品设计思考</strong>这件事情<em>系统化</em>，成为了我一段时间内的努力方向，简单整理了一些也与大家分享：</p>
+<p>前方，业余警告⚠️</p>
+<ul>
+<li>
+<p>基础信息获取</p>
+<ol>
+<li>确认产品形态，网页或 App？</li>
+<li>确认合同情况并进行需求罗列
+<ol>
+<li>多少是核心需求？需要划分几个功能块？</li>
+<li>多少是服务核心需求的基础需求？</li>
+<li>需求在产品上的体现会有多少层级？
+<ol>
+<li>层级&lt;3 沿用传统三级菜单设计？</li>
+<li>层级&gt;=3 层级数是否必须？可否进行合并？</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>极大基数情况</p>
+<ol>
+<li>用户的查看是否直接有效？</li>
+<li>用户能否进行筛选？</li>
+<li>现有筛选条件是否足够直接？
+<ol>
+<li>现有筛选条件能否满足需求？能否对页面进一步合并精简？</li>
+<li>新增筛选条件是已有的还是需要新设计？</li>
+<li>新增筛选条件是否遵循 MECE 原则？</li>
+<li>新增筛选条件是否会导致筛选条件过多？</li>
+<li>如果筛选条件过多是否需要进行分组或交互优化？</li>
+<li>筛选条件变动后是否会导致操作联路变长？</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>极小基数情况？</p>
+</li>
+<li>
+<p>依赖查看</p>
+<ol>
+<li>当前系统内是否存在依赖情况？</li>
+<li>当前系统内是否存在多种依赖情况？</li>
+<li>当前多种依赖情况能否被用户快速定位和识别
+<ol>
+<li>无法被快速识别 是否需要增加依赖情况查看窗口？</li>
+<li>能被快速识别 是否有单独设计依赖查询的必要性？</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>思考面对人群</p>
+<ol>
+<li>用户人群是否具有相应技术基础</li>
+<li>用户人群对于可视化依赖性的高低</li>
+</ol>
+<p>……</p>
+</li>
+</ul>
+<p>基于以上写到的、没写到的种种，我能够尽可能的让自己在搭建产品功能框架的同时，涉及到一些细节工作的考量，尤其是对于<em>依赖关系</em>的处理，在其他项目上也踩到了小坑，看之后有机会再整理一下好好让自己反省一下。</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://cirsever.github.io/tags/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/">产品经理</a></span>
+        <span class="tag"><a href="https://cirsever.github.io/tags/pm/">PM</a></span>
+        <span class="tag"><a href="https://cirsever.github.io/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></span>
+        
+    </p>
+
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder meta-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+
+        <span class="tag"><a href="https://cirsever.github.io/categories/%E4%BA%A7%E5%93%81%E6%97%A5%E8%AE%B0/">产品日记</a></span>
+        
+    </p>
+
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        126 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2019-08-26 10:59
+        
+
+         
+          
+        
+      </p>
+    </div>
+      <hr />
+      <div class="sharing-buttons">
+        
+<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
+  <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan&amp;caption=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan&amp;canonicalUrl=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
+  <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
+    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.178l.011.002z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="mailto:?subject=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan&amp;body=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
+  <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f&amp;media=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f;description=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
+  <div class="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f&amp;title=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan&amp;summary=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan&amp;source=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
+  <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f&amp;resubmit=true&amp;title=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f;title=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan" target="_blank" rel="noopener" aria-label="" title="Share on xing">
+  <div class="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.239.234.45.234h3.461c.518 0 .766-.348.945-.667l3.734-6.609-2.378-4.155c-.172-.315-.434-.659-.962-.659H3.648v.016z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="whatsapp://send?text=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan%20https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
+  <div class="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f&amp;t=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=No.3%20%e5%81%9a%e5%a5%bd%e4%ba%a7%e5%93%81%e5%b7%a5%e4%bd%9c%e7%9a%84WorkPlan&amp;url=https%3a%2f%2fcirsever.github.io%2fposts%2f2019%2f08%2fno.3-%25E5%2581%259A%25E5%25A5%25BD%25E4%25BA%25A7%25E5%2593%2581%25E5%25B7%25A5%25E4%25BD%259C%25E7%259A%2584workplan%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
+  <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </div>
+  </div>
+</a>
+
+      </div>
+
+    
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h"></span>
+          <hr />
+        </div>
+
+        <div class="pagination__buttons">
+          
+            <span class="button previous">
+              <a href="https://cirsever.github.io/posts/2020/12/mac%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Mac系统环境配置</span>
+              </a>
+            </span>
+          
+
+          
+            <span class="button next">
+              <a href="https://cirsever.github.io/posts/2019/08/no.2-%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86%E7%9A%84%E5%85%AD%E5%A4%A7%E5%B7%A5%E4%BD%9C%E8%81%8C%E8%B4%A3%E9%9C%80%E6%B1%82%E7%9A%84%E4%B8%89%E7%A7%8D%E6%B7%B1%E5%BA%A6/">
+                <span class="button__text">No.2 产品经理的六大工作职责&amp;需求的三种深度</span>
+                <span class="button__icon">→</span>
+              </a>
+            </span>
+          
+        </div>
+      </div>
+    
+
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2020</span>
+            
+                <span><a href="https://cirsever.github.io">Sanshui</a></span>
+            
+            
+                <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="https://cirsever.github.io/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="http://gohugo.io">Hugo</a></span>
+            <span>Made with &#10084; by <a href="https://github.com/rhazdon">Djordje Atlialp</a></span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="https://cirsever.github.io/bundle.min.dc716e9092c9820b77f96da294d0120aeeb189b5bcea9752309ebea27fd53bbe6b13cffb2aca8ecf32525647ceb7001f76091de4199ac5a3caa432c070247f5b.js" integrity="sha512-3HFukJLJggt3&#43;W2ilNASCu6xibW86pdSMJ6&#43;on/VO75rE8/7KsqOzzJSVkfOtwAfdgkd5BmaxaPKpDLAcCR/Ww=="></script>
+
+
+
+    </body>
+</html>
