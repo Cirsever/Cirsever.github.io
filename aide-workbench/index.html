@@ -1,0 +1,2921 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Aide · 数据开发工作台</title>
+    <style>
+:root {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'PingFang SC',
+    'Microsoft YaHei',
+    sans-serif;
+  color: #242b3d;
+  background: #f6f8fb;
+  font-size: 13px;
+  font-synthesis: none;
+  --accent: #5662dc;
+  --muted: #8690a3;
+  --line: #e9edf3;
+  --green: #258869;
+  --red: #c5535c;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  color: inherit;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 3px solid #a9b1ff;
+  outline-offset: 3px;
+}
+button {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: white;
+  padding: 8px 12px;
+  transition:
+    background 0.16s,
+    border-color 0.16s;
+}
+button:hover {
+  background: #f3f5ff;
+  border-color: #cdd3ee;
+}
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 3px 8px #5662dc20;
+}
+button.primary:hover {
+  background: #444fc8;
+}
+.text-button {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  padding: 6px;
+}
+.muted {
+  color: var(--muted);
+}
+.tiny {
+  font-size: 11px;
+}
+.eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #8993a9;
+  text-transform: uppercase;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #e0e4ed;
+  border-radius: 5px;
+  font-size: 11px;
+  padding: 3px 7px;
+  white-space: nowrap;
+  color: #69738a;
+  background: #fafbfe;
+}
+.pill.blue {
+  color: #5861cf;
+  background: #f0f1ff;
+  border-color: #e0e3ff;
+}
+.pill.green {
+  color: #258869;
+  background: #edf8f2;
+  border-color: #d9eee4;
+}
+.pill.red {
+  color: #c5535c;
+  background: #fff1f1;
+  border-color: #f3d6da;
+}
+.pill.amber {
+  color: #af7a1f;
+  background: #fff8e9;
+  border-color: #f1e4c8;
+}
+.icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.avatar {
+  height: 27px;
+  width: 27px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 50%;
+  background: #ebedf9;
+  color: #6b75a8;
+}
+.avatar.ai {
+  background: #eeecff;
+  color: #7561c8;
+}
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.between {
+  justify-content: space-between;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h1 {
+  font-size: 25px;
+  font-weight: 650;
+  letter-spacing: -0.6px;
+}
+h2 {
+  font-size: 15px;
+  font-weight: 600;
+}
+h3 {
+  font-size: 13px;
+  font-weight: 600;
+}
+p {
+  line-height: 1.7;
+}
+small {
+  font-size: 11px;
+}
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
+  width: 204px;
+  flex-shrink: 0;
+  background: #fcfdff;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  padding: 27px 16px;
+}
+.logo {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin: 0 12px 35px;
+  font-size: 24px;
+  letter-spacing: -1.1px;
+  font-weight: 700;
+  color: #303754;
+}
+.logo-mark {
+  background: #5964dd;
+  border-radius: 9px;
+  color: white;
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  font-size: 23px;
+  box-shadow: 0 4px 10px #5964dd22;
+}
+.nav-label {
+  padding: 0 13px;
+  color: #a2a9b9;
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  margin: 19px 0 10px;
+}
+.nav-item {
+  border: 0;
+  background: transparent;
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 7px;
+  color: #768098;
+  text-align: left;
+  margin-bottom: 3px;
+}
+.nav-item.active {
+  background: #eef0ff;
+  color: var(--accent);
+  font-weight: 600;
+}
+.nav-count {
+  margin-left: auto;
+  background: #dfe3ff;
+  padding: 1px 6px;
+  font-size: 10px;
+  border-radius: 4px;
+}
+.project-card {
+  margin: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 13px;
+  font-size: 12px;
+  background: white;
+}
+.side-footer {
+  margin-top: auto;
+  padding: 15px 12px 0;
+  border-top: 1px solid var(--line);
+}
+.main {
+  margin-left: 204px;
+  min-width: 0;
+  width: calc(100% - 204px);
+}
+.topbar {
+  height: 67px;
+  border-bottom: 1px solid var(--line);
+  padding: 0 34px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.breadcrumb {
+  font-size: 12px;
+  color: #8b94a6;
+}
+.breadcrumb span {
+  color: #485268;
+}
+.member-select {
+  border: 0;
+  background: transparent;
+  color: #59647a;
+  padding: 6px;
+  max-width: 150px;
+}
+.page {
+  padding: 31px 35px 36px;
+  max-width: 1700px;
+  margin: auto;
+}
+.page-heading {
+  margin-bottom: 25px;
+}
+.subtitle {
+  color: #8992a5;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toolbar select {
+  background: white;
+  border: 1px solid var(--line);
+  padding: 8px 11px;
+  border-radius: 7px;
+  color: #65718a;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.metric {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px 22px;
+  text-align: left;
+  position: relative;
+}
+.metric-label {
+  color: #7b869e;
+  font-size: 12px;
+}
+.metric-number {
+  font-size: 31px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  margin: 12px 0 7px;
+}
+.metric-icon {
+  position: absolute;
+  right: 20px;
+  top: 18px;
+  background: #f2f3fc;
+  color: #7f8ac2;
+  padding: 9px;
+  border-radius: 8px;
+}
+.metric-foot {
+  font-size: 11px;
+  color: #99a2b3;
+}
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+.panel {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 21px 23px;
+}
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+.distribution {
+  display: flex;
+  align-items: center;
+  gap: 27px;
+  padding: 5px 0 10px;
+}
+.donut {
+  width: 145px;
+  height: 145px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.donut-hole {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.donut-hole strong {
+  font-size: 30px;
+  font-weight: 600;
+}
+.legend-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.legend-row {
+  border: 0;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  padding: 0;
+  font-size: 12px;
+  color: #758198;
+  gap: 9px;
+  width: 100%;
+}
+.legend-row strong {
+  margin-left: auto;
+  color: #525d74;
+  font-weight: 500;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  display: inline-block;
+  border-radius: 50%;
+  background: #737be5;
+}
+.dot.c1 {
+  background: #a0abed;
+}
+.dot.c2 {
+  background: #c9cef1;
+}
+.dot.c3 {
+  background: #dfe4ef;
+}
+.chart {
+  width: 100%;
+  height: 163px;
+  overflow: visible;
+}
+.chart text {
+  fill: #a0a9b9;
+  font-size: 10px;
+  font-family: inherit;
+}
+.chart .gridline {
+  stroke: #f0f2f6;
+  stroke-dasharray: 3 4;
+}
+.chart .trend {
+  fill: none;
+  stroke: #727ae1;
+  stroke-width: 2.3;
+}
+.chart circle {
+  fill: white;
+  stroke: #727ae1;
+  stroke-width: 2;
+  cursor: pointer;
+}
+.task-strip {
+  background: #f0f2ff;
+  border: 1px solid #e0e4fd;
+  padding: 16px 19px;
+  border-radius: 9px;
+  margin-bottom: 23px;
+}
+.task-strip p {
+  font-size: 12px;
+  color: #7e88a8;
+  margin-top: 4px;
+}
+.strip-icon {
+  color: #6470d4;
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+}
+.table-head {
+  margin-bottom: 13px;
+}
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin: 0 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+.tab {
+  padding: 12px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #8b94a8;
+  font-size: 12px;
+  position: relative;
+}
+.tab.active {
+  color: #5360d3;
+  font-weight: 600;
+}
+.tab.active:after {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  content: '';
+  height: 2px;
+  background: #6670df;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+  text-align: left;
+}
+th {
+  color: #9099ac;
+  font-weight: 500;
+  background: #fafbfd;
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--line);
+}
+td {
+  padding: 17px 15px;
+  border-bottom: 1px solid #f0f2f6;
+  vertical-align: middle;
+}
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+.req-name {
+  font-weight: 550;
+  color: #3a4560;
+  cursor: pointer;
+}
+.req-name:hover {
+  color: var(--accent);
+}
+.req-desc {
+  margin-top: 6px;
+  color: #a0a9b9;
+  font-size: 11px;
+}
+.progress {
+  height: 4px;
+  width: 84px;
+  background: #eef0f7;
+  border-radius: 2px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+.progress span {
+  height: 100%;
+  background: #8b94e8;
+  display: block;
+}
+.session-summary {
+  display: flex;
+  gap: 24px;
+  margin-top: 22px;
+  padding: 17px 20px;
+  border-top: 1px solid var(--line);
+  color: #8a94a7;
+  font-size: 11px;
+}
+.session-summary strong {
+  color: #606c83;
+}
+.empty {
+  text-align: center;
+  padding: 55px;
+  color: #8b95a9;
+}
+.search {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: white;
+  outline: none;
+  width: 210px;
+}
+.detail-page {
+  padding-top: 24px;
+}
+.detail-title {
+  margin-bottom: 20px;
+}
+.detail-title h1 {
+  font-size: 22px;
+}
+.detail-meta {
+  margin-top: 12px;
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  color: #929bae;
+  font-size: 11px;
+}
+.dag-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  margin-bottom: 18px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dag-area {
+  padding: 15px 18px 8px;
+  min-width: 0;
+}
+.dag-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+.dag-legend {
+  display: flex;
+  gap: 13px;
+  color: #949eaf;
+  font-size: 10px;
+}
+.dag-legend i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+.graph {
+  width: 100%;
+  height: 226px;
+  overflow: visible;
+}
+.graph text {
+  font-family: inherit;
+}
+.graph .node-box {
+  stroke-width: 1;
+}
+.graph g {
+  cursor: pointer;
+  outline: none;
+}
+.graph g:focus-visible .node-box {
+  stroke: #6c77ed;
+  stroke-width: 3;
+}
+.graph .idle .node-box {
+  fill: #fbfcfe;
+  stroke: #e3e8f0;
+}
+.graph .waiting .node-box {
+  fill: #f0f5ff;
+  stroke: #d0dff6;
+}
+.graph .running .node-box {
+  fill: #fffaee;
+  stroke: #efdfb8;
+}
+.graph .done .node-box {
+  fill: #f1faf5;
+  stroke: #c8e7d7;
+}
+.graph .failed .node-box {
+  fill: #fff3f3;
+  stroke: #edcad0;
+}
+.graph .selected-ring {
+  fill: none;
+  stroke: #818af0;
+  stroke-width: 2;
+}
+.graph .node-name {
+  font-size: 11px;
+  font-weight: 550;
+  fill: #46546f;
+}
+.graph .node-state {
+  font-size: 9px;
+  fill: #8795ac;
+}
+.graph .done .node-state {
+  fill: #4c9575;
+}
+.graph .failed .node-state {
+  fill: #c55d66;
+}
+.graph .running .node-state {
+  fill: #b18b37;
+}
+.graph .node-owner {
+  font-size: 8px;
+  fill: #99a3b5;
+}
+.graph .edge {
+  fill: none;
+  stroke: #dce3ef;
+  stroke-width: 1.3;
+  stroke-dasharray: 4 4;
+}
+.graph .edge.satisfied {
+  stroke: #aebdcc;
+  stroke-dasharray: none;
+}
+.time-panel {
+  border-left: 1px solid var(--line);
+  background: #fcfdff;
+  padding: 16px 18px;
+}
+.time-panel .tabs {
+  gap: 19px;
+  margin-bottom: 14px;
+}
+.time-panel .tab {
+  font-size: 11px;
+  padding: 3px 0 10px;
+}
+.time-number {
+  font-size: 21px;
+  font-weight: 600;
+  margin: 5px 0 7px;
+  color: #525f7b;
+}
+.time-bar {
+  display: flex;
+  height: 5px;
+  gap: 2px;
+  margin: 16px 0 13px;
+}
+.time-bar span {
+  background: #9bace7;
+  border-radius: 2px;
+  flex: 1;
+}
+.time-bar span:nth-child(2) {
+  background: #c9d5f0;
+}
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 11px 0;
+  font-size: 10px;
+  color: #97a1b3;
+}
+.next-step {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 21px;
+  border: 1px solid #dfe4fb;
+  border-radius: 9px;
+  background: #f2f4ff;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 9px #5260ca04;
+}
+.next-step h3 {
+  color: #515d84;
+  margin-bottom: 5px;
+}
+.next-step p {
+  font-size: 11px;
+  color: #8793ae;
+}
+.next-step.error {
+  background: #fff4f3;
+  border-color: #f2d8d7;
+}
+.next-step.success {
+  background: #f0f9f4;
+  border-color: #d7ebdf;
+}
+.work-area {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 370px;
+  gap: 20px;
+  align-items: stretch;
+}
+.work-area.collapsed {
+  grid-template-columns: minmax(0, 1fr) 52px;
+}
+.artifact {
+  padding: 23px;
+  min-height: 435px;
+}
+.artifact-heading {
+  margin-bottom: 18px;
+}
+.input-source {
+  font-size: 10px;
+  color: #949eb1;
+  background: #fafbfd;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 0;
+  margin-bottom: 22px;
+}
+.artifact h3 {
+  margin: 20px 0 12px;
+}
+.field-row {
+  display: grid;
+  grid-template-columns: 95px 1fr;
+  padding: 12px 0;
+  gap: 18px;
+  border-bottom: 1px solid #f0f2f7;
+  font-size: 12px;
+}
+.field-row label {
+  color: #8a95aa;
+  align-self: center;
+}
+.field-row input {
+  border: 0;
+  background: #fafbfe;
+  border-radius: 5px;
+  padding: 8px;
+  color: #53617c;
+  width: 100%;
+}
+.radio-options {
+  display: flex;
+  gap: 12px;
+}
+.radio-choice {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px;
+  color: #69748b;
+}
+.radio-choice:has(input:checked) {
+  border-color: #9ea8ed;
+  background: #f4f5ff;
+}
+.radio-choice input {
+  width: auto;
+}
+.radio-choice small {
+  display: block;
+  margin-top: 3px;
+  color: #98a2b5;
+}
+.code-toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin: 13px 0;
+}
+.code {
+  background: #f9fafd;
+  border: 1px solid #e9edf5;
+  border-radius: 7px;
+  padding: 17px 0;
+  max-height: 365px;
+  overflow: auto;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.95;
+}
+.code-line {
+  display: flex;
+  white-space: pre;
+}
+.line-number {
+  color: #b3bccd;
+  text-align: right;
+  width: 39px;
+  padding-right: 13px;
+  flex-shrink: 0;
+  user-select: none;
+}
+.line-code {
+  color: #556380;
+  padding-right: 15px;
+}
+.line-code.comment {
+  color: #9ba5b8;
+}
+.code-editor {
+  width: 100%;
+  min-height: 330px;
+  font:
+    11px/1.9 'SFMono-Regular',
+    monospace;
+  border: 1px solid #cdd5f0;
+  background: #fbfcff;
+  padding: 15px;
+  resize: vertical;
+  border-radius: 7px;
+}
+.notice {
+  padding: 12px 14px;
+  background: #f7f8fc;
+  border-radius: 6px;
+  color: #8a95aa;
+  font-size: 11px;
+  line-height: 1.7;
+  margin-top: 16px;
+}
+.chat {
+  display: flex;
+  flex-direction: column;
+  max-height: 670px;
+  padding: 0;
+  overflow: hidden;
+}
+.chat-header {
+  padding: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.chat-header h2 {
+  font-size: 13px;
+}
+.chat-members {
+  display: flex;
+  gap: 5px;
+  margin-top: 11px;
+}
+.chat-members .avatar {
+  height: 22px;
+  width: 22px;
+  font-size: 9px;
+}
+.chat-feed {
+  flex: 1;
+  min-height: 285px;
+  max-height: 460px;
+  overflow: auto;
+  padding: 18px;
+}
+.message {
+  display: flex;
+  gap: 9px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+.message .avatar {
+  width: 24px;
+  height: 24px;
+  font-size: 9px;
+}
+.message-meta {
+  font-size: 10px;
+  color: #98a3b6;
+  margin-bottom: 5px;
+}
+.message-meta strong {
+  color: #5e6b83;
+  font-weight: 550;
+  margin-right: 7px;
+}
+.message-text {
+  font-size: 11px;
+  line-height: 1.85;
+  color: #76829a;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.message.ai-message .message-text {
+  background: #f7f8fe;
+  padding: 10px 12px;
+  border: 1px solid #eceffa;
+  border-radius: 0 7px 7px 7px;
+}
+.chat-compose {
+  padding: 13px;
+  border-top: 1px solid var(--line);
+  background: #fff;
+}
+.chat-compose textarea {
+  width: 100%;
+  border: 1px solid #e4e8f2;
+  resize: none;
+  border-radius: 7px;
+  height: 83px;
+  padding: 11px;
+  outline: none;
+  color: #65718b;
+  font-size: 11px;
+}
+.chat-compose textarea:focus {
+  border-color: #a6aeec;
+}
+.compose-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+.compose-footer span {
+  color: #a9b2c4;
+  font-size: 9px;
+}
+.suggestion {
+  background: #f5f4ff;
+  border: 1px solid #e5e3fc;
+  padding: 12px;
+  border-radius: 7px;
+  font-size: 11px;
+  color: #776f9f;
+  margin: 12px 0;
+  line-height: 1.8;
+}
+.check-result {
+  color: #338866;
+  font-weight: 500;
+}
+.check-failed {
+  color: #c25560;
+  font-weight: 500;
+}
+.delivery-hero {
+  padding: 24px;
+  background: #f1f9f5;
+  border: 1px solid #dfede5;
+  border-radius: 8px;
+  text-align: center;
+  margin: 14px 0 20px;
+}
+.delivery-hero h2 {
+  color: #378465;
+  font-size: 20px;
+  margin: 10px 0;
+}
+.delivery-hero p {
+  font-size: 12px;
+  color: #8aa293;
+}
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #28324d2b;
+  z-index: 20;
+  display: flex;
+  justify-content: flex-end;
+  backdrop-filter: blur(2px);
+}
+.drawer {
+  width: 490px;
+  background: white;
+  padding: 26px;
+  overflow: auto;
+  box-shadow: -10px 0 60px #2d365b12;
+}
+.drawer h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+.drawer form {
+  margin-top: 25px;
+}
+.drawer label {
+  display: block;
+  font-size: 12px;
+  color: #748097;
+  margin: 18px 0 8px;
+}
+.drawer textarea,
+.drawer input,
+.drawer select {
+  width: 100%;
+  border: 1px solid #dfe4ee;
+  border-radius: 7px;
+  padding: 11px;
+  color: #59647b;
+  background: #fcfdff;
+}
+.drawer textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.8;
+}
+.drawer-footer {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+.record {
+  border-left: 2px solid #dfe4fa;
+  padding: 2px 0 16px 15px;
+  margin-top: 16px;
+}
+.record p {
+  font-size: 12px;
+  color: #73809a;
+  margin: 5px 0;
+}
+.record small {
+  color: #a3aec0;
+}
+.error-text {
+  color: #c45a64;
+  font-size: 11px;
+  margin-top: 10px;
+  min-height: 17px;
+}
+.close-chat {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  padding: 22px 13px;
+  color: #8b95b0;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  align-self: stretch;
+}
+.bottom-note {
+  font-size: 10px;
+  color: #a0aabd;
+  text-align: center;
+  margin-top: 23px;
+}
+.spin {
+  animation: spin 1.8s linear infinite;
+  display: inline-block;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+#toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(25px);
+  padding: 12px 20px;
+  background: #343f5d;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 6px 25px #202a4522;
+  opacity: 0;
+  transition: 0.2s;
+  z-index: 50;
+  pointer-events: none;
+  font-size: 12px;
+  max-width: 70vw;
+}
+#toast.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.check-badge {
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: #dcefe3;
+  color: #428568;
+  font-size: 23px;
+}
+.graph.expanded {
+  height: 340px;
+}
+.filter-note {
+  font-size: 11px;
+  color: #8f9ab1;
+  margin-bottom: 12px;
+}
+.filter-note button {
+  font-size: 11px;
+}
+.handoff {
+  background: #fbf8ec;
+  border: 1px solid #ede5cc;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 10px 0;
+  color: #9b865b;
+  font-size: 11px;
+}
+.artifact table td,
+.artifact table th {
+  padding: 11px 10px;
+  font-size: 11px;
+}
+.artifact table {
+  overflow-wrap: anywhere;
+}
+.copy-feedback {
+  color: #6a8e7c;
+}
+.date-stamp {
+  font-size: 10px;
+  color: #a4aec0;
+}
+.shortcut {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.shortcut button {
+  padding: 5px 8px;
+  font-size: 10px;
+  color: #8c96ad;
+  background: #fafbfe;
+}
+.workspace-list {
+  padding: 21px 23px;
+}
+.brand-note {
+  font-size: 11px;
+  color: #a5aec0;
+  line-height: 1.8;
+}
+.spark {
+  color: #7778ce;
+  margin-right: 5px;
+}
+.stat-click {
+  cursor: pointer;
+  border: 0;
+  background: none;
+  text-align: left;
+  padding: 0;
+}
+.time-event {
+  font-size: 10px;
+  color: #8b98b2;
+  line-height: 1.7;
+  margin: 7px 0;
+}
+.time-event button {
+  font-size: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #7787af;
+}
+.export-link {
+  color: #6470d9;
+  text-decoration: none;
+}
+.badge-count {
+  font-size: 10px;
+  margin-left: 5px;
+  background: #eeeefc;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.sql-keyword {
+  color: #8564b1;
+  font-weight: 500;
+}
+.artifact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 18px 0;
+}
+.artifact-links button {
+  text-align: left;
+  padding: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.download-description {
+  margin-left: auto;
+  color: #99a3b5;
+  font-size: 10px;
+}
+@media (min-width: 1500px) {
+  .work-area {
+    grid-template-columns: minmax(0, 1fr) 400px;
+  }
+  .dag-panel {
+    grid-template-columns: minmax(0, 1fr) 310px;
+  }
+  .graph {
+    height: 245px;
+  }
+}
+@media (max-width: 1100px) {
+  .sidebar {
+    width: 165px;
+  }
+  .main {
+    margin-left: 165px;
+    width: calc(100% - 165px);
+  }
+  .page {
+    padding: 24px;
+  }
+  .topbar {
+    padding: 0 24px;
+  }
+  .dag-panel {
+    grid-template-columns: 1fr;
+  }
+  .time-panel {
+    display: none;
+  }
+  .work-area {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+  .charts {
+    gap: 14px;
+  }
+  .distribution {
+    gap: 15px;
+  }
+  .donut {
+    width: 125px;
+    height: 125px;
+  }
+  .donut-hole {
+    width: 95px;
+    height: 95px;
+  }
+}
+@media (max-width: 800px) {
+  .sidebar {
+    display: none;
+  }
+  .main {
+    margin: 0;
+    width: 100%;
+  }
+  .topbar {
+    padding: 0 18px;
+  }
+  .page {
+    padding: 20px 16px;
+  }
+  .page-heading {
+    align-items: flex-start;
+    gap: 16px;
+    flex-direction: column;
+  }
+  .metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+  .charts,
+  .work-area {
+    grid-template-columns: 1fr;
+  }
+  .workspace-list {
+    overflow: auto;
+  }
+  .work-area.collapsed {
+    grid-template-columns: 1fr 50px;
+  }
+  .chat {
+    max-height: 560px;
+  }
+  .graph {
+    height: 180px;
+  }
+  .dag-legend {
+    gap: 7px;
+  }
+  .toolbar {
+    flex-wrap: wrap;
+  }
+  .drawer {
+    width: min(490px, 100%);
+  }
+  .detail-meta {
+    flex-wrap: wrap;
+  }
+  .next-step {
+    gap: 15px;
+  }
+  .next-step .primary {
+    white-space: nowrap;
+  }
+  .metric {
+    padding: 17px;
+  }
+  .radio-options {
+    flex-direction: column;
+  }
+  .topbar .breadcrumb {
+    display: none;
+  }
+  .donut {
+    width: 145px;
+    height: 145px;
+  }
+  .donut-hole {
+    width: 112px;
+    height: 112px;
+  }
+}
+
+</style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script>
+var Aide = (() => {
+  const members = ['林溪', '陈默', '周宁', '许安'];
+  const definitions = [
+    ['understand', '需求理解', '需求理解', [], 20, 96],
+    ['plan', '技术方案', '技术方案', ['understand'], 210, 96],
+    ['orders', '订单明细开发', '数据开发', ['plan'], 400, 16],
+    ['refunds', '退款处理开发', '数据开发', ['plan'], 400, 96],
+    ['schedule', '调度配置', '数据开发', ['plan'], 400, 176],
+    ['daily', '渠道日报开发', '数据开发', ['orders', 'refunds'], 590, 56],
+    ['test', '数据测试', '数据测试', ['daily', 'schedule'], 780, 96],
+    ['publish', '发布上线', '发布上线', ['test'], 970, 96],
+  ];
+  function message(request, nodeId, author, text) {
+    const node = request.nodes.find((n) => n.id === nodeId);
+    node.messages.push({ author, text, at: Date.now(), id: `${Date.now()}-${Math.random()}` });
+    node.closed = false;
+  }
+  function event(request, node, type, text, actor = 'Aide') {
+    request.events.push({
+      node: node.id,
+      type,
+      text,
+      actor,
+      at: Date.now(),
+      version: node.version,
+    });
+    message(request, node.id, actor, text);
+  }
+  function createRequest(title, owner = '林溪', scenario = 'happy') {
+    const now = Date.now();
+    const request = {
+      id: `req-${now}-${Math.random().toString(36).slice(2, 6)}`,
+      title,
+      owner,
+      description:
+        '每天 09:00 前获得各渠道支付金额与退款金额，交付订单明细表、渠道交易日报和每日调度任务。',
+      createdAt: now,
+      deliveredAt: null,
+      version: 1,
+      flowVersion: 1,
+      refundBasis: '',
+      historyDays: 30,
+      dimension: false,
+      scenario,
+      fixed: false,
+      paused: false,
+      draft: false,
+      events: [],
+      nodes: definitions.map(([id, name, category, deps, x, y]) => ({
+        id,
+        name,
+        category,
+        deps: [...deps],
+        x,
+        y,
+        owner,
+        status: id === 'understand' ? 'waiting' : 'idle',
+        version: 1,
+        batch: 0,
+        startedAt: id === 'understand' ? now : null,
+        endedAt: null,
+        reviews: [],
+        reviewHistory: [],
+        transfer: null,
+        messages: [],
+        seen: {},
+        drafts: {},
+        closed: false,
+      })),
+    };
+    message(
+      request,
+      'understand',
+      '林溪',
+      '运营希望每天 09:00 前看到渠道交易日报，请先确认退款的统计日期。',
+    );
+    message(
+      request,
+      'understand',
+      'Aide',
+      '已整理业务目标。退款按发生日反映当天资金变动；按订单日反映订单批次。请明确口径再继续。',
+    );
+    return request;
+  }
+  function seed() {
+    const channel = createRequest('渠道交易日报建设');
+    const delivered = createRequest('会员复购分析宽表');
+    delivered.createdAt -= 2 * 86400000;
+    delivered.deliveredAt = Date.now() - 86400000;
+    delivered.nodes.forEach((n) => {
+      n.status = 'done';
+      n.startedAt = delivered.createdAt;
+      n.endedAt = delivered.deliveredAt;
+      n.closed = true;
+    });
+    const active = createRequest('商品库存预警明细');
+    active.refundBasis = 'refund';
+    active.nodes[0].status = 'done';
+    active.nodes[1].status = 'waiting';
+    active.nodes[1].startedAt = Date.now() - 600000;
+    message(active, 'plan', 'Aide', '示例方案已生成，等待林溪审阅。');
+    const draft = createRequest('新客转化漏斗');
+    draft.draft = true;
+    draft.nodes[0].messages = [];
+    return { schema: 1, member: '林溪', requests: [channel, active, delivered, draft] };
+  }
+  function actionable(request, member) {
+    if (request.paused || request.deliveredAt || request.draft) return [];
+    return request.nodes.filter(
+      (n) =>
+        n.transfer?.to === member ||
+        n.reviews.some((r) => r.reviewer === member && r.status === 'pending') ||
+        (n.owner === member && ['waiting', 'failed'].includes(n.status) && !n.transfer),
+    );
+  }
+  function status(request, member) {
+    if (request.draft) return '草稿';
+    if (request.deliveredAt) return '已交付';
+    if (request.paused) return '已暂停';
+    if (actionable(request, member).length) return '待我处理';
+    if (request.nodes.some((n) => n.status === 'failed')) return '受阻';
+    const waiting = request.nodes.find((n) => n.status === 'waiting');
+    if (waiting)
+      return `等待${waiting.transfer?.to || waiting.reviews.find((r) => r.status === 'pending')?.reviewer || waiting.owner}`;
+    return '运行中';
+  }
+  const duration = (ms) =>
+    ms < 60000
+      ? `${Math.max(0, Math.floor(ms / 1000))} 秒`
+      : ms < 3600000
+        ? `${Math.floor(ms / 60000)} 分 ${Math.floor(ms / 1000) % 60} 秒`
+        : `${Math.floor(ms / 3600000)} 小时 ${Math.floor(ms / 60000) % 60} 分`;
+  const escape = (input) =>
+    String(input ?? '').replace(
+      /[&<>"']/g,
+      (s) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[s],
+    );
+  return { members, createRequest, seed, message, event, actionable, status, duration, escape };
+})();
+
+</script>
+    <script>
+Object.assign(
+  Aide,
+  (() => {
+    const orders = [
+      { order: 'O1001', channel: '自然流量', shop: '旗舰店', date: '2026-10-08', payment: 12800 },
+      { order: 'O1002', channel: '广告投放', shop: '旗舰店', date: '2026-10-08', payment: 18600 },
+      { order: 'O1003', channel: '自然流量', shop: '专营店', date: '2026-10-08', payment: 8400 },
+    ];
+    const refunds = [
+      { id: 'R001', order: 'O1001', date: '2026-10-09', amount: 1200 },
+      { id: 'R002', order: 'O1002', date: '2026-10-09', amount: 800 },
+      { id: 'R003', order: 'O1003', date: '2026-10-09', amount: 300 },
+      { id: 'R001', order: 'O1001', date: '2026-10-09', amount: 1200 },
+    ];
+    function report(request) {
+      const unique = [...new Map(refunds.map((r) => [r.id, r])).values()];
+      const bad = request.scenario === 'refund-failure' && !request.fixed;
+      const rows = new Map();
+      function bucket(date, order) {
+        const key = `${date}|${order.channel}${request.dimension ? `|${order.shop}` : ''}`;
+        if (!rows.has(key))
+          rows.set(key, {
+            date,
+            channel: order.channel,
+            shop: request.dimension ? order.shop : '全部',
+            payment: 0,
+            refund: 0,
+          });
+        return rows.get(key);
+      }
+      orders.forEach((o) => (bucket(o.date, o).payment += o.payment));
+      (bad ? refunds : unique).forEach((r) => {
+        const order = orders.find((o) => o.order === r.order);
+        bucket(request.refundBasis === 'order' ? order.date : r.date, order).refund += r.amount;
+      });
+      const payment = orders.reduce((sum, o) => sum + o.payment, 0);
+      const refund = [...rows.values()].reduce((sum, r) => sum + r.refund, 0);
+      const checks = [
+        {
+          key: 'grain',
+          name: '结构与粒度',
+          expected: request.dimension ? '日期 × 渠道 × 店铺' : '日期 × 渠道',
+          actual: `${rows.size} 行，无重复键`,
+          passed: true,
+        },
+        {
+          key: 'payment',
+          name: '支付金额核对',
+          expected: payment,
+          actual: [...rows.values()].reduce((sum, r) => sum + r.payment, 0),
+          passed: true,
+        },
+        {
+          key: 'refund',
+          name: '退款金额核对',
+          expected: 2300,
+          actual: refund,
+          passed: refund === 2300,
+        },
+        {
+          key: 'null',
+          name: '关键字段空值',
+          expected: '0 个空值',
+          actual: '0 个空值',
+          passed: [...rows.values()].every((r) => r.channel && r.date),
+        },
+        {
+          key: 'schedule',
+          name: '调度依赖',
+          expected: '08:30，等待来源就绪',
+          actual: '08:30，来源依赖已配置',
+          passed: true,
+        },
+      ];
+      if (request.nodes.some((n) => n.id === 'unique'))
+        checks.push({
+          key: 'unique',
+          name: '渠道日期唯一性',
+          expected: '重复键 = 0',
+          actual: '重复键 = 0',
+          passed: rows.size === new Set([...rows.keys()]).size,
+        });
+      return { payment, refund, rows: [...rows.values()], checks };
+    }
+    function sql(request, nodeId) {
+      const dim = request.dimension ? ', shop_id' : '';
+      if (nodeId === 'schedule')
+        return JSON.stringify(
+          {
+            name: 'channel_trade_daily',
+            cron: '30 8 * * *',
+            timezone: 'Asia/Shanghai',
+            dependencies: ['ods_orders', 'ods_refunds'],
+            target: 'ads_channel_trade_di',
+            deadline: '09:00',
+            mode: '仅模拟',
+          },
+          null,
+          2,
+        );
+      if (nodeId === 'orders')
+        return `-- 演示 Hive SQL · 金额单位：分\nINSERT OVERWRITE TABLE dwd_order_detail_di PARTITION (dt='\${bizdate}')\nSELECT order_id, channel_id, shop_id, pay_time,\n       COALESCE(pay_amount, 0) AS pay_amount\nFROM ods_orders\nWHERE dt='\${bizdate}' AND pay_status='paid';`;
+      if (nodeId === 'refunds' && request.scenario === 'refund-failure' && !request.fixed)
+        return '-- 故障演示：尚未对退款流水去重\nSELECT refund_id, order_id, refund_time, refund_amount\nFROM ods_refunds;';
+      if (nodeId === 'refunds')
+        return `-- 退款编号去重，避免重复流水放大金额\nWITH ranked AS (\n  SELECT *, ROW_NUMBER() OVER (\n    PARTITION BY refund_id ORDER BY updated_at DESC\n  ) AS rn FROM ods_refunds\n)\nSELECT refund_id, order_id, refund_time,\n       COALESCE(refund_amount, 0) AS refund_amount\nFROM ranked WHERE rn = 1;`;
+      const date = request.refundBasis === 'order' ? 'o.pay_time' : 'r.refund_time';
+      return `-- 支付和退款分别聚合，避免一对多关联\nWITH payment AS (\n  SELECT TO_DATE(pay_time) AS stat_date, channel_id${dim},\n         SUM(COALESCE(pay_amount, 0)) AS pay_amount\n  FROM dwd_order_detail_di\n  GROUP BY TO_DATE(pay_time), channel_id${dim}\n), refund AS (\n  SELECT TO_DATE(${date}) AS stat_date, o.channel_id${request.dimension ? ', o.shop_id' : ''},\n         SUM(COALESCE(r.refund_amount, 0)) AS refund_amount\n  FROM dwd_refund_detail_di r\n  JOIN dwd_order_detail_di o ON r.order_id = o.order_id\n  GROUP BY TO_DATE(${date}), o.channel_id${request.dimension ? ', o.shop_id' : ''}\n)\nSELECT COALESCE(p.stat_date, r.stat_date) AS stat_date,\n       COALESCE(p.channel_id, r.channel_id) AS channel_id,\n${request.dimension ? '       COALESCE(p.shop_id, r.shop_id) AS shop_id,\n' : ''}       COALESCE(p.pay_amount, 0) AS pay_amount,\n       COALESCE(r.refund_amount, 0) AS refund_amount\nFROM payment p FULL OUTER JOIN refund r\n  ON p.stat_date = r.stat_date AND p.channel_id = r.channel_id${request.dimension ? '\n AND p.shop_id = r.shop_id' : ''};`;
+    }
+    function suggestion(request, node, text) {
+      if (/退款|发生日|订单日|最近.*天/.test(text) && node.id === 'understand') {
+        return {
+          kind: 'requirement',
+          version: node.version,
+          basis: /订单日/.test(text) ? 'order' : 'refund',
+          days: Number(text.match(/(\d+)\s*天/)?.[1] || request.historyDays),
+          summary: '更新退款归属口径及历史范围，确认后将传递给技术方案。',
+        };
+      }
+      if (/店铺/.test(text) && node.id === 'plan')
+        return {
+          kind: 'dimension',
+          version: node.version,
+          summary: '增加店铺维度：日报粒度变为日期 × 渠道 × 店铺，SQL 与唯一性检查同步更新。',
+        };
+      if (/空值|COALESCE|去重/.test(text) && node.category === '数据开发')
+        return {
+          kind: 'sql',
+          version: node.version,
+          summary:
+            '金额使用 COALESCE；退款按 refund_id 去重。保存为新版本并重新验证，原确认与评审失效。',
+        };
+      if (/唯一|重复/.test(text) && node.id === 'test')
+        return {
+          kind: 'unique',
+          version: node.version,
+          summary: '增加必需的渠道日期唯一性检查，结果汇入数据测试报告。',
+        };
+      return null;
+    }
+    return {
+      orders,
+      refunds,
+      report,
+      sql: (request, nodeId) => {
+        const output = sql(request, nodeId);
+        return request.nodes.find((n) => n.id === nodeId)?.nullSafe
+          ? output
+          : output
+              .replaceAll('COALESCE(pay_amount, 0)', 'pay_amount')
+              .replaceAll('COALESCE(r.refund_amount, 0)', 'r.refund_amount');
+      },
+      suggestion,
+    };
+  })(),
+);
+
+</script>
+    <script>
+Object.assign(
+  Aide,
+  (() => {
+    function get(request, id) {
+      return request.nodes.find((n) => n.id === id);
+    }
+    function allowed(request, node, actor) {
+      if (actor !== node.owner && actor !== request.owner) throw Error('当前成员没有操作权限');
+    }
+    function start(request, node, now = Date.now()) {
+      node.status = 'running';
+      node.batch += 1;
+      node.startedAt ||= now;
+      node.runAt = now;
+      node.dueAt = now + 1200;
+      node.endedAt = null;
+      Aide.event(
+        request,
+        node,
+        'start',
+        `正在生成 ${node.name} · V${node.version} · 批次 ${node.batch}`,
+      );
+    }
+    function advance(request) {
+      if (request.paused || request.deliveredAt) return;
+      for (const node of request.nodes)
+        if (
+          node.status === 'idle' &&
+          node.deps.length &&
+          node.deps.every((id) => get(request, id)?.status === 'done')
+        )
+          start(request, node);
+    }
+    function confirm(request, id, actor) {
+      const node = get(request, id);
+      allowed(request, node, actor);
+      if (request.paused) throw Error('请先继续执行');
+      if (node.status !== 'waiting') throw Error('产物尚未就绪');
+      if (node.transfer) throw Error('请先等待目标成员接手');
+      if (node.reviews.some((r) => r.status !== 'passed' || r.version !== node.version))
+        throw Error('当前版本评审尚未全部通过');
+      if (id === 'understand' && !request.refundBasis) throw Error('请先确认退款归属日期');
+      if (id === 'publish') {
+        if (actor !== request.owner) throw Error('只有需求负责人有发布权限');
+        node.authorizedVersion = node.version;
+        start(request, node);
+        return;
+      }
+      node.status = 'done';
+      node.endedAt = Date.now();
+      Aide.event(
+        request,
+        node,
+        'confirm',
+        `${actor} 已确认 V${node.version}，有效成果自动交给下游。`,
+        actor,
+      );
+      advance(request);
+    }
+    function tick(request, now = Date.now()) {
+      if (request.paused) return false;
+      let changed = false;
+      for (const node of request.nodes) {
+        if (node.status !== 'running' || now < node.dueAt) continue;
+        changed = true;
+        if (node.id === 'publish' && node.authorizedVersion) {
+          if (request.scenario === 'publish-failure' && !request.publishFixed) {
+            node.status = 'failed';
+            Aide.event(
+              request,
+              node,
+              'failure',
+              '模拟首跑失败：来源就绪超时。保留发布记录，重试需要重新授权。',
+            );
+            continue;
+          }
+          node.status = 'done';
+          node.endedAt = now;
+          request.deliveredAt ||= now;
+          Aide.event(
+            request,
+            node,
+            'delivered',
+            '模拟发布与首跑验收通过，交付已完成。首次交付计数 +1。',
+          );
+          request.nodes.forEach((n) => {
+            n.closed = true;
+          });
+          continue;
+        }
+        if (node.id === 'test' && Aide.report(request).checks.some((c) => !c.passed)) {
+          node.status = 'failed';
+          node.endedAt = now;
+          Aide.event(
+            request,
+            node,
+            'failure',
+            '退款金额核对失败：期望 2,300 分，实际 3,500 分。发现重复退款 R001，需生成去重修复候选。',
+          );
+          continue;
+        }
+        if (node.id === 'unique') {
+          node.status = 'done';
+          node.endedAt = now;
+          Aide.event(request, node, 'check', '唯一性检查通过：日期与渠道重复键 = 0。');
+          advance(request);
+          continue;
+        }
+        node.status = 'waiting';
+        Aide.event(
+          request,
+          node,
+          'result',
+          `${node.name} V${node.version} 已生成${node.id === 'test' ? '，5 项基础检查通过' : ''}。等待${node.owner}确认，查看成果后继续。`,
+        );
+      }
+      return changed;
+    }
+    function transfer(request, id, actor, target) {
+      const node = get(request, id);
+      allowed(request, node, actor);
+      if (!Aide.members.includes(target) || target === node.owner || node.transfer)
+        throw Error('请选择不同的目标成员，且不得重复转交');
+      node.transfer = { from: node.owner, to: target, at: Date.now() };
+      Aide.event(
+        request,
+        node,
+        'transfer',
+        `${node.owner} 将 V${node.version} 转交${target}，等待接手。`,
+        actor,
+      );
+    }
+    function acceptTransfer(request, id, actor, accept = true) {
+      const node = get(request, id);
+      if (node.transfer?.to !== actor) throw Error('当前成员没有接手权限');
+      if (accept) node.owner = actor;
+      node.transfer = null;
+      Aide.event(
+        request,
+        node,
+        'accept',
+        `${actor}${accept ? '接受转交' : '退回转交，请在协作区说明原因'}。`,
+        actor,
+      );
+    }
+    function review(request, id, actor, reviewers) {
+      const node = get(request, id);
+      allowed(request, node, actor);
+      if (node.status !== 'waiting') throw Error('产物尚未就绪，请等待生成');
+      if (!reviewers.length || reviewers.some((r) => r === actor || !Aide.members.includes(r)))
+        throw Error('请选择其他有效评审人');
+      node.reviews = [...new Set(reviewers)].map((reviewer) => ({
+        reviewer,
+        version: node.version,
+        status: 'pending',
+        at: Date.now(),
+      }));
+      Aide.event(
+        request,
+        node,
+        'review',
+        `V${node.version} 已提交${reviewers.join('、')}评审。`,
+        actor,
+      );
+    }
+    function reviewDecision(request, id, actor, passed, opinion = '') {
+      const node = get(request, id);
+      const record = node.reviews.find((r) => r.reviewer === actor && r.version === node.version);
+      if (!record || record.status !== 'pending') throw Error('当前成员没有待处理评审');
+      if (!passed && !opinion.trim()) throw Error('要求修改时请填写意见');
+      record.status = passed ? 'passed' : 'changes';
+      record.endedAt = Date.now();
+      Aide.event(
+        request,
+        node,
+        'decision',
+        `${actor} 对 V${node.version}${passed ? '评审通过' : `要求修改：${opinion}`}`,
+        actor,
+      );
+    }
+    function revise(request, id, actor) {
+      const node = get(request, id);
+      allowed(request, node, actor);
+      if (request.deliveredAt) throw Error('已交付版本只读，请新建需求');
+      node.version++;
+      node.reviewHistory.push(...node.reviews.map((r) => ({ ...r, status: 'expired' })));
+      node.reviews.forEach((r) => {
+        r.version = node.version;
+        r.status = 'pending';
+        r.at = Date.now();
+      });
+      node.status = 'waiting';
+      node.endedAt = null;
+      delete node.authorizedVersion;
+      const affected = new Set([id]);
+      for (let i = 0; i < request.nodes.length; i++)
+        for (const downstream of request.nodes)
+          if (downstream.deps.some((dep) => affected.has(dep))) affected.add(downstream.id);
+      for (const downstream of request.nodes)
+        if (downstream.id !== id && affected.has(downstream.id)) {
+          downstream.status = 'idle';
+          downstream.version++;
+          downstream.endedAt = null;
+          delete downstream.authorizedVersion;
+          downstream.reviewHistory.push(
+            ...downstream.reviews.map((r) => ({ ...r, status: 'expired' })),
+          );
+          downstream.reviews.forEach((r) => {
+            r.version = downstream.version;
+            r.status = 'pending';
+          });
+        }
+      Aide.event(
+        request,
+        node,
+        'revision',
+        `V${node.version} 已保存；受影响下游成果和旧评审已失效，需重新确认。`,
+        actor,
+      );
+    }
+    function validateFlow(nodes) {
+      const visited = new Set(),
+        stack = new Set();
+      function visit(id) {
+        if (stack.has(id)) throw Error('流程存在环或自连接');
+        if (visited.has(id)) return;
+        const node = nodes.find((n) => n.id === id);
+        if (!node) throw Error('上游节点不存在');
+        stack.add(id);
+        node.deps.forEach(visit);
+        stack.delete(id);
+        visited.add(id);
+      }
+      nodes.forEach((n) => visit(n.id));
+      if (!nodes.find((n) => n.id === 'publish')?.deps.includes('test'))
+        throw Error('发布必须依赖数据测试，不得绕过');
+      for (const node of nodes)
+        if (node.id !== 'understand' && !node.deps.length)
+          throw Error('所有任务必须从需求起点可达');
+    }
+    function addCheck(request, actor) {
+      if (actor !== request.owner && actor !== get(request, 'test').owner)
+        throw Error('当前成员没有编辑流程权限');
+      if (request.deliveredAt) throw Error('已发布流程只读');
+      if (get(request, 'unique')) throw Error('唯一性检查已经存在');
+      const testNode = get(request, 'test');
+      request.nodes.push({
+        ...structuredClone(testNode),
+        id: 'unique',
+        name: '渠道唯一性检查',
+        category: '数据检查',
+        deps: ['daily'],
+        x: 590,
+        y: 176,
+        status: 'idle',
+        messages: [],
+        reviews: [],
+        reviewHistory: [],
+        transfer: null,
+        startedAt: null,
+        endedAt: null,
+        batch: 0,
+        version: 1,
+      });
+      testNode.deps.push('unique');
+      request.flowVersion++;
+      revise(request, 'test', actor);
+      testNode.status = 'idle';
+      validateFlow(request.nodes);
+      advance(request);
+    }
+    return {
+      get,
+      confirm,
+      tick,
+      advance,
+      transfer,
+      acceptTransfer,
+      review,
+      reviewDecision,
+      revise,
+      validateFlow,
+      addCheck,
+      start,
+    };
+  })(),
+);
+
+</script>
+    <script>
+var AideUI = (() => {
+  const e = Aide.escape;
+  const paths = {
+    grid: 'M3 3h6v6H3z M15 3h6v6h-6z M3 15h6v6H3z M15 15h6v6h-6z',
+    list: 'M8 5h13 M8 12h13 M8 19h13 M3 5h1 M3 12h1 M3 19h1',
+    chat: 'M4 4h16v12H9l-5 4z M8 8h8 M8 12h5',
+    folder: 'M3 6h7l2 3h9v11H3z',
+    clock: 'M12 8v5l3 2 M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0',
+    check: 'M5 12l4 4L19 6',
+    spark: 'M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z',
+    plus: 'M12 5v14 M5 12h14',
+    back: 'M14 5l-7 7 7 7',
+    arrow: 'M5 12h14 M14 7l5 5-5 5',
+    code: 'M8 6l-6 6 6 6 M16 6l6 6-6 6 M14 3l-4 18',
+    settings: 'M4 7h16 M4 17h16 M8 3v8 M16 13v8',
+    close: 'M6 6l12 12 M6 18L18 6',
+    activity: 'M3 12h4l3-8 4 16 3-8h4',
+  };
+  const icon = (name) =>
+    `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name] || paths.grid}"/></svg>`;
+  const avatar = (name) =>
+    `<span class="avatar ${name === 'Aide' ? 'ai' : ''}">${name === 'Aide' ? '✦' : e(name.slice(-1))}</span>`;
+  const date = (time) =>
+    new Date(time).toLocaleDateString('zh-CN', {
+      timeZone: 'Asia/Shanghai',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  const clock = (time) =>
+    new Date(time).toLocaleTimeString('zh-CN', {
+      timeZone: 'Asia/Shanghai',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  const dayKey = (time) =>
+    new Date(time).toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+  function pill(text) {
+    return `<span class="pill ${text === '已交付' || text === '已完成' ? 'green' : text === '受阻' || text === '失败' ? 'red' : text === '运行中' ? 'amber' : text === '草稿' || text === '已暂停' ? '' : 'blue'}">${e(text)}</span>`;
+  }
+  function shell(db, ui, content) {
+    const count = db.requests.reduce((sum, r) => sum + Aide.actionable(r, db.member).length, 0);
+    return `<div class="app-shell"><aside class="sidebar"><div class="logo"><span class="logo-mark">a</span>Aide<span class="tiny muted" style="letter-spacing:0;margin-top:6px">工作台</span></div><div class="nav-label">WORKSPACE</div>${[
+      ['overview', 'grid', '总览'],
+      ['all', 'list', '全部需求'],
+      ['sessions', 'chat', '协作记录'],
+    ]
+      .map(
+        ([id, glyph, name]) =>
+          `<button class="nav-item ${ui.tab === id && !ui.requestId ? 'active' : ''}" data-action="nav" data-id="${id}">${icon(glyph)}${name}${id === 'all' ? `<span class="nav-count">${db.requests.length}</span>` : ''}</button>`,
+      )
+      .join(
+        '',
+      )}<div class="nav-label">CURRENT PROJECT</div><div class="project-card"><div class="flex">${icon('folder')}电商数据项目</div><p class="tiny muted" style="margin-top:8px">示例空间 · 北京时间</p></div><div class="side-footer"><div class="flex">${avatar('Aide')}<div><h3>Aide 助手</h3><p class="tiny muted">与你一起完成数据交付</p></div></div><p class="brand-note" style="margin-top:15px">让想法成为可靠的数据。</p></div></aside><div class="main"><header class="topbar"><div class="breadcrumb">工作空间 <span style="margin:0 11px">/</span><span>${ui.requestId ? '需求交付' : '数据开发工作台'}</span></div><div class="flex"><span class="pill">◉ 演示模式</span><span class="tiny muted">待办 ${count}</span><span class="muted">│</span>${avatar(db.member)}<select class="member-select" id="member" aria-label="切换演示成员">${Aide.members.map((name) => `<option ${name === db.member ? 'selected' : ''}>${name}</option>`).join('')}</select></div></header>${content}</div></div>`;
+  }
+  function filtered(db, ui) {
+    return db.requests.filter((r) => {
+      if (ui.search && !r.title.includes(ui.search)) return false;
+      if (ui.filter === 'active') return !r.deliveredAt && !r.draft;
+      if (ui.filter === 'todo') return Aide.actionable(r, db.member).length > 0;
+      if (ui.filter === 'delivered') return inRange(r, ui);
+      if (ui.filter?.startsWith('day:'))
+        return r.deliveredAt && dayKey(r.deliveredAt) === ui.filter.slice(4);
+      if (ui.filter?.startsWith('stage:'))
+        return (
+          !r.deliveredAt &&
+          !r.draft &&
+          r.nodes.find((n) => n.status !== 'done')?.category === ui.filter.slice(6)
+        );
+      return true;
+    });
+  }
+  function inRange(r, ui) {
+    return (
+      r.deliveredAt &&
+      r.deliveredAt >= Date.now() - Number(ui.range || 7) * 86400000 &&
+      r.deliveredAt <= Date.now()
+    );
+  }
+  function requestRows(requests, member) {
+    return requests
+      .map((r) => {
+        const next = Aide.actionable(r, member)[0] || r.nodes.find((n) => n.status !== 'done');
+        const completed = r.nodes.filter((n) => n.status === 'done').length;
+        return `<tr><td><button class="stat-click req-name" data-action="open" data-id="${r.id}">${e(r.title)}</button><div class="req-desc">${r.draft ? '需求草稿，等待补充' : next ? e(next.name) : '成果与验收证据已归档'}</div></td><td>${pill(Aide.status(r, member))}</td><td><span class="muted">${completed} / ${r.nodes.length}</span><div class="progress"><span style="width:${(completed / r.nodes.length) * 100}%"></span></div></td><td><div class="flex">${avatar(r.owner)}<span class="muted">${r.owner}</span></div></td><td class="muted tiny">${date(r.deliveredAt || r.createdAt)}</td><td><button class="text-button tiny" data-action="open" data-id="${r.id}" data-node="${next?.id || 'publish'}">${r.deliveredAt ? '查看成果' : next?.id === 'understand' ? '确认退款口径' : '查看任务'} ${icon('arrow')}</button></td></tr>`;
+      })
+      .join('');
+  }
+  function chart(db, ui) {
+    const span = Number(ui.range || 7),
+      total = db.requests.filter((r) => inRange(r, ui)).length;
+    const days = Array.from({ length: span }, (_, i) => Date.now() - (span - 1 - i) * 86400000);
+    const counts = days.map(
+      (day) =>
+        db.requests.filter((r) => r.deliveredAt && dayKey(r.deliveredAt) === dayKey(day)).length,
+    );
+    const max = Math.max(2, ...counts),
+      points = counts.map((count, i) => [30 + (i * 465) / (span - 1), 130 - (count / max) * 100]);
+    return `<div class="panel"><div class="panel-heading"><h2>交付趋势 <span class="tiny muted" style="font-weight:400;margin-left:8px">最近 ${span} 天</span></h2><span class="tiny muted">本期 <strong style="color:#626fe0">${total}</strong> 个需求</span></div><svg class="chart" viewBox="0 0 525 166" role="img" aria-label="交付趋势，总计${total}个"><defs><linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ca5f1" stop-opacity=".18"/><stop offset="1" stop-color="#9ca5f1" stop-opacity="0"/></linearGradient></defs>${[0, 1, 2].map((i) => `<line class="gridline" x1="28" x2="503" y1="${130 - i * 50}" y2="${130 - i * 50}"/><text x="7" y="${134 - i * 50}">${Math.round((i * max) / 2)}</text>`).join('')}<path d="M${points.map((p) => p.join(',')).join(' L')} L495,130 L30,130 Z" fill="url(#area)"/><path class="trend" d="M${points.map((p) => p.join(',')).join(' L')}"/>${points.map(([x, y], i) => `<circle tabindex="0" role="button" aria-label="${date(days[i])}交付${counts[i]}个" data-action="filter" data-id="day:${dayKey(days[i])}" cx="${x}" cy="${y}" r="3.7"><title>${date(days[i])}：${counts[i]} 个交付</title></circle>${span === 7 || i % 5 === 0 || i === span - 1 ? `<text text-anchor="middle" x="${x}" y="156">${date(days[i])}</text>` : ''}`).join('')}</svg></div>`;
+  }
+  function distribution(db) {
+    const active = db.requests.filter((r) => !r.deliveredAt && !r.draft),
+      cats = ['需求理解', '技术方案', '数据开发', '数据测试', '发布上线'];
+    const colors = ['#858de7', '#a9b3ee', '#c9cff2', '#a0cabf', '#b5c0d6'];
+    let start = 0;
+    const gradient = cats
+      .map((cat, i) => {
+        const count = active.filter(
+          (r) => r.nodes.find((n) => n.status !== 'done')?.category === cat,
+        ).length;
+        const end = start + (active.length ? (count / active.length) * 100 : 0),
+          stop = `${colors[i]} ${start}% ${end}%`;
+        start = end;
+        return stop;
+      })
+      .join(',');
+    return `<div class="panel"><div class="panel-heading"><h2>需求进度分布</h2><span class="tiny muted">当前 · 按最早未完成环节</span></div><div class="distribution"><div class="donut" style="background:${active.length ? `conic-gradient(${gradient})` : '#eef0f6'}"><div class="donut-hole"><strong>${active.length}</strong><span class="tiny muted">进行中需求</span></div></div><div class="legend-list">${cats.map((cat, i) => `<button class="legend-row" data-action="filter" data-id="stage:${cat}"><i class="dot" style="background:${colors[i]}"></i>${cat}<strong>${active.filter((r) => r.nodes.find((n) => n.status !== 'done')?.category === cat).length}</strong></button>`).join('')}</div></div></div>`;
+  }
+  function workspace(db, ui) {
+    const active = db.requests.filter((r) => !r.deliveredAt && !r.draft).length;
+    const todos = db.requests.flatMap((r) => Aide.actionable(r, db.member).map((n) => ({ r, n })));
+    const delivered = db.requests.filter((r) => inRange(r, ui)).length;
+    const threads = db.requests.flatMap((r) =>
+      r.nodes.filter((n) => n.messages.length && !n.closed).map((n) => ({ r, n })),
+    );
+    const metrics = [
+      ['进行中需求', active, 'active', 'folder', '当前项目 · 排除草稿'],
+      ['待我处理', todos.length, 'todo', 'clock', `${db.member}的确认、接手与评审`],
+      ['本期已交付', delivered, 'delivered', 'check', `最近 ${ui.range} 天 · 首次交付`],
+      ['活跃协作会话', threads.length, 'sessions', 'chat', '当前项目 · 每个节点一个线程'],
+    ];
+    const title = ui.tab === 'all' ? '全部需求' : ui.tab === 'sessions' ? '协作记录' : '工作台总览';
+    return `<main class="page"><div class="page-heading flex between"><div><div class="eyebrow" style="margin-bottom:9px">DATA DEVELOPMENT WORKSPACE</div><h1>${title}</h1><p class="subtitle">从一句需求，到一份可靠的数据交付。</p></div><div class="toolbar"><span class="pill">${icon('folder')} 电商数据项目</span><select id="range" aria-label="时间范围"><option value="7" ${ui.range === 7 ? 'selected' : ''}>最近 7 天</option><option value="30" ${ui.range === 30 ? 'selected' : ''}>最近 30 天</option></select><button class="primary" data-action="create">${icon('plus')} 新建需求</button></div></div>${ui.tab === 'overview' ? `<div class="metrics">${metrics.map(([name, number, filter, glyph, foot]) => `<button class="metric" data-action="filter" data-id="${filter}"><span class="metric-label">${name}</span><span class="metric-icon">${icon(glyph)}</span><div class="metric-number">${number}</div><div class="metric-foot">${foot}</div></button>`).join('')}</div><div class="charts">${distribution(db)}${chart(db, ui)}</div>${todos.length ? `<div class="task-strip flex between"><div class="flex"><span class="strip-icon">${icon('spark')}</span><div><h3>${e(todos[0].r.title)}<span class="pill blue" style="margin-left:10px">需要你处理</span></h3><p>${todos[0].n.id === 'understand' ? '退款归属日期尚未确认，补充口径后 Aide 将自动生成技术方案。' : `${e(todos[0].n.name)}等待你处理，完成后自动交接。`}</p></div></div><button data-action="open" data-id="${todos[0].r.id}" data-node="${todos[0].n.id}">去处理 ${icon('arrow')}</button></div>` : ''}` : ''}<section class="panel workspace-list"><div class="table-head flex between"><h2>${ui.tab === 'sessions' ? '节点协作线程' : ui.tab === 'all' ? '需求列表' : '近期需求'} <span class="badge-count">${ui.tab === 'sessions' ? threads.length : filtered(db, ui).length}</span></h2><input class="search" id="search" placeholder="搜索需求名称…" value="${e(ui.search)}" aria-label="搜索需求"/></div>${ui.filter ? `<div class="filter-note">已应用筛选 <button class="text-button" data-action="clear-filter">清空筛选</button></div>` : ''}${ui.tab === 'sessions' ? sessions(db, ui) : `<table><thead><tr><th style="width:30%">需求名称 / 当前任务</th><th>状态</th><th>完成进度</th><th>负责人</th><th>更新时间</th><th>下一步</th></tr></thead><tbody>${requestRows(filtered(db, ui), db.member)}</tbody></table>${!filtered(db, ui).length ? '<div class="empty">暂无匹配需求，清空筛选或新建需求。</div>' : ''}`}</section><div class="session-summary">${icon('chat')}<span>会话情况</span><span>待回复 <strong>${threads.filter((t) => t.n.status === 'waiting').length}</strong></span><span>处理中 <strong>${threads.filter((t) => t.n.status !== 'waiting').length}</strong></span><span>未读 <strong>${threads.filter((t) => t.n.messages.length > (t.n.seen[db.member] || 0)).length}</strong></span><button class="text-button tiny" data-action="nav" data-id="sessions">查看协作记录 →</button></div><p class="bottom-note">演示数据 · AI、测试执行、发布与首跑均为本地模拟 · 状态自动保存在当前浏览器</p></main>`;
+  }
+  function sessions(db, ui) {
+    return `<table><thead><tr><th>话题 / 关联需求</th><th>参与者</th><th>最近消息</th><th>状态</th><th>未读</th></tr></thead><tbody>${db.requests
+      .filter((r) => !ui.search || r.title.includes(ui.search))
+      .flatMap((r) =>
+        r.nodes
+          .filter((n) => n.messages.length)
+          .map(
+            (n) =>
+              `<tr><td><button class="stat-click req-name" data-action="open" data-id="${r.id}" data-node="${n.id}">${n.name}</button><div class="req-desc">${e(r.title)}</div></td><td class="muted">${e([...new Set(n.messages.map((m) => m.author))].join('、'))}</td><td class="muted">${e(n.messages.at(-1).text.slice(0, 45))}…</td><td>${pill(n.closed ? '已结束' : '进行中')}</td><td class="muted">${Math.max(0, n.messages.length - (n.seen[db.member] || 0))}</td></tr>`,
+          ),
+      )
+      .join('')}</tbody></table>`;
+  }
+  return { e, icon, avatar, date, clock, dayKey, pill, shell, workspace };
+})();
+
+</script>
+    <script>
+Object.assign(
+  AideUI,
+  (() => {
+    const { e, icon, avatar, pill } = AideUI;
+    function nodeLabel(node) {
+      if (node.transfer) return `待${node.transfer.to}接手`;
+      const review = node.reviews.find((r) => r.status === 'pending');
+      if (review) return `待${review.reviewer}评审`;
+      return {
+        idle: '未开始',
+        running: '执行中',
+        waiting: `待${node.owner}确认`,
+        done: '已完成',
+        failed: '失败',
+      }[node.status];
+    }
+    function graph(request, ui) {
+      return `<svg class="graph ${ui.expanded ? 'expanded' : ''}" viewBox="0 0 1150 260" aria-label="需求依赖 DAG"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 1L9 5L0 9" fill="none" stroke="#bcc8d9"/></marker></defs>${request.nodes
+        .flatMap((node) =>
+          node.deps.map((id) => {
+            const parent = Aide.get(request, id),
+              x = parent.x + 153,
+              y = parent.y + 32,
+              tx = node.x,
+              ty = node.y + 32;
+            return `<path class="edge ${parent.status === 'done' ? 'satisfied' : ''}" marker-end="url(#arrow)" d="M${x},${y} C${x + 24},${y} ${tx - 24},${ty} ${tx},${ty}"/>`;
+          }),
+        )
+        .join(
+          '',
+        )}${request.nodes.map((node) => `<g class="${node.status}" tabindex="0" role="button" aria-label="${node.name}，${nodeLabel(node)}" data-action="node" data-id="${node.id}" transform="translate(${node.x},${node.y})">${ui.nodeId === node.id ? '<rect class="selected-ring" x="-3" y="-3" width="159" height="70" rx="8"/>' : ''}<rect class="node-box" width="153" height="64" rx="6"/><text x="12" y="21" class="node-name">${node.name}</text><text x="12" y="38" class="node-state">${node.status === 'done' ? '✓ ' : node.status === 'running' ? '◌ ' : node.status === 'failed' ? '× ' : '○ '}${nodeLabel(node)}</text><text x="12" y="54" class="node-owner">${node.owner} · V${node.version}${node.startedAt ? ` · ${Aide.duration((node.endedAt || request.deliveredAt || Date.now()) - node.startedAt)}` : ''}</text></g>`).join('')}</svg>`;
+    }
+    function timing(request, ui) {
+      const elapsed = (request.deliveredAt || Date.now()) - request.createdAt;
+      const node = Aide.get(request, ui.nodeId),
+        started = request.nodes.filter((n) => n.startedAt);
+      const running = request.nodes.filter((n) => n.status === 'running');
+      const selectedEvents = request.events.filter((event) =>
+        ui.timeTab === 'node' ? event.node === node.id : true,
+      );
+      return `<aside class="time-panel"><div class="tabs">${[
+        ['overview', '总览'],
+        ['node', '节点'],
+        ['member', '成员'],
+      ]
+        .map(
+          ([id, label]) =>
+            `<button class="tab ${ui.timeTab === id ? 'active' : ''}" data-action="time-tab" data-id="${id}">${label}</button>`,
+        )
+        .join(
+          '',
+        )}</div><div class="tiny muted">${ui.timeTab === 'node' ? `${node.name} · 本轮` : '需求总历时'}</div><div class="time-number" data-clock="${ui.timeTab === 'node' ? node.startedAt || Date.now() : request.createdAt}" data-end="${ui.timeTab === 'node' ? node.endedAt || request.deliveredAt || '' : request.deliveredAt || ''}">${Aide.duration(ui.timeTab === 'node' ? (node.endedAt || Date.now()) - (node.startedAt || Date.now()) : elapsed)}</div><div class="tiny muted">${request.deliveredAt ? '已冻结首次交付历时' : request.paused ? '已暂停，等待时间继续累计' : `当前${running.length ? '正在生成成果' : '等待人工处理'}`}</div><div class="time-bar"><span></span><span></span><span></span></div>${
+        ui.timeTab === 'member'
+          ? Aide.members
+              .map((member) => {
+                const owned = request.nodes.filter((n) => n.owner === member && n.startedAt),
+                  actions = request.events.filter((ev) => ev.actor === member);
+                return `<div class="time-row"><span>${member} · ${owned.length} 个负责节点</span><span>${actions.length} 次有效操作</span></div>`;
+              })
+              .join('')
+          : `<div class="time-row"><span>当前里程碑</span><span>${request.deliveredAt ? '交付完成' : Aide.get(request, ui.nodeId).category}</span></div><div class="time-row"><span>已启动节点</span><span>${started.length} / ${request.nodes.length}</span></div><div class="time-row"><span>本节点批次</span><span>${node.batch || 1} · V${node.version}</span></div><div class="time-row"><span>依赖路径</span><span>开发 → 数据测试 → 发布</span></div>`
+      }<div class="tiny muted" style="border-top:1px solid #edf0f6;padding-top:11px;margin-top:15px">${ui.timeTab === 'member' ? '协作事件与周期，非实际投入工时' : '近期关键事件'}</div>${
+        selectedEvents
+          .slice(-3)
+          .reverse()
+          .map(
+            (event) =>
+              `<div class="time-event"><button data-action="node" data-id="${event.node}">${AideUI.clock(event.at)} · ${e(event.text.slice(0, 27))}</button></div>`,
+          )
+          .join('') || '<div class="time-event">确认后开始记录交接与执行事件。</div>'
+      }<div class="tiny muted" style="margin-top:13px;line-height:1.7">按创建到交付的墙钟时间计算；并行节点周期不相加。</div></aside>`;
+    }
+    function nextStep(request, ui, member) {
+      const node = Aide.get(request, ui.nodeId);
+      let title,
+        description,
+        label,
+        action = 'confirm',
+        disabled = false;
+      if (request.deliveredAt)
+        return `<div class="next-step success"><div><h3>交付完成，所有必需任务与首跑验收均已通过</h3><p>成果已归档 · 看板与交付趋势已同步更新</p></div><button data-action="node" data-id="publish">查看交付成果 ${icon('arrow')}</button></div>`;
+      if (request.paused)
+        return `<div class="next-step"><div><h3>流程已暂停，已有成果和讨论已保存</h3><p>恢复后继续未完成的自动任务。</p></div><button class="primary" data-action="pause">继续执行</button></div>`;
+      if (node.transfer) {
+        title = `等待${node.transfer.to}接受${node.name}的转交`;
+        description = `当前负责人仍为${node.owner}，接手前不会完成节点或放行下游。`;
+        action = 'accept';
+        label = '接受转交';
+        disabled = member !== node.transfer.to;
+      } else if (node.reviews.some((r) => r.status === 'pending')) {
+        const own = node.reviews.find((r) => r.reviewer === member && r.status === 'pending');
+        title = `V${node.version} 等待${node.reviews
+          .filter((r) => r.status === 'pending')
+          .map((r) => r.reviewer)
+          .join('、')}评审`;
+        description = '评审结论与当前产物版本绑定，全部通过后由负责人确认。';
+        label = '提交评审结论';
+        action = 'review-decision';
+        disabled = !own;
+      } else if (node.status === 'failed') {
+        title =
+          node.id === 'publish'
+            ? '模拟首跑失败：来源数据未按时就绪'
+            : '退款核对失败：发现重复退款流水';
+        description =
+          node.id === 'publish'
+            ? '检查来源就绪后重新授权模拟发布，失败记录会保留。'
+            : '生成去重修复候选、重新确认退款产物，再自动重测。';
+        action = 'repair';
+        label = node.id === 'publish' ? '修复并重新授权' : '生成修复候选';
+      } else if (node.status === 'running') {
+        title = `${node.name}执行中，正在${node.id === 'publish' ? (node.authorizedVersion ? '模拟发布与首跑验收' : '准备发布包，尚未获得发布授权') : '生成和验证当前版本'}`;
+        description = '已完成的独立分支仍可查看，结果就绪后等待人工确认。';
+        label = '◌ 执行中';
+        disabled = true;
+      } else if (node.status === 'idle' || node.status === 'done') {
+        const target =
+          Aide.actionable(request, member)[0] ||
+          request.nodes.find((n) => ['running', 'waiting', 'failed'].includes(n.status));
+        title =
+          node.status === 'done'
+            ? `${node.name}已完成，当前查看的是已保存成果`
+            : `${node.name}等待有效上游成果`;
+        description = `依赖：${node.deps.map((id) => Aide.get(request, id).name).join('、') || '需求起点'}。实际执行状态始终显示在 DAG。`;
+        return `<div class="next-step"><div><h3>${title}</h3><p>${description}</p></div>${target ? `<button class="primary" data-action="node" data-id="${target.id}">前往${target.name}</button>` : ''}</div>`;
+      } else {
+        const names = {
+          understand: ['确认退款归属日期，开始生成技术方案', '确认需求并生成方案'],
+          plan: ['审阅方案，采用后启动三条并行开发分支', '采用方案并开始开发'],
+          test: ['全部测试通过，请核对当前版本报告', '确认测试结果并继续'],
+          publish: ['当前版本测试已通过，请审阅发布包', '确认模拟发布'],
+        };
+        [title, label] = names[node.id] || [
+          'AI 已生成产物，请检查或在协作区提出修改',
+          '确认产出并继续',
+        ];
+        description = `操作者：${node.owner} · ${node.id === 'publish' ? '授权后模拟发布，首跑通过才计入交付。' : '确认当前版本后，有效成果将自动交给下游。'}`;
+        disabled = member !== node.owner && member !== request.owner;
+        if (node.id === 'understand' && !request.refundBasis) {
+          disabled = true;
+          description = '请在成果区选择“按退款发生日”或“按订单日”，再确认需求。';
+        }
+        if (node.reviews.some((r) => r.status === 'changes')) {
+          disabled = true;
+          description = '评审要求修改，请在协作区提出调整并应用新版本。';
+        }
+      }
+      return `<div class="next-step ${node.status === 'failed' ? 'error' : ''}"><div><h3>${e(title)}</h3><p>${e(description)}${disabled && !['running'].includes(node.status) && node.id !== 'understand' ? ' · 请切换有权限的演示成员' : ''}</p></div><button class="primary" data-action="${action}" ${disabled ? 'disabled' : ''}>${label}</button></div>`;
+    }
+    function chat(request, node, ui, member) {
+      if (ui.chatCollapsed)
+        return '<button class="close-chat" data-action="toggle-chat">节点协作 · 展开</button>';
+      const canEdit = member === node.owner || member === request.owner;
+      const draft = node.drafts[member] || '';
+      return `<aside class="panel chat"><div class="chat-header"><div class="flex between"><h2>${icon('chat')} 节点协作 <span class="tiny muted">· ${node.name}</span></h2><button class="text-button tiny" data-action="toggle-chat">收起</button></div><div class="chat-members">${[...new Set([node.owner, ...Aide.members, 'Aide'])].map(avatar).join('')}<span class="tiny muted" style="margin:auto 0 auto 5px">负责人 ${node.owner}</span></div></div><div class="chat-feed">${node.messages.map((m) => `<div class="message ${m.author === 'Aide' ? 'ai-message' : ''}">${avatar(m.author)}<div style="min-width:0"><div class="message-meta"><strong>${m.author}</strong>${m.author === 'Aide' ? 'AI 助手 · ' : ''}${AideUI.clock(m.at)}</div><div class="message-text">${e(m.text)}</div></div></div>`).join('') || '<div class="empty">此节点尚未开始。消息始终归属当前节点。</div>'}${node.suggestion ? `<div class="suggestion"><strong>✦ 修改预览 · 基于 V${node.suggestion.version}</strong><p>${e(node.suggestion.summary)}</p><div class="flex" style="margin-top:10px"><button class="primary tiny" data-action="apply" ${!canEdit || request.deliveredAt ? 'disabled' : ''}>应用到节点</button><button class="text-button tiny" data-action="discard">放弃建议</button></div></div>` : ''}</div><div class="chat-compose"><div class="shortcut">${(node.id === 'understand' ? ['退款按发生日，保留最近30天'] : node.id === 'plan' ? ['增加店铺维度'] : node.id === 'test' ? ['增加渠道日期唯一性检查'] : node.category === '数据开发' ? ['金额补上空值处理'] : ['解释当前发布条件']).map((text) => `<button data-action="prompt" data-id="${text}">${text}</button>`).join('')}</div><textarea id="chat-input" aria-label="节点协作输入" placeholder="与 Aide 讨论，或 @同事补充要求…">${e(draft)}</textarea><div class="compose-footer"><span>模拟 AI · 修改须预览后应用</span><button class="primary tiny" data-action="send">发送 ${icon('arrow')}</button></div></div></aside>`;
+    }
+    function detail(db, ui) {
+      const request = db.requests.find((r) => r.id === ui.requestId),
+        node = Aide.get(request, ui.nodeId);
+      return `<main class="page detail-page"><div class="flex between" style="margin-bottom:20px"><button class="text-button tiny" data-action="nav" data-id="overview">${icon('back')} 返回工作台</button><div class="flex"><button class="text-button tiny" data-action="records">${icon('clock')} 执行记录</button>${!request.deliveredAt ? `<button class="text-button tiny" data-action="pause">${request.paused ? '继续' : '暂停'}执行</button>` : ''}</div></div><div class="detail-title"><div class="flex between"><h1>${e(request.title)}</h1>${pill(Aide.status(request, db.member))}</div><p class="subtitle">${e(request.description)}</p><div class="detail-meta"><span>${avatar(request.owner)} 需求负责人 ${request.owner}</span><span>需求 R${request.version} · 流程 F${request.flowVersion}</span><span>必需任务 ${request.nodes.filter((n) => n.status === 'done').length} / ${request.nodes.length}</span><span>电商数据项目</span></div></div><section class="dag-panel"><div class="dag-area"><div class="dag-toolbar"><div class="flex"><h3>交付流程</h3><span class="tiny muted">可组合 DAG</span></div><div class="flex"><button class="text-button tiny" data-action="expand">${ui.expanded ? '收起编排' : '展开编排'}</button><button class="text-button tiny" data-action="flow" ${request.deliveredAt ? 'disabled' : ''}>${icon('settings')} 编辑流程</button></div></div><div class="dag-legend">${[
+        ['未开始', '#c7cdd9'],
+        ['等待人工', '#b3c9ef'],
+        ['执行中', '#eac86f'],
+        ['已完成', '#8cc3a8'],
+        ['失败', '#dc969b'],
+      ]
+        .map(([name, color]) => `<span><i style="background:${color}"></i>${name}</span>`)
+        .join(
+          '',
+        )}<span style="margin-left:auto">点击节点查看成果</span></div>${graph(request, ui)}</div>${timing(request, ui)}</section>${nextStep(request, ui, db.member)}<div class="work-area ${ui.chatCollapsed ? 'collapsed' : ''}"><section class="panel artifact"><div class="artifact-heading flex between"><div class="flex"><h2>${node.name}</h2><span class="pill">V${node.version}</span></div><div class="flex">${!request.deliveredAt && ['waiting', 'running'].includes(node.status) ? `<button class="text-button tiny" data-action="transfer">转交</button><button class="text-button tiny" data-action="review">发起评审</button>` : ''}</div></div><div class="input-source">输入：需求 R${request.version} · ${node.deps.length ? node.deps.map((id) => `${Aide.get(request, id).name} V${Aide.get(request, id).version}`).join('、') : '用户原始描述与所选来源'} <button class="text-button tiny" data-action="sources">查看依据</button></div>${AideUI.content(request, node, ui, db.member)}</section>${chat(request, node, ui, db.member)}</div><p class="bottom-note">演示数据 · 模拟执行不连接 Hive、Dorado 或外部大模型 · 人工确认、评审与发布授权分别记录</p></main>`;
+    }
+    return { nodeLabel, detail };
+  })(),
+);
+
+</script>
+    <script>
+Object.assign(
+  AideUI,
+  (() => {
+    const { e, icon, pill } = AideUI;
+    function requirement(request, member) {
+      const edit = member === request.owner || member === request.nodes[0].owner;
+      return `<h3 style="margin-top:0">把业务目标变成明确的交付要求</h3><div class="field-row"><label>业务目标</label><div>${e(request.description)}</div></div><div class="field-row"><label>数据粒度</label><div>统计日期 × 渠道${request.dimension ? ' × 店铺' : ''}</div></div><div class="field-row"><label>退款归属日期 <span style="color:#c4807a">*</span></label><div><div class="radio-options"><label class="radio-choice"><input type="radio" name="basis" value="refund" ${request.refundBasis === 'refund' ? 'checked' : ''} ${!edit || request.nodes[0].status === 'done' ? 'disabled' : ''}/><div>按退款发生日<small>反映当天实际资金变动</small></div></label><label class="radio-choice"><input type="radio" name="basis" value="order" ${request.refundBasis === 'order' ? 'checked' : ''} ${!edit || request.nodes[0].status === 'done' ? 'disabled' : ''}/><div>按订单日<small>反映订单批次退款情况</small></div></label></div>${!request.refundBasis ? '<p class="tiny" style="color:#a18a64;margin-top:8px">待确认 · 两种口径会影响退款日期聚合与测试结果。</p>' : ''}</div></div><div class="field-row"><label>历史范围</label><div class="flex"><input type="number" id="history-days" value="${request.historyDays}" min="1" max="365" ${!edit || request.nodes[0].status === 'done' ? 'disabled' : ''} style="width:80px"/><span class="muted">天 · 演示历史范围</span></div></div><div class="field-row"><label>来源数据</label><div>ods_orders · 订单明细<br><span class="tiny muted">ods_refunds · 退款流水（含重复示例，用于验证去重）</span></div></div><div class="field-row"><label>交付物</label><div>订单明细表、渠道交易日报、每日调度任务</div></div><div class="field-row"><label>验收条件</label><div>支付 / 退款金额一致，日期渠道唯一，无关键字段空值，09:00 前完成。<br><span class="tiny muted">发布首跑时验证完成时效。</span></div></div><div class="notice">✦ Aide 已提取需求的核心信息。确认退款口径后，将自动生成技术方案与数据模型。</div>`;
+    }
+    function plan(request) {
+      return `<h3 style="margin-top:0">先分别聚合，再组合渠道交易指标</h3><p class="muted" style="font-size:12px">订单与退款独立处理，避免一对多关联放大支付金额。退款按${request.refundBasis === 'order' ? '订单日' : '发生日'}归属；日报以日期与渠道${request.dimension ? '、店铺' : ''}为联合粒度。</p><h3>数据模型与交付范围</h3><table><thead><tr><th>产物</th><th>粒度 / 主要字段</th><th>上游依赖</th></tr></thead><tbody><tr><td>dwd_order_detail_di</td><td>订单 · order_id / pay_amount</td><td>ods_orders</td></tr><tr><td>dwd_refund_detail_di</td><td>退款编号 · refund_id / refund_amount</td><td>ods_refunds</td></tr><tr><td>ads_channel_trade_di</td><td>日期 × 渠道${request.dimension ? ' × 店铺' : ''}</td><td>订单与退款处理产物</td></tr><tr><td>channel_trade_daily</td><td>08:30 每日调度</td><td>来源就绪 + 当前测试报告</td></tr></tbody></table><h3>执行与交接</h3><p class="muted" style="font-size:12px">采用方案后，订单开发、退款开发与调度配置并行生成。确认订单与退款成果后生成日报；日报与调度均确认后进入数据测试。当前版本报告经人工确认，再准备发布包。</p><div class="notice">自动执行范围：生成产物、样本校验与依赖交接。产物确认、已发起评审、模拟发布授权均保留人工操作。</div>`;
+    }
+    function codeView(request, node, ui) {
+      const code = node.customSql || Aide.sql(request, node.id);
+      const tabs = [
+        ['sql', node.id === 'schedule' ? '配置' : 'SQL'],
+        ['schema', '表结构'],
+        ['diff', '差异'],
+      ];
+      const table = `<table><thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead><tbody>${[['stat_date', 'DATE', '统计日期'], ['channel_id', 'STRING', '渠道标识'], ...(request.dimension ? [['shop_id', 'STRING', '店铺标识']] : []), ['pay_amount', 'BIGINT', '支付金额，分'], ['refund_amount', 'BIGINT', '退款金额，分']].map((row) => `<tr>${row.map((s) => `<td>${s}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+      return `<div class="tabs">${tabs.map(([id, name]) => `<button class="tab ${ui.artifactTab === id ? 'active' : ''}" data-action="artifact-tab" data-id="${id}">${name}</button>`).join('')}</div>${ui.artifactTab === 'schema' ? table : ui.artifactTab === 'diff' ? `<h3 style="margin-top:0">版本变更 · V${node.version}</h3><div class="notice">${node.version > 1 ? `当前版本已修改${node.nullSafe ? '金额空值处理，使用 COALESCE(..., 0)' : request.fixed ? '退款去重规则，以 refund_id 保留最新流水' : '方案或上游输入'}。旧确认与评审已失效。` : '首个版本，暂无历史差异。'}</div>${codeBlock(code)}` : `<div class="code-toolbar"><span class="tiny muted">${node.id === 'schedule' ? 'schedule.json' : `${node.id}.sql`} · V${node.version} · ${node.status === 'running' ? '生成中' : '已保存'}</span><div class="flex"><button class="text-button tiny" data-action="copy">复制</button><button class="text-button tiny" data-action="edit-sql" ${request.deliveredAt ? 'disabled' : ''}>${ui.editingSql ? '放弃编辑' : '编辑'}</button>${ui.editingSql ? '<button class="tiny" data-action="save-sql">保存新版本</button>' : ''}</div></div>${ui.editingSql ? `<textarea class="code-editor" id="sql-input" aria-label="SQL编辑器">${e(ui.sqlDraft || code)}</textarea>` : codeBlock(code)}`}<div class="notice">${node.id === 'schedule' ? '调度为结构化示例配置；真实运行与时效不在此阶段证明。' : '演示 SQL 可复制和编辑。测试使用 JavaScript 对固定样本计算核对，不连接 Hive，也不执行此 SQL。'}</div>`;
+    }
+    function codeBlock(code) {
+      return `<div class="code">${code
+        .split('\n')
+        .map(
+          (line, index) =>
+            `<div class="code-line"><span class="line-number">${index + 1}</span><span class="line-code ${line.trim().startsWith('--') ? 'comment' : ''}">${e(line).replace(/\b(SELECT|FROM|WHERE|GROUP BY|JOIN|WITH|AS|INSERT OVERWRITE|PARTITION|SUM|COALESCE|FULL OUTER JOIN|ON)\b/g, '<span class="sql-keyword">$1</span>')}</span></div>`,
+        )
+        .join('')}</div>`;
+    }
+    function tests(request, node) {
+      const result = Aide.report(request);
+      if (['idle', 'running'].includes(node.status))
+        return `<div class="notice">${node.status === 'running' ? '◌ 正在对固定样本执行金额、粒度与空值检查，完成后生成报告。' : '等待日报、调度和必需检查的有效产物。'}</div>`;
+      return `<div class="flex between" style="margin-bottom:16px"><h3 style="margin:0">测试报告 <span class="pill">V${node.version} · 批次 ${node.batch}</span></h3>${pill(node.status === 'failed' ? '失败' : '已完成')}</div><table><thead><tr><th>检查项</th><th>预期</th><th>实际</th><th>结果</th></tr></thead><tbody>${result.checks.map((check) => `<tr><td>${check.name}</td><td class="muted">${e(check.expected)}</td><td class="muted">${e(check.actual)}</td><td class="${check.passed ? 'check-result' : 'check-failed'}">${check.passed ? '✓ 通过' : '× 失败'}</td></tr>`).join('')}</tbody></table><div class="notice">样本支付总额：${result.payment.toLocaleString()} 分；退款总额：${result.refund.toLocaleString()} 分。重复退款 R001 ${request.fixed || request.scenario !== 'refund-failure' ? '已去重' : '尚未去重'}。数据测试报告通过后仍需负责人确认。</div><h3>渠道日报预览 · 虚构样本</h3>${preview(result)}${node.status === 'failed' ? '<div class="handoff">失败证据已保存。修复候选会产生新产物版本，原人工确认与评审不可继承。</div>' : ''}`;
+    }
+    function preview(result) {
+      return `<table><thead><tr><th>日期</th><th>渠道</th><th>支付金额 / 分</th><th>退款金额 / 分</th></tr></thead><tbody>${result.rows.map((row) => `<tr><td class="muted">${row.date}</td><td>${row.channel}${row.shop !== '全部' ? ` · ${row.shop}` : ''}</td><td>${row.payment.toLocaleString()}</td><td>${row.refund.toLocaleString()}</td></tr>`).join('')}</tbody></table>`;
+    }
+    function publish(request, node) {
+      if (request.deliveredAt)
+        return `<div class="delivery-hero"><span class="check-badge">✓</span><h2>渠道交易日报已交付</h2><p>模拟发布成功 · 首跑完成 · 所有验收条件通过</p><div class="tiny muted" style="margin-top:10px">首次交付 ${AideUI.date(request.deliveredAt)} ${AideUI.clock(request.deliveredAt)} · 总历时 ${Aide.duration(request.deliveredAt - request.createdAt)}</div></div><div class="artifact-links">${[
+          ['orders', '订单明细表', '查看 SQL'],
+          ['daily', '渠道交易日报表', '查看成果'],
+          ['schedule', '每日调度任务', '查看配置'],
+        ]
+          .map(
+            ([id, name, desc]) =>
+              `<button data-action="node" data-id="${id}">${icon('code')}${name}<span class="download-description">${desc} →</span></button>`,
+          )
+          .join(
+            '',
+          )}<button data-action="download">${icon('check')}下载交付包<span class="download-description">SQL、报告与执行记录 · JSON</span></button></div><h3>首跑验收证据 · 模拟</h3><table><tbody><tr><td>部署检查</td><td class="check-result">✓ 当前版本一致</td></tr><tr><td>首跑执行</td><td class="check-result">✓ 模拟 08:42 完成，早于 09:00</td></tr><tr><td>数据验收</td><td class="check-result">✓ 金额、粒度、空值与来源依赖通过</td></tr></tbody></table>`;
+      return `<h3 style="margin-top:0">发布包 · 电商数据项目 / 模拟环境</h3><table><thead><tr><th>发布内容</th><th>版本 / 状态</th></tr></thead><tbody>${request.nodes
+        .filter((n) => ['数据开发', '数据测试'].includes(n.category))
+        .map(
+          (n) =>
+            `<tr><td>${n.name}</td><td>${pill(n.status === 'done' ? '已完成' : AideUI.nodeLabel(n))} <span class="tiny muted">V${n.version}</span></td></tr>`,
+        )
+        .join(
+          '',
+        )}</tbody></table><div class="field-row"><label>调度安排</label><div>每日 08:30，等待订单与退款来源就绪</div></div><div class="field-row"><label>恢复方式</label><div>保留前一版本，出现异常时重新授权发布</div></div><div class="notice">${node.status === 'running' ? (node.authorizedVersion ? '◌ 已获得当前发布包授权，正在模拟部署、首跑与验收。' : '◌ 正在准备发布包，尚未发布；就绪后等待需求负责人明确授权。') : '发布授权仅由需求负责人明确确认。模拟发布成功后继续首跑，首跑通过才标记交付。'}</div>`;
+    }
+    function content(request, node, ui, member) {
+      if (node.id === 'understand') return requirement(request, member);
+      if (node.id === 'plan')
+        return ['idle', 'running'].includes(node.status)
+          ? `<div class="empty">${node.status === 'running' ? '◌ 正在基于已确认口径生成技术方案…' : '确认需求后自动生成技术方案。'}</div>`
+          : plan(request);
+      if (node.id === 'test') return tests(request, node);
+      if (node.id === 'publish') return publish(request, node);
+      if (node.id === 'unique')
+        return `<h3>日期 × 渠道唯一性检查</h3><div class="notice">规则：相同统计日期与渠道的记录数不得超过 1。参与发布检查，结果汇入数据测试报告。${node.status === 'done' ? '当前样本检查通过，重复键 = 0。' : '等待渠道日报有效成果后自动执行。'}</div>`;
+      if (node.status === 'idle')
+        return '<div class="empty">上游成果尚未确认，此节点将在依赖满足后自动开始。</div>';
+      return codeView(request, node, ui);
+    }
+    return { content };
+  })(),
+);
+
+</script>
+    <script>
+var AideController = (() => {
+  const { e } = AideUI;
+  function drawer(db, ui) {
+    if (!ui.drawer) return '';
+    const request = db.requests.find((r) => r.id === ui.requestId),
+      node = request && Aide.get(request, ui.nodeId);
+    const titles = {
+      create: ['新建数据需求', '用自然语言描述目标，Aide 将整理成可确认的需求。'],
+      transfer: ['转交负责人', '原负责人在接手前继续承担责任。'],
+      review: ['发起版本评审', '评审绑定当前成果版本，一般聊天不等于评审通过。'],
+      'review-decision': ['提交评审结论', `审阅 ${node?.name} V${node?.version} 后提交结论。`],
+      flow: ['编辑流程', '首版支持增加可执行的渠道唯一性检查，发布仍必须经过数据测试。'],
+      records: ['执行与协作记录', '保留确认、转交、评审、版本、失败与发布的事件证据。'],
+      sources: ['输入依据与样本', '虚构数据；金额单位为分。'],
+    };
+    const [title, subtitle] = titles[ui.drawer];
+    const close =
+      '<button class="text-button" data-action="close-drawer" aria-label="关闭">×</button>';
+    let body = '';
+    if (ui.drawer === 'create')
+      body = `<form id="create-form"><label for="request-title">需求名称</label><input id="request-title" name="title" value="渠道交易日报建设" required maxlength="80"/><label for="request-description">业务需求</label><textarea id="request-description" name="description" required>每天 09:00 前获得各渠道支付金额和退款金额，交付订单明细表、渠道日报与每日调度任务。退款按发生日统计，保留最近30天。</textarea><label for="scenario">演示场景</label><select id="scenario" name="scenario"><option value="happy">顺畅交付</option><option value="refund-failure">退款核对失败 → 修复重测</option><option value="publish-failure">首跑失败 → 重新授权发布</option></select><p class="notice">创建后进入需求理解，同一份需求贯穿全部阶段。新节点默认由当前成员负责。</p><div class="drawer-footer"><button type="submit" class="primary">提取需求并创建</button><button type="button" data-action="close-drawer">取消</button></div><p class="error-text" id="form-error"></p></form>`;
+    if (ui.drawer === 'transfer')
+      body = `<form id="transfer-form"><label>目标负责人</label><select name="target">${Aide.members
+        .filter((member) => member !== node.owner)
+        .map((member) => `<option>${member}</option>`)
+        .join(
+          '',
+        )}</select><label>交接说明</label><textarea name="note" required>请检查当前 V${node.version} 成果，确认后继续自动交接。</textarea><div class="drawer-footer"><button class="primary" type="submit">确认转交</button></div><p class="error-text" id="form-error"></p></form>${node.transfer ? `<div class="notice">当前正在等待${node.transfer.to}接手。</div>` : ''}`;
+    if (ui.drawer === 'review')
+      body = `<form id="review-form"><label>评审人 · 可多选</label>${Aide.members
+        .filter((member) => member !== db.member)
+        .map(
+          (member) =>
+            `<label class="flex"><input type="checkbox" name="reviewer" value="${member}" ${member === '许安' ? 'checked' : ''} style="width:auto"/>${member}</label>`,
+        )
+        .join(
+          '',
+        )}<label>关注点</label><textarea name="note" required>核对数据粒度、金额聚合和退款去重规则。</textarea><div class="drawer-footer"><button class="primary" type="submit">提交当前版本评审</button></div><p class="error-text" id="form-error"></p></form>`;
+    if (ui.drawer === 'review-decision')
+      body = `<form id="decision-form"><label>评审结论</label><select name="decision"><option value="passed">通过</option><option value="changes">要求修改</option></select><label>评审意见 · 要求修改时必填</label><textarea name="opinion" placeholder="请输入需要修改的具体问题"></textarea><div class="drawer-footer"><button class="primary" type="submit">提交结论</button></div><p class="error-text" id="form-error"></p></form>`;
+    if (ui.drawer === 'flow')
+      body = `<h3 style="margin-top:25px">必需业务环节</h3><div class="notice">需求理解 → 技术方案 → 数据开发 → <strong>数据测试</strong> → 发布上线<br>发布依赖不可绕过数据测试。纯位置调整不使成果失效。</div><h3 style="margin-top:24px">新增检查配置</h3><div class="field-row"><label>类型</label><span>唯一性检查</span></div><div class="field-row"><label>输入</label><span>渠道日报当前版本</span></div><div class="field-row"><label>检查字段</label><span>统计日期、渠道${request.dimension ? '、店铺' : ''}</span></div><div class="field-row"><label>预期</label><span>重复键数量 = 0</span></div><div class="field-row"><label>参与发布检查</label><span>是 · 必需</span></div><div class="drawer-footer"><button class="primary" data-action="add-check" ${Aide.get(request, 'unique') ? 'disabled' : ''}>保存流程并增加检查</button><button data-action="close-drawer">取消</button></div><div class="notice">保存会产生流程 F${request.flowVersion + 1}，使测试及发布包失效，重新执行当前版本检查。</div>`;
+    if (ui.drawer === 'records')
+      body =
+        request.events
+          .slice()
+          .reverse()
+          .map(
+            (event) =>
+              `<div class="record"><strong class="tiny">${Aide.get(request, event.node).name} · V${event.version}</strong><p>${e(event.text)}</p><small>${event.actor} · ${AideUI.date(event.at)} ${AideUI.clock(event.at)}</small><br><button class="text-button tiny" data-action="record-node" data-id="${event.node}">查看对应节点 →</button></div>`,
+          )
+          .join('') || '<div class="empty">尚无执行事件，确认需求后开始记录。</div>';
+    if (ui.drawer === 'sources')
+      body = `<h3 style="margin-top:25px">需求原文</h3><p class="notice">${e(request.description)}</p><h3 style="margin-top:25px">ods_orders · 虚构订单样本</h3><table><thead><tr><th>订单</th><th>渠道</th><th>支付 / 分</th></tr></thead><tbody>${Aide.orders.map((o) => `<tr><td>${o.order}</td><td>${o.channel}</td><td>${o.payment}</td></tr>`).join('')}</tbody></table><h3 style="margin-top:25px">ods_refunds · 虚构退款流水</h3><table><thead><tr><th>退款编号</th><th>订单</th><th>退款 / 分</th></tr></thead><tbody>${Aide.refunds.map((r) => `<tr><td>${r.id}</td><td>${r.order}</td><td>${r.amount}</td></tr>`).join('')}</tbody></table><div class="notice">R001 为同一笔退款的重复记录。固定样本日期为 2026-10-08 / 09；来源与 SQL 均用于原型演示。</div>`;
+    return `<div class="overlay"><section class="drawer" role="dialog" aria-modal="true" aria-label="${title}"><div class="flex between"><h2>${title}</h2>${close}</div><p class="subtitle">${subtitle}</p>${body}</section></div>`;
+  }
+  function handle(action, id, db, ui, helpers, button) {
+    const request = db.requests.find((r) => r.id === ui.requestId),
+      node = request && Aide.get(request, ui.nodeId);
+    const member = db.member;
+    if (action === 'nav') {
+      if (!helpers.leaveEditor()) return;
+      ui.requestId = null;
+      ui.tab = id;
+      ui.filter = '';
+      ui.drawer = null;
+    }
+    if (action === 'filter') {
+      ui.filter = id === 'sessions' ? '' : id;
+      if (id === 'sessions') ui.tab = 'sessions';
+    }
+    if (action === 'clear-filter') {
+      ui.filter = '';
+      ui.search = '';
+    }
+    if (action === 'create') ui.drawer = 'create';
+    if (action === 'open') {
+      if (!helpers.leaveEditor()) return;
+      ui.requestId = id;
+      const r = db.requests.find((item) => item.id === id);
+      r.draft = false;
+      ui.nodeId =
+        button.dataset.node ||
+        Aide.actionable(r, member)[0]?.id ||
+        (r.deliveredAt ? 'publish' : r.nodes.find((n) => n.status !== 'done')?.id || 'understand');
+    }
+    if (action === 'node' || action === 'record-node') {
+      if (!helpers.leaveEditor()) return;
+      ui.nodeId = id;
+      ui.artifactTab = 'sql';
+      if (action === 'record-node') ui.drawer = null;
+    }
+    if (action === 'close-drawer') ui.drawer = null;
+    if (['transfer', 'review', 'review-decision', 'flow', 'records', 'sources'].includes(action))
+      ui.drawer = action;
+    if (action === 'expand') ui.expanded = !ui.expanded;
+    if (action === 'time-tab') ui.timeTab = id;
+    if (action === 'artifact-tab') {
+      if (!helpers.leaveEditor()) return;
+      ui.artifactTab = id;
+    }
+    if (action === 'toggle-chat') ui.chatCollapsed = !ui.chatCollapsed;
+    if (action === 'pause') {
+      request.paused = !request.paused;
+      Aide.event(
+        request,
+        node,
+        'pause',
+        request.paused ? '用户暂停自动执行，已有成果已保存。' : '用户恢复自动执行。',
+        member,
+      );
+      if (!request.paused)
+        request.nodes
+          .filter((n) => n.status === 'running')
+          .forEach((n) => (n.dueAt = Date.now() + 1200));
+    }
+    if (action === 'confirm') {
+      Aide.confirm(request, node.id, member);
+      helpers.toast(
+        node.id === 'publish'
+          ? '已授权模拟发布，正在收集首跑证据'
+          : '当前版本已确认，有效成果已自动交接',
+      );
+    }
+    if (action === 'accept') Aide.acceptTransfer(request, node.id, member);
+    if (action === 'add-check') {
+      Aide.addCheck(request, member);
+      ui.drawer = null;
+      ui.nodeId = 'unique';
+      helpers.toast('流程已保存，唯一性检查已真实加入必需测试');
+    }
+    if (action === 'prompt') {
+      node.drafts[member] = id;
+    }
+    if (action === 'send') {
+      const text = (node.drafts[member] || '').trim();
+      if (!text) throw Error('请先输入消息或问题');
+      Aide.message(request, node.id, member, text);
+      node.drafts[member] = '';
+      const suggestion = Aide.suggestion(request, node, text);
+      if (suggestion) {
+        node.suggestion = suggestion;
+        Aide.message(
+          request,
+          node.id,
+          'Aide',
+          `理解你的调整目标：${suggestion.summary} 已生成预览，正式产物将在你应用后更新。`,
+        );
+      } else if (/解释|为什么|汇总|发布|通过|好了/.test(text))
+        Aide.message(
+          request,
+          node.id,
+          'Aide',
+          `当前 ${node.name} V${node.version}，状态为${AideUI.nodeLabel(node)}。${node.id === 'publish' ? '发布需要需求负责人授权、当前版本数据测试通过，首跑成功后才交付。' : '支付与退款分别聚合，可避免关联放大金额。'} 文字回复会保留在讨论中，不会代替确认、评审或发布授权。`,
+        );
+      else
+        Aide.message(
+          request,
+          node.id,
+          'Aide',
+          '已保留你的消息。本 demo 使用确定规则解析；请明确要调整的口径、店铺维度、金额空值或唯一性用例，或 @同事讨论。',
+        );
+    }
+    if (action === 'discard') delete node.suggestion;
+    if (action === 'apply') {
+      const suggestion = node.suggestion;
+      if (!suggestion || suggestion.version !== node.version)
+        throw Error('内容已更新，请重新生成建议');
+      if (member !== node.owner && member !== request.owner)
+        throw Error('只有负责人可以应用正式变更');
+      if (request.deliveredAt) throw Error('已交付成果只读');
+      if (suggestion.kind === 'requirement') {
+        request.refundBasis = suggestion.basis;
+        request.historyDays = suggestion.days;
+        request.version++;
+        Aide.revise(request, node.id, member);
+      }
+      if (suggestion.kind === 'dimension') {
+        request.dimension = true;
+        Aide.revise(request, node.id, member);
+      }
+      if (suggestion.kind === 'sql') {
+        node.nullSafe = true;
+        Aide.revise(request, node.id, member);
+      }
+      if (suggestion.kind === 'unique') Aide.addCheck(request, member);
+      delete node.suggestion;
+      helpers.toast('修改已应用，新版本等待确认');
+    }
+    if (action === 'repair') {
+      if (member !== node.owner && member !== request.owner) throw Error('请切换为负责人处理');
+      if (node.id === 'publish') {
+        request.publishFixed = true;
+        node.status = 'waiting';
+        delete node.authorizedVersion;
+        helpers.toast('来源已模拟恢复，请审阅并重新授权发布');
+      } else {
+        request.fixed = true;
+        Aide.revise(request, 'refunds', member);
+        ui.nodeId = 'refunds';
+        Aide.event(
+          request,
+          Aide.get(request, 'refunds'),
+          'repair',
+          '根据失败证据生成退款去重候选，新版本需人工确认后重测。',
+        );
+      }
+    }
+    if (action === 'edit-sql') {
+      if (member !== node.owner && member !== request.owner) throw Error('只有负责人可以编辑');
+      if (ui.editingSql) {
+        if (!helpers.leaveEditor()) return;
+      } else {
+        request.paused = true;
+        ui.editingSql = true;
+        ui.sqlDraft = node.customSql || Aide.sql(request, node.id);
+        helpers.toast('已暂停自动执行，编辑内容不会被覆盖');
+      }
+    }
+    if (action === 'save-sql') {
+      if (!(ui.sqlDraft || '').trim()) throw Error('SQL 不能为空');
+      node.customSql = ui.sqlDraft;
+      Aide.revise(request, node.id, member);
+      ui.editingSql = false;
+      request.paused = false;
+      helpers.toast('新版本已保存，样本测试不执行自定义 SQL，请检查后确认');
+    }
+    if (action === 'copy') helpers.copy(node.customSql || Aide.sql(request, node.id));
+    if (action === 'download') helpers.download(request);
+  }
+  function submit(form, db, ui) {
+    const data = new FormData(form),
+      request = db.requests.find((r) => r.id === ui.requestId);
+    if (form.id === 'create-form') {
+      const title = String(data.get('title') || '').trim(),
+        description = String(data.get('description') || '').trim();
+      if (!title || !description) throw Error('请填写需求名称和业务目标');
+      const next = Aide.createRequest(title, db.member, String(data.get('scenario')));
+      next.description = description;
+      next.refundBasis = /发生日/.test(description)
+        ? 'refund'
+        : /订单日/.test(description)
+          ? 'order'
+          : '';
+      next.historyDays = Math.max(
+        1,
+        Math.min(365, Number(description.match(/(\d+)\s*天/)?.[1] || 30)),
+      );
+      db.requests.unshift(next);
+      ui.requestId = next.id;
+      ui.nodeId = 'understand';
+      ui.artifactTab = 'sql';
+    }
+    if (form.id === 'transfer-form') {
+      Aide.transfer(request, ui.nodeId, db.member, String(data.get('target')));
+      Aide.message(request, ui.nodeId, db.member, `交接说明：${data.get('note')}`);
+    }
+    if (form.id === 'review-form') {
+      Aide.review(request, ui.nodeId, db.member, data.getAll('reviewer').map(String));
+      Aide.message(request, ui.nodeId, db.member, `评审关注点：${data.get('note')}`);
+    }
+    if (form.id === 'decision-form')
+      Aide.reviewDecision(
+        request,
+        ui.nodeId,
+        db.member,
+        data.get('decision') === 'passed',
+        String(data.get('opinion')),
+      );
+    ui.drawer = null;
+  }
+  return { drawer, handle, submit };
+})();
+
+</script>
+    <script>
+(() => {
+  const storageKey = 'aide-data-workbench-demo-v1';
+  let db,
+    storageWarning = false;
+  try {
+    db = JSON.parse(localStorage.getItem(storageKey) || 'null');
+  } catch {
+    storageWarning = true;
+  }
+  if (!db || db.schema !== 1 || !Array.isArray(db.requests)) db = Aide.seed();
+  const ui = {
+    tab: 'overview',
+    requestId: null,
+    nodeId: 'understand',
+    range: 7,
+    filter: '',
+    search: '',
+    drawer: null,
+    timeTab: 'overview',
+    artifactTab: 'sql',
+    chatCollapsed: false,
+    expanded: false,
+    editingSql: false,
+    sqlDraft: '',
+  };
+  try {
+    Object.assign(ui, JSON.parse(sessionStorage.getItem(`${storageKey}-view`) || '{}'), {
+      drawer: null,
+      editingSql: false,
+    });
+  } catch {
+    storageWarning = true;
+  }
+  if (!db.requests.some((r) => r.id === ui.requestId)) ui.requestId = null;
+  const app = document.getElementById('app');
+  function toast(text) {
+    const box = document.getElementById('toast');
+    box.textContent = text;
+    box.classList.add('visible');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => box.classList.remove('visible'), 4000);
+  }
+  function save() {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(db));
+      sessionStorage.setItem(`${storageKey}-view`, JSON.stringify(ui));
+    } catch {
+      if (!storageWarning) toast('浏览器存储不可用，当前内容仅在本次页面中保留。');
+      storageWarning = true;
+    }
+  }
+  function render() {
+    const focus = document.activeElement?.id,
+      selection = document.activeElement?.selectionStart;
+    if (ui.requestId) {
+      const request = db.requests.find((r) => r.id === ui.requestId);
+      if (!Aide.get(request, ui.nodeId)) ui.nodeId = 'understand';
+      const node = Aide.get(request, ui.nodeId);
+      node.seen[db.member] = node.messages.length;
+    }
+    app.innerHTML =
+      AideUI.shell(db, ui, ui.requestId ? AideUI.detail(db, ui) : AideUI.workspace(db, ui)) +
+      AideController.drawer(db, ui);
+    if (focus && document.getElementById(focus)) {
+      const input = document.getElementById(focus);
+      input.focus();
+      if (
+        selection !== null &&
+        typeof input.setSelectionRange === 'function' &&
+        !['number', 'radio', 'checkbox'].includes(input.type)
+      )
+        input.setSelectionRange(selection, selection);
+    }
+    const feed = app.querySelector('.chat-feed');
+    if (feed) feed.scrollTop = feed.scrollHeight;
+    save();
+  }
+  function leaveEditor() {
+    if (ui.editingSql && !confirm('有未保存的 SQL 修改。放弃修改并离开编辑？')) return false;
+    ui.editingSql = false;
+    return true;
+  }
+  async function copy(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast('已复制当前版本内容');
+    } catch {
+      const area = document.createElement('textarea');
+      area.value = text;
+      document.body.appendChild(area);
+      area.select();
+      const copied = document.execCommand('copy');
+      area.remove();
+      toast(copied ? '已复制当前版本内容' : '复制权限不可用，请从代码区手动选择复制');
+    }
+  }
+  function download(request) {
+    const blob = new Blob(
+      [
+        JSON.stringify(
+          {
+            mode: '本地模拟，非生产交付',
+            title: request.title,
+            versions: request.nodes.map((n) => ({ name: n.name, version: n.version })),
+            sql: Object.fromEntries(
+              request.nodes
+                .filter((n) => n.category === '数据开发')
+                .map((n) => [n.id, n.customSql || Aide.sql(request, n.id)]),
+            ),
+            report: Aide.report(request),
+            events: request.events,
+            deliveredAt: request.deliveredAt,
+          },
+          null,
+          2,
+        ),
+      ],
+      { type: 'application/json' },
+    );
+    const url = URL.createObjectURL(blob),
+      link = document.createElement('a');
+    link.href = url;
+    link.download = 'aide-channel-delivery.json';
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('交付包已下载，包含 SQL、样本报告与执行记录');
+  }
+  app.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-action]');
+    if (!button || button.disabled) return;
+    try {
+      AideController.handle(
+        button.dataset.action,
+        button.dataset.id,
+        db,
+        ui,
+        { toast, leaveEditor, copy, download },
+        button,
+      );
+      render();
+      if (['nav', 'open'].includes(button.dataset.action)) window.scrollTo(0, 0);
+    } catch (error) {
+      toast(error.message);
+    }
+  });
+  app.addEventListener('submit', (event) => {
+    event.preventDefault();
+    try {
+      AideController.submit(event.target, db, ui);
+      render();
+      if (event.target.id === 'create-form') window.scrollTo(0, 0);
+    } catch (error) {
+      const output = document.getElementById('form-error');
+      if (output) output.textContent = error.message;
+      else toast(error.message);
+    }
+  });
+  app.addEventListener('input', (event) => {
+    if (event.target.id === 'search') {
+      ui.search = event.target.value;
+      render();
+    }
+    const request = db.requests.find((r) => r.id === ui.requestId);
+    if (event.target.id === 'chat-input') {
+      Aide.get(request, ui.nodeId).drafts[db.member] = event.target.value;
+      save();
+    }
+    if (event.target.id === 'sql-input') {
+      ui.sqlDraft = event.target.value;
+      save();
+    }
+  });
+  app.addEventListener('change', (event) => {
+    if (event.target.id === 'member') {
+      db.member = event.target.value;
+      if (ui.requestId) {
+        const request = db.requests.find((r) => r.id === ui.requestId);
+        const next = Aide.actionable(request, db.member)[0];
+        if (next && !ui.editingSql) ui.nodeId = next.id;
+      }
+    }
+    if (event.target.id === 'range') ui.range = Number(event.target.value);
+    const request = db.requests.find((r) => r.id === ui.requestId);
+    if (event.target.name === 'basis') request.refundBasis = event.target.value;
+    if (event.target.id === 'history-days')
+      request.historyDays = Math.max(1, Math.min(365, Number(event.target.value) || 30));
+    render();
+  });
+  app.addEventListener('keydown', (event) => {
+    if (
+      event.target.id === 'chat-input' &&
+      event.key === 'Enter' &&
+      (event.metaKey || event.ctrlKey)
+    ) {
+      event.preventDefault();
+      app.querySelector('[data-action="send"]').click();
+    }
+    if (event.key === 'Escape' && ui.drawer) {
+      ui.drawer = null;
+      render();
+    }
+    if (event.key === 'Enter' && event.target.matches('g[data-action],circle[data-action]'))
+      event.target.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+  setInterval(() => {
+    let changed = false;
+    db.requests.forEach((request) => {
+      if (Aide.tick(request)) changed = true;
+    });
+    if (changed && !ui.drawer && !ui.editingSql) render();
+    else if (changed) save();
+    document
+      .querySelectorAll('[data-clock]')
+      .forEach(
+        (element) =>
+          (element.textContent = Aide.duration(
+            (Number(element.dataset.end) || Date.now()) - Number(element.dataset.clock),
+          )),
+      );
+  }, 300);
+  render();
+  if (storageWarning) toast('存储读取失败，已恢复默认演示数据。');
+})();
+
+</script>
+  </body>
+</html>
