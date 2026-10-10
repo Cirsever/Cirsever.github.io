@@ -1407,6 +1407,299 @@ tbody tr:last-child td {
     height: 112px;
   }
 }
+.personal-button {
+  color: var(--accent);
+  border-color: #cdd3ee;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.personal-overview-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+.personal-overview-bar h1 {
+  font-size: 24px;
+  margin: 8px 0;
+}
+.personal-overview {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  width: 100%;
+  height: 700px;
+  background: white;
+}
+.personal-overlay {
+  padding: 24px;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+}
+.personal-designer {
+  width: min(1480px, 100%);
+  height: min(960px, calc(100dvh - 48px));
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  background: white;
+  overflow: hidden;
+  box-shadow: 0 24px 90px #1c274138;
+}
+.personal-designer-header {
+  padding: 20px 26px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.personal-designer-header h2 {
+  margin-top: 5px;
+  font-size: 21px;
+}
+.personal-designer-header .subtitle {
+  margin: 6px 0 0;
+  font-size: 12px;
+}
+.personal-designer-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+}
+.personal-compose {
+  border-right: 1px solid var(--line);
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+.personal-tabs {
+  display: flex;
+  padding: 14px 16px 0;
+  border-bottom: 1px solid var(--line);
+  gap: 10px;
+}
+.personal-tabs button {
+  border: 0;
+  border-radius: 0;
+  padding: 10px 6px;
+  color: var(--muted);
+  background: none;
+}
+.personal-tabs button.active {
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  font-weight: 600;
+}
+.personal-compose-content {
+  padding: 22px;
+  overflow: auto;
+  flex: 1;
+}
+.personal-agent-response {
+  padding: 16px;
+  margin: 18px 0;
+  background: #f4f6fc;
+  line-height: 1.8;
+  border-radius: 10px;
+  color: #667087;
+}
+.personal-examples {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+.personal-examples button {
+  text-align: left;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.personal-agent label {
+  display: block;
+  margin: 24px 0 8px;
+  font-weight: 600;
+}
+.personal-compose textarea {
+  width: 100%;
+  border: 1px solid #dce1ee;
+  border-radius: 8px;
+  padding: 12px;
+  resize: vertical;
+  line-height: 1.65;
+  font-size: 12px;
+}
+.personal-compose textarea:focus {
+  outline: 2px solid #b2bbfa;
+}
+#personal-prompt {
+  min-height: 112px;
+}
+.personal-agent > .primary {
+  width: 100%;
+  justify-content: center;
+  margin: 10px 0;
+}
+.external-agent-note {
+  border-top: 1px solid var(--line);
+  margin-top: 22px;
+  padding-top: 20px;
+}
+.external-agent-note p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.external-agent-note button {
+  width: 100%;
+  margin-top: 10px;
+}
+.personal-canvas {
+  min-height: 0;
+  background: #f5f7fa;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.personal-canvas-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #69738a;
+  flex-wrap: wrap;
+}
+.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #46b188;
+  margin-right: 5px;
+}
+.personal-preview {
+  border: 1px solid #e1e6ee;
+  border-radius: 9px;
+  background: white;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+.personal-binding-status {
+  color: #7f899b;
+  font-size: 11px;
+}
+.personal-designer-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 26px;
+  border-top: 1px solid var(--line);
+}
+.personal-editor-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.import-label {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 12px;
+}
+.import-label input {
+  display: none;
+}
+#personal-source {
+  height: 380px;
+  min-height: 200px;
+  margin: 14px 0;
+  font:
+    11px/1.65 ui-monospace,
+    SFMono-Regular,
+    monospace;
+  white-space: pre;
+}
+.source-catalog {
+  margin: 18px 0;
+}
+.source-catalog > div {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.source-catalog code {
+  float: right;
+  color: var(--accent);
+  font-size: 11px;
+}
+.source-catalog p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+.personal-json {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 10px;
+  max-height: 340px;
+  overflow: auto;
+}
+@media (max-width: 1000px) {
+  .personal-designer-body {
+    grid-template-columns: 310px minmax(0, 1fr);
+  }
+  .personal-overview-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+@media (max-width: 720px) {
+  .personal-overlay {
+    padding: 0;
+  }
+  .personal-designer {
+    border-radius: 0;
+    height: 100dvh;
+  }
+  .personal-designer-header {
+    padding: 14px 16px;
+  }
+  .personal-designer-header .subtitle {
+    display: none;
+  }
+  .personal-designer-body {
+    display: block;
+    overflow: auto;
+  }
+  .personal-compose {
+    border-right: 0;
+  }
+  .personal-compose-content {
+    overflow: visible;
+    padding: 16px;
+  }
+  .personal-canvas {
+    height: 520px;
+    min-height: 400px;
+  }
+  .personal-designer-footer {
+    padding: 12px 16px;
+  }
+  .personal-designer-footer > span {
+    display: none;
+  }
+  .personal-designer-footer .toolbar {
+    margin-left: auto;
+  }
+}
 
 </style>
   </head>
@@ -2005,6 +2298,453 @@ Object.assign(
 
 </script>
     <script>
+var AidePersonal = (() => {
+  const limit = 150000;
+  function page(db, member = db.member) {
+    db.personalPages ||= {};
+    if (!Object.hasOwn(db.personalPages, member))
+      db.personalPages[member] = { source: '', prompt: '', history: [], revision: 0 };
+    return db.personalPages[member];
+  }
+  function validate(source) {
+    if (typeof source !== 'string') throw Error('请提供 HTML/CSS 源码。');
+    if (source.length > limit) throw Error('页面源码不能超过 150000 字符。');
+    if (!source.trim() || !/<[a-z]/i.test(source))
+      throw Error('请提供包含页面内容的 HTML/CSS 源码。');
+    if (/<\s*script\b/i.test(source) || /javascript\s*:/i.test(source))
+      throw Error(
+        '此版接受 HTML/CSS，不执行自定义 JavaScript。动态数据请使用 data-aide 数据绑定。',
+      );
+    if (/\son\w+\s*=/i.test(source)) throw Error('请移除内联事件，需求跳转使用 data-aide-open。');
+    if (/<\s*(iframe|object|embed|form)\b/i.test(source))
+      throw Error('不支持外部嵌入或表单；请使用普通 HTML/CSS。');
+    if (/<\s*(meta|base)\b/i.test(source))
+      throw Error('请移除 meta/base 跳转或策略标签；保留页面 HTML/CSS 即可。');
+    return source.trim();
+  }
+  function apply(db, member, source, prompt = '') {
+    const clean = source ? validate(source) : '';
+    const current = page(db, member);
+    if (current.source === clean && current.prompt === prompt) return;
+    current.history.push({ source: current.source, prompt: current.prompt, at: Date.now() });
+    current.history = current.history.slice(-8);
+    current.source = clean;
+    current.prompt = String(prompt).slice(0, 2000);
+    current.revision++;
+    current.updatedAt = Date.now();
+  }
+  function undo(db, member) {
+    const current = page(db, member),
+      previous = current.history.pop();
+    if (!previous) throw Error('没有可撤销的保存版本。');
+    Object.assign(current, previous, { revision: current.revision + 1, updatedAt: Date.now() });
+  }
+  function snapshot(db) {
+    const now = Date.now(),
+      member = db.member;
+    const date = (at) =>
+      at ? new Date(at).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }) : '—';
+    const requests = db.requests.map((r) => {
+      const nodes = r.nodes.map((n) => ({
+        id: n.id,
+        title: n.name,
+        owner: n.owner,
+        category: n.category,
+        status: n.status,
+        version: n.version,
+        requestId: r.id,
+        requestTitle: r.title,
+        reason:
+          n.status === 'failed'
+            ? '执行失败，需要检查成果并修复'
+            : n.transfer
+              ? `等待${n.transfer.to}接手`
+              : n.reviews.some((v) => v.status === 'pending')
+                ? '当前版本等待评审'
+                : n.status === 'waiting'
+                  ? '成果等待确认'
+                  : '自动依赖推进',
+      }));
+      const completed = nodes.filter((n) => n.status === 'done').length;
+      return {
+        id: r.id,
+        title: r.title,
+        owner: r.owner,
+        status: Aide.status(r, member),
+        stage: r.deliveredAt
+          ? '已交付'
+          : nodes.find((n) => n.status !== 'done')?.category || '已完成',
+        completed,
+        total: nodes.length,
+        progress: Math.round((completed / nodes.length) * 100),
+        progressText: `${completed} / ${nodes.length}`,
+        draft: r.draft,
+        paused: r.paused,
+        active: !r.draft && !r.deliveredAt,
+        blocked: nodes.some((n) => n.status === 'failed'),
+        deliveredAt: r.deliveredAt,
+        createdAt: r.createdAt,
+        updatedAt: r.events.at(-1)?.at || r.deliveredAt || r.createdAt,
+        date: date(r.deliveredAt || r.createdAt),
+        nodes,
+        reason:
+          nodes.find((n) => n.status === 'failed')?.reason ||
+          nodes.find((n) => n.status === 'waiting')?.reason ||
+          '依赖自动推进',
+      };
+    });
+    const byId = new Map(requests.map((r) => [r.id, r]));
+    const todos = db.requests.flatMap((r) =>
+      Aide.actionable(r, member).map((n) => byId.get(r.id).nodes.find((v) => v.id === n.id)),
+    );
+    const reviews = db.requests
+      .filter((r) => !r.draft && !r.deliveredAt)
+      .flatMap((r) =>
+        r.nodes
+          .filter((n) => n.reviews.some((v) => v.status === 'pending'))
+          .map((n) => byId.get(r.id).nodes.find((v) => v.id === n.id)),
+      );
+    const deliveries = requests
+      .filter((r) => r.deliveredAt)
+      .sort((a, b) => b.deliveredAt - a.deliveredAt);
+    const inDays = (days, mine = false) =>
+      deliveries.filter(
+        (r) =>
+          (!mine || r.owner === member) &&
+          r.deliveredAt >= now - days * 86400000 &&
+          r.deliveredAt <= now,
+      ).length;
+    const events = db.requests
+      .flatMap((r) =>
+        r.events.map((event) => ({
+          title: event.text,
+          actor: event.actor,
+          date: date(event.at),
+          at: event.at,
+          requestId: r.id,
+          requestTitle: r.title,
+        })),
+      )
+      .sort((a, b) => b.at - a.at)
+      .slice(0, 30);
+    const blocked = requests.filter((r) => r.active && r.blocked);
+    const stages = ['需求理解', '技术方案', '数据开发', '数据测试', '发布上线'].map((title) => ({
+      title,
+      count: requests.filter((r) => r.active && r.stage === title).length,
+    }));
+    return {
+      schema: 1,
+      member,
+      project: '电商数据项目',
+      date: date(now),
+      updatedAt: now,
+      updatedTime: new Date(now).toLocaleTimeString('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }),
+      summary: {
+        active: requests.filter((r) => r.active).length,
+        todo: todos.length,
+        blocked: blocked.length,
+        reviews: reviews.length,
+        delivered: inDays(7),
+        delivered30: inDays(30),
+        mineActive: requests.filter((r) => r.active && r.owner === member).length,
+        mineDelivered: inDays(7, true),
+        mineDelivered30: inDays(30, true),
+        total: requests.length,
+      },
+      requests,
+      todos,
+      blocked,
+      reviews,
+      deliveries,
+      events,
+      stages,
+    };
+  }
+  function agentPrompt(db, prompt = '') {
+    return `请为 Aide 数据开发工作台编写个性化总览。用户目标：${prompt || '按当前成员的工作安排设计首页'}。
+直接输出完整 HTML/CSS，布局、排版、色彩、SVG 和内容组织均可自由创造，不需要使用固定组件。仅使用给定数据，不编造统计；不要把示例值硬编码。
+使用 <style> 写 CSS。此页面在隔离环境渲染，无外部网络和自定义 JavaScript。
+动态绑定契约：data-aide-text="summary.active" 填文本；data-aide-each="requests" 在该元素内部重复渲染其子元素（条目中用 data-aide-text="title" 等字段）。可嵌套重复 nodes。空列表用 data-aide-empty="暂无事项"。
+重复容器可加 data-aide-filter="mine|active|blocked|delivered"、data-aide-sort="updated|progress"、data-aide-limit="6"。
+data-aide-open="id"（需求）或 data-aide-open="requestId"（任务）让按钮打开对应需求；任务按钮加 data-aide-node="id"。
+data-aide-attr-width="progress" 可绑定 SVG width；可绑定 height/x/y/d/title/aria-label。自由创造所有 HTML 结构与 CSS，不要写脚本、事件属性、meta/base、iframe、外部资源或表单。
+可用根字段 member/project/date/updatedTime/summary；列表 requests/todos/blocked/reviews/deliveries/events/stages。
+示例：<section data-aide-each="todos" data-aide-empty="全部处理完成"><article><h2 data-aide-text="title"></h2><p data-aide-text="requestTitle"></p><button data-aide-open="requestId" data-aide-node="id">去处理</button></article></section>
+当前数据样本（虚构演示数据，实际显示由工作台每次注入最新快照）：
+${JSON.stringify(snapshot(db), null, 2)}
+请仅返回 HTML 源码，用户会在“个性化 → HTML/CSS”中粘贴、预览并保存。`;
+  }
+  return { page, validate, apply, undo, snapshot, agentPrompt };
+})();
+
+</script>
+    <script>
+var AidePersonalGenerate = (() => {
+  const examples = [
+    '做成深色指挥中心，优先看受阻任务，最近30天，只看我负责的需求',
+    '做成暖色杂志，标题叫每日交付简报，重点展示待办和评审',
+    '做成极简时间线，用大字展示今天的待办，不要统计卡片',
+  ];
+  function create(prompt) {
+    if (!prompt.trim()) throw Error('请先描述想要的页面。');
+    if (/薪资|银行|账户余额|真实收入|天气|股票/.test(prompt))
+      throw Error('当前数据来源只有需求、任务、评审、交付与执行记录，请描述基于这些数据的页面。');
+    const e = Aide.escape;
+    const dark = /深色|暗色|黑色|赛博|指挥/.test(prompt);
+    const editorial = /杂志|简报|暖色|报纸/.test(prompt);
+    const timeline = /时间线|极简|清单/.test(prompt) && !editorial;
+    const mine = /我负责|我的需求/.test(prompt);
+    const days = /30|三十/.test(prompt) ? 30 : 7;
+    const title =
+      prompt.match(/标题(?:叫|改成|设为|为|是)[“"「]?([^，。；\n”"」]{1,30})/)?.[1] ||
+      (editorial
+        ? '每天，交付一点更好的数据。'
+        : timeline
+          ? '把今天，安排清楚。'
+          : '数据交付指挥中心');
+    const bg = dark ? '#101922' : editorial ? '#f5f0e5' : '#fff';
+    const ink = dark ? '#e8f4f3' : '#273631';
+    const muted = dark ? '#8fa9b0' : '#777d75';
+    const accent = dark ? '#a7ebc6' : editorial ? '#b84c30' : '#5662dc';
+    const line = dark ? '#30454d' : '#deded5';
+    const text = (path, tag = 'span') => `<${tag} data-aide-text="${path}"></${tag}>`;
+    const list = (
+      key,
+      kind = 'task',
+    ) => `<div class="items ${kind}" data-aide-each="${key}" data-aide-limit="8" data-aide-empty="${key === 'blocked' ? '当前没有受阻需求。' : key === 'reviews' ? '当前没有待评审事项。' : '暂无事项，新的进展会出现在这里。'}" ${key === 'requests' ? 'data-aide-sort="updated"' : ''} ${mine && ['requests', 'blocked', 'deliveries'].includes(key) ? 'data-aide-filter="mine"' : ''}>
+      <article class="item"><div class="item-top"><span class="small">${text(['requests', 'blocked', 'deliveries'].includes(key) ? 'stage' : key === 'events' ? 'date' : 'category')}</span><span class="small">${text(key === 'events' ? 'actor' : 'owner')}</span></div>
+      ${text('title', 'h3')}${key === 'events' ? text('requestTitle', 'p') : `<p>${text(['requests', 'blocked', 'deliveries'].includes(key) ? 'reason' : 'requestTitle')}</p><button data-aide-open="${['requests', 'blocked', 'deliveries'].includes(key) ? 'id' : 'requestId'}" ${key === 'todos' || key === 'reviews' ? 'data-aide-node="id"' : ''}>${['requests', 'blocked', 'deliveries'].includes(key) ? '查看需求' : '处理任务'} ↗</button>`}
+      ${key === 'requests' ? '<svg class="progress" viewBox="0 0 100 2" preserveAspectRatio="none" aria-label="完成进度"><rect width="100" height="2" fill="currentColor" opacity=".1"/><rect data-aide-attr-width="progress" height="2" fill="currentColor"/></svg>' : ''}</article>
+    </div>`;
+    const section = (label, key, kind = 'task') =>
+      `<section class="section"><h2>${label}</h2>${list(key, kind)}</section>`;
+    const metrics = /不要统计|隐藏统计|不要卡片/.test(prompt)
+      ? ''
+      : `<div class="numbers"><p>${text('summary.todo', 'b')}<span>待我处理</span></p><p>${text(mine ? 'summary.mineActive' : 'summary.active', 'b')}<span>${mine ? '我负责的进行中需求' : '项目进行中需求'}</span></p><p>${text(`summary.${mine ? 'mineDelivered' : 'delivered'}${days === 30 ? '30' : ''}`, 'b')}<span>${mine ? '我负责的' : ''}近 ${days} 天交付</span></p></div>`;
+    const risk = /受阻|风险|失败/.test(prompt) ? section('先解决这些阻塞', 'blocked', 'risk') : '';
+    const reviews = /评审|审核/.test(prompt) ? section('等待一次认真审阅', 'reviews') : '';
+    let body;
+    if (editorial)
+      body = `<header class="masthead"><strong>AIDE / DAILY EDITION</strong>${text('date')}</header><div class="editorial-lead"><h1>${e(title)}</h1><p><span data-aide-text="member"></span>，这里记录你的数据工作。<br>用更少的切换，完成更可靠的交付。</p></div>${metrics}${risk}<div class="spread"><div>${section('01 / 今天值得推进的事', 'todos')}${reviews}</div><div>${section('02 / 需求现场', 'requests')}${section('03 / 最近的交付', 'deliveries')}</div></div>`;
+    else if (timeline)
+      body = `<header class="minimal-head"><span class="small">AIDE / PERSONAL DESK</span>${text('date')}<h1>${e(title)}</h1><p>${text('member')}，你的待办清单会随工作推进自动更新。</p></header>${metrics}${risk}<div class="timeline-layout"><div>${section('现在，先推进这些任务', 'todos', 'timeline')}${reviews}${section('最近发生', 'events', 'timeline')}</div><aside>${section('我的需求', 'requests')}</aside></div>`;
+    else
+      body = `<header class="command-head"><span class="signal">● LIVE WORKSPACE</span>${text('updatedTime')}<h1>${e(title)}</h1><p>${text('member')}的工作现场 · ${text('project')} · 从决策到交付</p></header>${metrics}${risk}<div class="command-grid"><div>${section('需要你的决策', 'todos')}${reviews}${section(mine ? '我负责的需求' : '需求进展', 'requests')}</div><aside>${section('最近的交付', 'deliveries')}${section('执行动态', 'events')}</aside></div>`;
+    const source = `<!doctype html><html lang="zh-CN"><head><title>${e(title)}</title><style>
+*{box-sizing:border-box}body{margin:0;background:${bg};color:${ink};font:14px/1.6 -apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif}main{max-width:1240px;margin:auto;padding:36px}h1,h2,h3,p{margin:0}h1{font-size:clamp(32px,4vw,54px);line-height:1.15;letter-spacing:-1.6px;margin:20px 0}h2{font-size:14px;font-weight:600;letter-spacing:.5px;margin-bottom:18px}h3{font-size:17px;line-height:1.5}p,.small{color:${muted}}button{font:inherit;cursor:pointer;border:0;background:none;color:${accent};padding:10px 0}.section{margin:28px 0}.item{padding:18px 0;border-top:1px solid ${line}}.item p{margin-top:8px;font-size:12px}.item-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px}.small{font-size:11px}.numbers{display:flex;gap:48px;margin:30px 0;padding:24px 0;border-top:1px solid ${line};border-bottom:1px solid ${line}}.numbers p{display:grid;gap:4px}.numbers b{font-size:38px;line-height:1.15;font-weight:500;color:${ink}}.numbers span{font-size:12px}.progress{height:3px;width:100%;display:block;color:${accent};margin-top:10px}.risk{border-left:3px solid ${accent};padding-left:20px}.empty{padding:20px 0;color:${muted};font-size:13px}.masthead{border-bottom:2px solid ${ink};padding-bottom:14px;display:flex;justify-content:space-between;letter-spacing:1px;font-size:11px}.editorial-lead{display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:end;padding:26px 0}.editorial-lead h1{font-family:Georgia,'Songti SC',serif;font-weight:500;font-size:clamp(36px,5vw,66px)}.editorial-lead p{padding-bottom:22px}.spread{display:grid;grid-template-columns:1.2fr 1fr;gap:60px}.spread>.section{margin-top:0}.spread .section h2{color:${accent};text-transform:uppercase}.command-head{border-left:3px solid ${accent};padding-left:24px}.command-head>span:nth-child(2){float:right;color:${muted};font:12px monospace}.signal{font:11px monospace;color:${accent};letter-spacing:2px}.command-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:32px}.command-grid .task{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.command-grid .task .item{padding:18px;background:${dark ? '#182830' : '#f5f7fa'};border:1px solid ${line};border-radius:12px}.command-grid aside{padding:0 22px;border-left:1px solid ${line}}.minimal-head{max-width:740px;margin-bottom:42px}.minimal-head>span:nth-child(2){float:right;font-size:12px;color:${muted}}.timeline-layout{display:grid;grid-template-columns:1.5fr 1fr;gap:80px}.timeline{border-left:1px solid ${line};margin-left:5px}.timeline .item{position:relative;border:0;padding:0 0 32px 30px}.timeline .item:before{content:'';position:absolute;left:-4px;top:5px;background:${accent};width:7px;height:7px;border-radius:50%}.timeline h3{font-size:20px}.footer{margin-top:36px;padding-top:16px;border-top:1px solid ${line};font-size:11px;color:${muted}}
+@media(max-width:720px){main{padding:24px 18px}.spread,.command-grid,.timeline-layout,.editorial-lead{grid-template-columns:1fr;gap:10px}.command-grid aside{border:0;padding:0}.command-grid .task{grid-template-columns:1fr}.numbers{gap:28px}.editorial-lead p{padding-bottom:0}}
+</style></head><body><main>${body}<footer class="footer">Aide 个性化总览 · 当前数据来自工作台 · 更新于 ${text('updatedTime')}</footer></main></body></html>`;
+    return {
+      source,
+      summary: `已生成${editorial ? '杂志式双栏' : timeline ? '极简时间线' : dark ? '深色指挥中心' : '工作现场'} HTML/CSS；${mine ? '需求限定为当前成员负责；' : ''}${days} 天交付口径。可以编辑任意结构和样式再预览。`,
+    };
+  }
+  return { create, examples };
+})();
+
+</script>
+    <script>
+var AidePersonalRuntime = (() => {
+  // User HTML supplies presentation; this platform-owned bridge alone can execute.
+  function bridge() {
+    const original = [...document.body.childNodes].map((n) => n.cloneNode(true));
+    let snapshot;
+    const send = (type, rest = {}) => parent.postMessage({ aidePersonal: 1, type, ...rest }, '*');
+    const height = () => send('height', { height: document.documentElement.scrollHeight });
+    function draw(data) {
+      snapshot = data;
+      let budget = 3000;
+      const missing = new Set();
+      const read = (scope, path) => {
+        const parts = String(path).split('.');
+        if (parts.some((p) => ['__proto__', 'constructor', 'prototype'].includes(p)))
+          return undefined;
+        const get = (object) =>
+          parts.reduce(
+            (current, key) => (current && Object.hasOwn(current, key) ? current[key] : undefined),
+            object,
+          );
+        const result = get(scope) ?? get(snapshot);
+        if (result === undefined) missing.add(path);
+        return result;
+      };
+      function bind(element, scope, depth = 0) {
+        if (element.nodeType !== 1 || budget-- <= 0) return;
+        const each = element.getAttribute('data-aide-each');
+        if (each && depth < 5) {
+          let items = read(scope, each);
+          if (!Array.isArray(items)) items = [];
+          const filters = (element.getAttribute('data-aide-filter') || '').split(',');
+          filters.forEach((filter) => {
+            if (filter === 'mine') items = items.filter((item) => item.owner === snapshot.member);
+            if (filter === 'active') items = items.filter((item) => item.active);
+            if (filter === 'blocked') items = items.filter((item) => item.blocked);
+            if (filter === 'delivered') items = items.filter((item) => item.deliveredAt);
+          });
+          const sort = element.getAttribute('data-aide-sort');
+          if (sort)
+            items = items
+              .slice()
+              .sort((a, b) =>
+                sort === 'progress' ? b.progress - a.progress : b.updatedAt - a.updatedAt,
+              );
+          items = items.slice(
+            0,
+            Math.max(0, Math.min(100, Number(element.getAttribute('data-aide-limit') || 20))),
+          );
+          const children = [...element.childNodes];
+          element.replaceChildren();
+          for (const item of items)
+            for (const child of children) {
+              if (budget <= 0) break;
+              const clone = child.cloneNode(true);
+              element.append(clone);
+              bind(clone, item, depth + 1);
+            }
+          if (!items.length) {
+            const empty = document.createElement('p');
+            empty.className = 'empty';
+            empty.textContent = element.getAttribute('data-aide-empty') || '暂无数据';
+            element.append(empty);
+          }
+          return;
+        }
+        const path = element.getAttribute('data-aide-text');
+        if (path) element.textContent = String(read(scope, path) ?? '—');
+        for (const attr of ['width', 'height', 'x', 'y', 'd', 'title', 'aria-label']) {
+          const binding = element.getAttribute(`data-aide-attr-${attr}`);
+          if (binding) element.setAttribute(attr, String(read(scope, binding) ?? ''));
+        }
+        const open = element.getAttribute('data-aide-open');
+        if (open) {
+          element.dataset.boundOpen = String(read(scope, open) || '');
+          const node = element.getAttribute('data-aide-node');
+          if (node) element.dataset.boundNode = String(read(scope, node) || '');
+        }
+        if (!path) for (const child of element.children) bind(child, scope, depth);
+      }
+      document.body.replaceChildren(...original.map((n) => n.cloneNode(true)));
+      for (const element of document.body.children) bind(element, snapshot);
+      send('bound', { missing: [...missing].slice(0, 10) });
+      requestAnimationFrame(height);
+    }
+    window.addEventListener('message', (event) => {
+      if (event.source === parent && event.data?.aidePersonal === 1 && event.data.type === 'data')
+        draw(event.data.snapshot);
+    });
+    document.addEventListener('click', (event) => {
+      if (event.target.closest('a')) event.preventDefault();
+      const button = event.target.closest('[data-bound-open]');
+      if (button) send('open', { id: button.dataset.boundOpen, node: button.dataset.boundNode });
+    });
+    new ResizeObserver(height).observe(document.body);
+    send('ready');
+  }
+  function documentFor(source) {
+    AidePersonal.validate(source);
+    const parsed = new DOMParser().parseFromString(source, 'text/html');
+    parsed
+      .querySelectorAll('script,iframe,object,embed,form,meta,base,link')
+      .forEach((n) => n.remove());
+    parsed.querySelectorAll('*').forEach((element) => {
+      for (const attr of [...element.attributes]) {
+        if (
+          /^on/i.test(attr.name) ||
+          ['srcset', 'action', 'formaction', 'nonce'].includes(attr.name)
+        )
+          element.removeAttribute(attr.name);
+        if (['href', 'xlink:href'].includes(attr.name) && !attr.value.startsWith('#'))
+          element.removeAttribute(attr.name);
+        if (
+          attr.name === 'src' &&
+          !(
+            element.tagName === 'IMG' &&
+            /^data:image\/(png|jpeg|gif|webp);base64,/i.test(attr.value)
+          )
+        )
+          element.removeAttribute(attr.name);
+      }
+    });
+    const nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)), (n) =>
+      n.toString(16).padStart(2, '0'),
+    ).join('');
+    const policy = `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'`;
+    // The policy must precede user styles and markup so external resources never load.
+    return `<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="${policy}"><style>html{overflow-x:hidden}body{min-height:0}button:focus-visible{outline:3px solid #9cacf0}</style>${parsed.head.innerHTML}</head><body>${parsed.body.innerHTML}</body><script nonce="${nonce}">(${bridge.toString()})()<\/script></html>`;
+  }
+  function mount(db, ui) {
+    document.querySelectorAll('iframe[data-personal-frame]').forEach((frame) => {
+      const source =
+        frame.dataset.personalFrame === 'preview'
+          ? ui.personal?.previewSource
+          : AidePersonal.page(db).source;
+      if (!source) return;
+      try {
+        frame.srcdoc = documentFor(source);
+      } catch (error) {
+        frame.replaceWith(
+          Object.assign(document.createElement('p'), {
+            className: 'error-text',
+            textContent: error.message,
+          }),
+        );
+      }
+    });
+  }
+  function sync(db) {
+    const snapshot = AidePersonal.snapshot(db);
+    document
+      .querySelectorAll('iframe[data-personal-frame]')
+      .forEach((frame) =>
+        frame.contentWindow?.postMessage({ aidePersonal: 1, type: 'data', snapshot }, '*'),
+      );
+  }
+  function receive(event, db, ui, helpers) {
+    const frame = [...document.querySelectorAll('iframe[data-personal-frame]')].find(
+      (candidate) => candidate.contentWindow === event.source,
+    );
+    if (!frame || event.data?.aidePersonal !== 1) return;
+    const message = event.data;
+    if (message.type === 'ready') sync(db);
+    if (message.type === 'height' && frame.dataset.personalFrame === 'overview')
+      frame.style.height = `${Math.max(480, Math.min(4000, Number(message.height) || 480))}px`;
+    if (message.type === 'bound' && frame.dataset.personalFrame === 'preview') {
+      const status = document.getElementById('personal-binding-status');
+      if (status) {
+        const missing = Array.isArray(message.missing) ? message.missing.map(String) : [];
+        status.textContent = missing.length
+          ? `字段未找到：${missing.join('、')}`
+          : '数据已连接 · 数字和条目来自当前工作台';
+        status.classList.toggle('error-text', missing.length > 0);
+      }
+    }
+    if (message.type === 'open') {
+      if (frame.dataset.personalFrame === 'preview')
+        return helpers.toast('预览中的链接已绑定；保存后可进入需求。');
+      const request = db.requests.find((r) => r.id === message.id);
+      if (!request) return helpers.toast('此需求已不存在，请重新生成或检查绑定。');
+      request.draft = false;
+      ui.requestId = request.id;
+      ui.nodeId = request.nodes.some((n) => n.id === message.node)
+        ? message.node
+        : Aide.actionable(request, db.member)[0]?.id ||
+          (request.deliveredAt
+            ? 'publish'
+            : request.nodes.find((n) => n.status !== 'done')?.id || 'understand');
+      helpers.render();
+      window.scrollTo(0, 0);
+    }
+  }
+  return { mount, sync, receive };
+})();
+
+</script>
+    <script>
 var AideUI = (() => {
   const e = Aide.escape;
   const paths = {
@@ -2123,6 +2863,8 @@ var AideUI = (() => {
     return `<div class="panel"><div class="panel-heading"><h2>需求进度分布</h2><span class="tiny muted">当前 · 按最早未完成环节</span></div><div class="distribution"><div class="donut" style="background:${active.length ? `conic-gradient(${gradient})` : '#eef0f6'}"><div class="donut-hole"><strong>${active.length}</strong><span class="tiny muted">进行中需求</span></div></div><div class="legend-list">${cats.map((cat, i) => `<button class="legend-row" data-action="filter" data-id="stage:${cat}"><i class="dot" style="background:${colors[i]}"></i>${cat}<strong>${active.filter((r) => r.nodes.find((n) => n.status !== 'done')?.category === cat).length}</strong></button>`).join('')}</div></div></div>`;
   }
   function workspace(db, ui) {
+    if (ui.tab === 'overview' && AidePersonal.page(db).source)
+      return AidePersonalUI.overview(db, ui);
     const active = db.requests.filter((r) => !r.deliveredAt && !r.draft).length;
     const todos = db.requests.flatMap((r) => Aide.actionable(r, db.member).map((n) => ({ r, n })));
     const delivered = db.requests.filter((r) => inRange(r, ui)).length;
@@ -2136,7 +2878,7 @@ var AideUI = (() => {
       ['活跃协作会话', threads.length, 'sessions', 'chat', '当前项目 · 每个节点一个线程'],
     ];
     const title = ui.tab === 'all' ? '全部需求' : ui.tab === 'sessions' ? '协作记录' : '工作台总览';
-    return `<main class="page"><div class="page-heading flex between"><div><div class="eyebrow" style="margin-bottom:9px">DATA DEVELOPMENT WORKSPACE</div><h1>${title}</h1><p class="subtitle">从一句需求，到一份可靠的数据交付。</p></div><div class="toolbar"><span class="pill">${icon('folder')} 电商数据项目</span><select id="range" aria-label="时间范围"><option value="7" ${ui.range === 7 ? 'selected' : ''}>最近 7 天</option><option value="30" ${ui.range === 30 ? 'selected' : ''}>最近 30 天</option></select><button class="primary" data-action="create">${icon('plus')} 新建需求</button></div></div>${ui.tab === 'overview' ? `<div class="metrics">${metrics.map(([name, number, filter, glyph, foot]) => `<button class="metric" data-action="filter" data-id="${filter}"><span class="metric-label">${name}</span><span class="metric-icon">${icon(glyph)}</span><div class="metric-number">${number}</div><div class="metric-foot">${foot}</div></button>`).join('')}</div><div class="charts">${distribution(db)}${chart(db, ui)}</div>${todos.length ? `<div class="task-strip flex between"><div class="flex"><span class="strip-icon">${icon('spark')}</span><div><h3>${e(todos[0].r.title)}<span class="pill blue" style="margin-left:10px">需要你处理</span></h3><p>${todos[0].n.id === 'understand' ? '退款归属日期尚未确认，补充口径后 Aide 将自动生成技术方案。' : `${e(todos[0].n.name)}等待你处理，完成后自动交接。`}</p></div></div><button data-action="open" data-id="${todos[0].r.id}" data-node="${todos[0].n.id}">去处理 ${icon('arrow')}</button></div>` : ''}` : ''}<section class="panel workspace-list"><div class="table-head flex between"><h2>${ui.tab === 'sessions' ? '节点协作线程' : ui.tab === 'all' ? '需求列表' : '近期需求'} <span class="badge-count">${ui.tab === 'sessions' ? threads.length : filtered(db, ui).length}</span></h2><input class="search" id="search" placeholder="搜索需求名称…" value="${e(ui.search)}" aria-label="搜索需求"/></div>${ui.filter ? `<div class="filter-note">已应用筛选 <button class="text-button" data-action="clear-filter">清空筛选</button></div>` : ''}${ui.tab === 'sessions' ? sessions(db, ui) : `<table><thead><tr><th style="width:30%">需求名称 / 当前任务</th><th>状态</th><th>完成进度</th><th>负责人</th><th>更新时间</th><th>下一步</th></tr></thead><tbody>${requestRows(filtered(db, ui), db.member)}</tbody></table>${!filtered(db, ui).length ? '<div class="empty">暂无匹配需求，清空筛选或新建需求。</div>' : ''}`}</section><div class="session-summary">${icon('chat')}<span>会话情况</span><span>待回复 <strong>${threads.filter((t) => t.n.status === 'waiting').length}</strong></span><span>处理中 <strong>${threads.filter((t) => t.n.status !== 'waiting').length}</strong></span><span>未读 <strong>${threads.filter((t) => t.n.messages.length > (t.n.seen[db.member] || 0)).length}</strong></span><button class="text-button tiny" data-action="nav" data-id="sessions">查看协作记录 →</button></div><p class="bottom-note">演示数据 · AI、测试执行、发布与首跑均为本地模拟 · 状态自动保存在当前浏览器</p></main>`;
+    return `<main class="page"><div class="page-heading flex between"><div><div class="eyebrow" style="margin-bottom:9px">DATA DEVELOPMENT WORKSPACE</div><h1>${title}</h1><p class="subtitle">从一句需求，到一份可靠的数据交付。</p></div><div class="toolbar"><span class="pill">${icon('folder')} 电商数据项目</span><select id="range" aria-label="时间范围"><option value="7" ${ui.range === 7 ? 'selected' : ''}>最近 7 天</option><option value="30" ${ui.range === 30 ? 'selected' : ''}>最近 30 天</option></select><button class="personal-button" data-action="personalize">✦ 个性化</button><button class="primary" data-action="create">${icon('plus')} 新建需求</button></div></div>${ui.tab === 'overview' ? `<div class="metrics">${metrics.map(([name, number, filter, glyph, foot]) => `<button class="metric" data-action="filter" data-id="${filter}"><span class="metric-label">${name}</span><span class="metric-icon">${icon(glyph)}</span><div class="metric-number">${number}</div><div class="metric-foot">${foot}</div></button>`).join('')}</div><div class="charts">${distribution(db)}${chart(db, ui)}</div>${todos.length ? `<div class="task-strip flex between"><div class="flex"><span class="strip-icon">${icon('spark')}</span><div><h3>${e(todos[0].r.title)}<span class="pill blue" style="margin-left:10px">需要你处理</span></h3><p>${todos[0].n.id === 'understand' ? '退款归属日期尚未确认，补充口径后 Aide 将自动生成技术方案。' : `${e(todos[0].n.name)}等待你处理，完成后自动交接。`}</p></div></div><button data-action="open" data-id="${todos[0].r.id}" data-node="${todos[0].n.id}">去处理 ${icon('arrow')}</button></div>` : ''}` : ''}<section class="panel workspace-list"><div class="table-head flex between"><h2>${ui.tab === 'sessions' ? '节点协作线程' : ui.tab === 'all' ? '需求列表' : '近期需求'} <span class="badge-count">${ui.tab === 'sessions' ? threads.length : filtered(db, ui).length}</span></h2><input class="search" id="search" placeholder="搜索需求名称…" value="${e(ui.search)}" aria-label="搜索需求"/></div>${ui.filter ? `<div class="filter-note">已应用筛选 <button class="text-button" data-action="clear-filter">清空筛选</button></div>` : ''}${ui.tab === 'sessions' ? sessions(db, ui) : `<table><thead><tr><th style="width:30%">需求名称 / 当前任务</th><th>状态</th><th>完成进度</th><th>负责人</th><th>更新时间</th><th>下一步</th></tr></thead><tbody>${requestRows(filtered(db, ui), db.member)}</tbody></table>${!filtered(db, ui).length ? '<div class="empty">暂无匹配需求，清空筛选或新建需求。</div>' : ''}`}</section><div class="session-summary">${icon('chat')}<span>会话情况</span><span>待回复 <strong>${threads.filter((t) => t.n.status === 'waiting').length}</strong></span><span>处理中 <strong>${threads.filter((t) => t.n.status !== 'waiting').length}</strong></span><span>未读 <strong>${threads.filter((t) => t.n.messages.length > (t.n.seen[db.member] || 0)).length}</strong></span><button class="text-button tiny" data-action="nav" data-id="sessions">查看协作记录 →</button></div><p class="bottom-note">演示数据 · AI、测试执行、发布与首跑均为本地模拟 · 状态自动保存在当前浏览器</p></main>`;
   }
   function sessions(db, ui) {
     return `<table><thead><tr><th>话题 / 关联需求</th><th>参与者</th><th>最近消息</th><th>状态</th><th>未读</th></tr></thead><tbody>${db.requests
@@ -2152,6 +2894,169 @@ var AideUI = (() => {
       .join('')}</tbody></table>`;
   }
   return { e, icon, avatar, date, clock, dayKey, pill, shell, workspace };
+})();
+
+</script>
+    <script>
+var AidePersonalUI = (() => {
+  const e = Aide.escape;
+  function open(db, ui) {
+    const saved = AidePersonal.page(db);
+    const source =
+      saved.source || AidePersonalGenerate.create(AidePersonalGenerate.examples[0]).source;
+    ui.personal = {
+      source,
+      previewSource: source,
+      baselineSource: source,
+      prompt: saved.prompt || AidePersonalGenerate.examples[0],
+      tab: 'ask',
+      summary: saved.source
+        ? '已加载你保存的 HTML/CSS。继续描述调整，或直接编辑源码。'
+        : '这是一个未保存的演示草稿。描述你的目标，生成不同排版，或导入 Agent 编写的 HTML/CSS。',
+    };
+    ui.personal.baselinePrompt = ui.personal.prompt;
+    ui.drawer = 'personalize';
+  }
+  function overview(db) {
+    const saved = AidePersonal.page(db);
+    return `<main class="page personal-page"><div class="personal-overview-bar"><div><span class="eyebrow">YOUR WORKSPACE</span><h1>我的总览 <span class="pill blue">${e(db.member)} · V${saved.revision}</span></h1><p class="subtitle">这份页面由 HTML/CSS 定义，数据随工作推进更新。</p></div><div class="toolbar"><button data-action="personal-undo" ${saved.history.length ? '' : 'disabled'}>撤销上次保存</button><button data-action="personal-reset">恢复默认</button><button class="personal-button" data-action="personalize">${AideUI.icon('spark')} 个性化</button><button class="primary" data-action="create">${AideUI.icon('plus')} 新建需求</button></div></div><iframe class="personal-overview" data-personal-frame="overview" sandbox="allow-scripts" title="个人总览"></iframe><p class="bottom-note">虚构演示数据 · 个人页面仅保存在当前浏览器 · 原有需求流程继续可用</p></main>`;
+  }
+  function dialog(db, ui) {
+    const draft = ui.personal,
+      saved = AidePersonal.page(db),
+      snapshot = AidePersonal.snapshot(db);
+    const stale = draft.source !== draft.previewSource;
+    const body =
+      draft.tab === 'code'
+        ? `<div class="personal-editor-head"><h3>HTML / CSS</h3><label class="import-label">导入 HTML<input type="file" id="personal-file" accept=".html,.htm,text/html"/></label></div><p class="tiny muted">可自由修改整页结构与样式。动态字段使用 data-aide-* 绑定；不执行自定义脚本。</p><textarea id="personal-source" aria-label="HTML CSS 源码" spellcheck="false">${e(draft.source)}</textarea><button class="primary" data-action="personal-preview">预览源码修改</button>`
+        : draft.tab === 'data'
+          ? `<h3>页面的数据上下文</h3><p class="subtitle">同一份底层数据，可写成杂志、指挥中心、清单或任意新布局。</p><div class="source-catalog">${[
+              ['requests', '需求 / 节点', '名称、负责人、阶段、进度、受阻原因'],
+              ['todos', '我的待办', '确认、接手、评审入口'],
+              ['reviews', '待评审', '绑定当前成果版本的任务'],
+              ['deliveries', '交付记录', '首次交付时间与成果入口'],
+              ['events', '执行记录', '决策、失败和交接事件'],
+              ['summary', '统计', '当前待办、受阻、7 / 30 天交付'],
+            ]
+              .map(
+                ([key, name, desc]) =>
+                  `<div><strong>${name}</strong><code>${key}</code><p>${desc}</p></div>`,
+              )
+              .join(
+                '',
+              )}</div><details><summary>查看当前 JSON 数据</summary><pre class="personal-json">${e(JSON.stringify(snapshot, null, 2))}</pre></details><p class="notice">原型只提供虚构工作台数据，不包含真实业务数据或成员聊天内容。</p>`
+          : `<div class="personal-agent"><div class="flex">${AideUI.avatar('Aide')}<div><h3>让首页适应你的工作</h3><p class="tiny muted">直接编写 HTML/CSS · 演示生成</p></div></div><p class="personal-agent-response">${e(draft.summary)}</p><div class="personal-examples">${AidePersonalGenerate.examples.map((prompt, i) => `<button data-action="personal-example" data-id="${i}">${e(prompt)}</button>`).join('')}</div><label for="personal-prompt">描述页面，或继续提出修改</label><textarea id="personal-prompt" maxlength="2000" placeholder="比如：做成杂志式简报，突出今天需要我决策的事…">${e(draft.prompt)}</textarea><button class="primary" data-action="personal-generate">${AideUI.icon('spark')} 生成演示草稿</button><p class="tiny muted">本地规则生成风格示例，尚未接入真实大模型。每次生成会重写整份草稿；已有手动修改请先导出。</p><div class="external-agent-note"><h3>交给你自己的 Agent</h3><p>复制目标、数据样本与绑定契约给 Codex / Claude，自由编写页面，再到“HTML/CSS”粘贴或导入结果。</p><button data-action="personal-agent-prompt">复制 Agent 任务与数据契约</button></div></div>`;
+    return `<div class="overlay personal-overlay"><section class="personal-designer" role="dialog" aria-modal="true" aria-label="个性化总览"><header class="personal-designer-header"><div><div class="eyebrow">MAKE IT YOURS</div><h2>个性化总览 <span class="pill">${e(db.member)}的首页</span></h2><p class="subtitle">告诉 Agent 你想关注什么，让它重新设计整页。</p></div><button class="text-button" data-action="personal-close" aria-label="关闭个性化">${AideUI.icon('close')}</button></header><div class="personal-designer-body"><aside class="personal-compose"><div class="personal-tabs">${[
+      ['ask', '描述目标'],
+      ['code', 'HTML/CSS'],
+      ['data', '数据来源'],
+    ]
+      .map(
+        ([id, label]) =>
+          `<button data-action="personal-tab" data-id="${id}" class="${draft.tab === id ? 'active' : ''}">${label}</button>`,
+      )
+      .join(
+        '',
+      )}</div><div class="personal-compose-content">${body}</div></aside><div class="personal-canvas"><div class="personal-canvas-heading"><span><i class="live-dot"></i> 实时数据预览</span><span class="pill ${stale ? 'amber' : ''}" id="personal-preview-state">${stale ? '源码有未预览修改' : '未应用的草稿'}</span><button class="text-button tiny" data-action="personal-export">导出 HTML 源码</button></div><iframe class="personal-preview" data-personal-frame="preview" sandbox="allow-scripts" title="个性化页面预览"></iframe><div class="personal-binding-status" id="personal-binding-status">正在连接工作台数据…</div></div></div><footer class="personal-designer-footer"><span class="tiny muted">${saved.source ? `当前保存版本 V${saved.revision} · ` : ''}只修改 ${e(db.member)} 的首页，不改变需求或任务</span><div class="toolbar"><button data-action="personal-undo" ${saved.history.length ? '' : 'disabled'}>撤销上次保存</button><button data-action="personal-close">取消</button><button class="primary" data-action="personal-save" ${stale ? 'disabled' : ''}>保存为我的总览</button></div></footer></section></div>`;
+  }
+  function handle(action, id, db, ui, helpers) {
+    if (action === 'personalize') {
+      open(db, ui);
+      return true;
+    }
+    if (!action.startsWith('personal-')) return false;
+    const draft = ui.personal;
+    if (action === 'personal-tab') draft.tab = id;
+    if (action === 'personal-close') {
+      if (
+        (draft.source !== draft.baselineSource || draft.prompt !== draft.baselinePrompt) &&
+        !confirm('离开后将放弃这份未保存的页面草稿，已保存总览保留。继续离开？')
+      )
+        return true;
+      ui.drawer = null;
+      ui.personal = null;
+    }
+    if (action === 'personal-example') {
+      draft.prompt = AidePersonalGenerate.examples[Number(id)];
+      const generated = AidePersonalGenerate.create(draft.prompt);
+      draft.source = draft.previewSource = generated.source;
+      draft.summary = generated.summary;
+    }
+    if (action === 'personal-generate') {
+      const generated = AidePersonalGenerate.create(draft.prompt);
+      draft.source = draft.previewSource = generated.source;
+      draft.summary = generated.summary;
+    }
+    if (action === 'personal-preview') {
+      draft.previewSource = AidePersonal.validate(draft.source);
+      draft.source = draft.previewSource;
+      helpers.toast('HTML/CSS 已更新预览；原总览尚未改变');
+    }
+    if (action === 'personal-save') {
+      if (draft.source !== draft.previewSource) throw Error('请先预览最新源码，再保存。');
+      AidePersonal.apply(db, db.member, draft.source, draft.prompt);
+      ui.drawer = null;
+      ui.personal = null;
+      ui.tab = 'overview';
+      ui.requestId = null;
+      helpers.toast('已保存个人总览，刷新后仍然保留');
+    }
+    if (action === 'personal-reset') {
+      AidePersonal.apply(db, db.member, '', '');
+      helpers.toast('已恢复默认总览，可撤销');
+    }
+    if (action === 'personal-undo') {
+      AidePersonal.undo(db, db.member);
+      if (ui.drawer === 'personalize') open(db, ui);
+      helpers.toast('已回到上一个保存版本');
+    }
+    if (action === 'personal-agent-prompt')
+      helpers.copy(AidePersonal.agentPrompt(db, draft.prompt));
+    if (action === 'personal-export') {
+      const blob = new Blob([draft.source], { type: 'text/html' }),
+        url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'aide-personal-overview.html';
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      helpers.toast('已导出页面源码，保留数据绑定，可再次导入');
+    }
+    return true;
+  }
+  function input(target, ui) {
+    if (!ui.personal) return false;
+    if (target.id === 'personal-prompt') {
+      ui.personal.prompt = target.value;
+      return true;
+    }
+    if (target.id === 'personal-source') {
+      ui.personal.source = target.value;
+      const stale = ui.personal.source !== ui.personal.previewSource;
+      document.querySelector('[data-action="personal-save"]').disabled = stale;
+      document.getElementById('personal-preview-state').textContent = stale
+        ? '源码有未预览修改'
+        : '未应用的草稿';
+      return true;
+    }
+    return false;
+  }
+  async function importFile(file, ui, helpers) {
+    if (!file || !ui.personal) return;
+    const draft = ui.personal;
+    try {
+      if (file.size > 450000) throw Error('文件过大，请使用不超过 150000 字符的 HTML 源码。');
+      const source = AidePersonal.validate(await file.text());
+      if (ui.personal !== draft) return;
+      draft.source = draft.previewSource = source;
+      draft.summary = '已导入外部 Agent 的 HTML/CSS；可继续修改或保存。';
+      helpers.render();
+      helpers.toast('已导入并预览，点击保存后成为个人总览');
+    } catch (error) {
+      helpers.toast(error.message);
+    }
+  }
+  return { open, overview, dialog, handle, input, importFile };
 })();
 
 </script>
@@ -2420,6 +3325,7 @@ var AideController = (() => {
   const { e } = AideUI;
   function drawer(db, ui) {
     if (!ui.drawer) return '';
+    if (ui.drawer === 'personalize') return AidePersonalUI.dialog(db, ui);
     const request = db.requests.find((r) => r.id === ui.requestId),
       node = request && Aide.get(request, ui.nodeId);
     const titles = {
@@ -2716,11 +3622,13 @@ var AideController = (() => {
     expanded: false,
     editingSql: false,
     sqlDraft: '',
+    personal: null,
   };
   try {
     Object.assign(ui, JSON.parse(sessionStorage.getItem(`${storageKey}-view`) || '{}'), {
       drawer: null,
       editingSql: false,
+      personal: null,
     });
   } catch {
     storageWarning = true;
@@ -2755,6 +3663,7 @@ var AideController = (() => {
     app.innerHTML =
       AideUI.shell(db, ui, ui.requestId ? AideUI.detail(db, ui) : AideUI.workspace(db, ui)) +
       AideController.drawer(db, ui);
+    AidePersonalRuntime.mount(db, ui);
     if (focus && document.getElementById(focus)) {
       const input = document.getElementById(focus);
       input.focus();
@@ -2823,14 +3732,15 @@ var AideController = (() => {
     const button = event.target.closest('[data-action]');
     if (!button || button.disabled) return;
     try {
-      AideController.handle(
-        button.dataset.action,
-        button.dataset.id,
-        db,
-        ui,
-        { toast, leaveEditor, copy, download },
-        button,
-      );
+      if (!AidePersonalUI.handle(button.dataset.action, button.dataset.id, db, ui, { toast, copy }))
+        AideController.handle(
+          button.dataset.action,
+          button.dataset.id,
+          db,
+          ui,
+          { toast, leaveEditor, copy, download },
+          button,
+        );
       render();
       if (['nav', 'open'].includes(button.dataset.action)) window.scrollTo(0, 0);
     } catch (error) {
@@ -2850,6 +3760,7 @@ var AideController = (() => {
     }
   });
   app.addEventListener('input', (event) => {
+    if (AidePersonalUI.input(event.target, ui)) return;
     if (event.target.id === 'search') {
       ui.search = event.target.value;
       render();
@@ -2865,7 +3776,15 @@ var AideController = (() => {
     }
   });
   app.addEventListener('change', (event) => {
+    if (event.target.id === 'personal-file') {
+      AidePersonalUI.importFile(event.target.files[0], ui, { toast, render });
+      return;
+    }
     if (event.target.id === 'member') {
+      if (ui.drawer === 'personalize') {
+        ui.drawer = null;
+        ui.personal = null;
+      }
       db.member = event.target.value;
       if (ui.requestId) {
         const request = db.requests.find((r) => r.id === ui.requestId);
@@ -2890,6 +3809,10 @@ var AideController = (() => {
       app.querySelector('[data-action="send"]').click();
     }
     if (event.key === 'Escape' && ui.drawer) {
+      if (ui.drawer === 'personalize') {
+        app.querySelector('[data-action="personal-close"]').click();
+        return;
+      }
       ui.drawer = null;
       render();
     }
@@ -2912,6 +3835,10 @@ var AideController = (() => {
           )),
       );
   }, 300);
+  window.addEventListener('message', (event) =>
+    AidePersonalRuntime.receive(event, db, ui, { toast, render }),
+  );
+  setInterval(() => AidePersonalRuntime.sync(db), 10000);
   render();
   if (storageWarning) toast('存储读取失败，已恢复默认演示数据。');
 })();
