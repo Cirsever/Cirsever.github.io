@@ -1545,6 +1545,36 @@ tbody tr:last-child td {
   text-align: left;
   font-size: 11px;
   line-height: 1.7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 10px;
+}
+.personal-examples button span {
+  color: var(--muted);
+  font-size: 10px;
+}
+.personal-data-banner {
+  border: 1px solid #dce1f6;
+  border-radius: 7px;
+  background: #f5f6fd;
+  padding: 12px;
+  margin-bottom: 18px;
+}
+.personal-data-banner strong {
+  font-size: 12px;
+}
+.personal-data-banner p {
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 5px 0 9px;
+}
+.personal-data-banner button {
+  font-size: 11px;
+  padding: 6px 10px;
+  color: var(--accent);
 }
 .personal-agent label {
   display: block;
@@ -2326,8 +2356,322 @@ Object.assign(
 
 </script>
     <script>
+var AidePersonalData = (() => {
+  const day = 86400000;
+  const statusNames = {
+    done: '已完成',
+    waiting: '待确认',
+    failed: '失败',
+    running: '运行中',
+    idle: '未开始',
+  };
+  const colors = {
+    done: '#52a68a',
+    waiting: '#8590e7',
+    failed: '#d7737d',
+    running: '#5662dc',
+    idle: '#e7eaf2',
+  };
+  const dateKey = (at) => new Date(at + 8 * 3600000).toISOString().slice(0, 10);
+  function populate(db, now = Date.now()) {
+    if (db.requests.some((r) => r.samplePortfolio)) return 0;
+    const titles = [
+      '直播渠道交易日报',
+      '618 活动支付日报',
+      '海外渠道退款汇总',
+      '商城会员交易明细',
+      '短视频渠道交易日报',
+      '新人优惠交易核对',
+      '渠道结算日报',
+      '店铺支付明细',
+      '促销活动退款追踪',
+      '品牌商城日结报表',
+      '达人带货交易日报',
+      '搜索渠道订单汇总',
+      '联盟渠道交易明细',
+      '周末活动支付日报',
+      '售后退款核对',
+      '会员专区交易日报',
+      '新客渠道订单明细',
+      '跨店活动结算日报',
+      '自营商城交易日报',
+      '内容渠道支付明细',
+      '直播活动退款日报',
+      '年度大促渠道日结',
+      '移动商城订单日报',
+      '复购渠道交易汇总',
+    ];
+    const owners = Aide.members;
+    for (let i = 0; i < titles.length; i++) {
+      const owner = owners[i % owners.length];
+      const r = Aide.createRequest(
+        titles[i],
+        owner,
+        i === 15 || i === 20 ? 'refund-failure' : 'happy',
+      );
+      r.id = `portfolio-v1-${now}-${i}`;
+      r.samplePortfolio = true;
+      r.createdAt = now - (2 + ((i * 7) % 28)) * day;
+      r.refundBasis = 'refund';
+      r.events = [];
+      r.nodes.forEach((n) => {
+        n.messages = [];
+        n.startedAt = null;
+      });
+      const completed = i < 12 ? 8 : [0, 1, 2, 6, 7, 5, 2, 1, 6, 7, 2, 0][i - 12];
+      r.nodes.forEach((n, index) => {
+        n.status = index < completed ? 'done' : 'idle';
+        n.closed = index < completed;
+        if (index < completed) {
+          n.startedAt = r.createdAt + index * 3600000;
+          n.endedAt = n.startedAt + 1800000;
+          r.events.push({
+            node: n.id,
+            type: 'confirm',
+            text: `${n.name} V1 已确认（虚构历史示例）`,
+            actor: owner,
+            at: n.endedAt,
+            version: 1,
+          });
+        }
+      });
+      if (i < 12) {
+        r.deliveredAt = now - (1 + ((i * 3) % 25)) * day;
+        r.createdAt = r.deliveredAt - (2 + (i % 3)) * day;
+        r.nodes.forEach((n, index) => {
+          n.startedAt = r.createdAt + index * 3600000;
+          n.endedAt = n.startedAt + 1800000;
+          r.events[index].at = n.endedAt;
+        });
+        r.events.push({
+          node: 'publish',
+          type: 'delivered',
+          text: '历史交付归档（虚构示例，不代表本次执行）',
+          actor: owner,
+          at: r.deliveredAt,
+          version: 1,
+        });
+      } else {
+        const ready = r.nodes.filter(
+          (n) =>
+            n.status === 'idle' &&
+            n.deps.every((id) => r.nodes.find((v) => v.id === id).status === 'done'),
+        );
+        ready.forEach((n) => {
+          n.status = 'waiting';
+          n.startedAt = now - ((i % 5) + 1) * 3600000;
+        });
+        if (i === 15 || i === 20) {
+          const failed = ready[0];
+          failed.status = 'failed';
+          failed.endedAt = now - 3600000;
+          r.events.push({
+            node: failed.id,
+            type: 'failure',
+            text: '模拟重复退款核对失败，等待修复',
+            actor: 'Aide',
+            at: failed.endedAt,
+            version: 1,
+          });
+        }
+        if (i === 14 || i === 18) {
+          ready[0].reviews.push({
+            reviewer: '许安',
+            status: 'pending',
+            version: 1,
+            at: now - 7200000,
+          });
+        }
+        if (i === 23) r.draft = true;
+        if (i === 19) r.paused = true;
+        r.events.push({
+          node: ready[0]?.id || 'understand',
+          type: 'sample',
+          text: '在途任务已就绪（虚构演示数据）',
+          actor: 'Aide',
+          at: now - ((i % 7) + 1) * 3600000,
+          version: 1,
+        });
+      }
+      db.requests.push(r);
+    }
+    return titles.length;
+  }
+  function donut(start, fraction) {
+    if (fraction <= 0) return '';
+    const point = (r, angle) =>
+      [48 + r * Math.cos(angle), 48 + r * Math.sin(angle)].map((v) => v.toFixed(2)).join(' ');
+    const a = start * Math.PI * 2 - Math.PI / 2;
+    const b = (start + Math.min(fraction, 0.999999)) * Math.PI * 2 - Math.PI / 2;
+    const large = fraction > 0.5 ? 1 : 0;
+    return `M ${point(36, a)} A 36 36 0 ${large} 1 ${point(36, b)} L ${point(26, b)} A 26 26 0 ${large} 0 ${point(26, a)} Z`;
+  }
+  function enrich(snapshot, now = Date.now()) {
+    snapshot.requests.forEach((r) => {
+      r.nodes.forEach((n, i) => {
+        n.x = i * 20;
+        n.color = colors[n.status] || colors.idle;
+        n.statusText = statusNames[n.status] || n.status;
+      });
+      r.progressLabel = `${r.progress}%`;
+      r.ageDays = Math.max(0, Math.floor((now - r.createdAt) / day));
+      r.statusColor = r.blocked ? colors.failed : r.deliveredAt ? colors.done : colors.waiting;
+    });
+    function scope(mine, days) {
+      const rows = snapshot.requests.filter((r) => !mine || r.owner === snapshot.member);
+      const working = rows.filter((r) => !r.draft);
+      const active = working.filter((r) => r.active);
+      const nodes = working.flatMap((r) => r.nodes);
+      const maxStage = Math.max(
+        1,
+        ...snapshot.stages.map((stage) => active.filter((r) => r.stage === stage.title).length),
+      );
+      const stages = snapshot.stages.map((stage) => {
+        const count = active.filter((r) => r.stage === stage.title).length;
+        return {
+          title: stage.title,
+          count,
+          width: (count / maxStage) * 240,
+          label: `${count} 个需求`,
+        };
+      });
+      const owners = Aide.members.map((owner) => {
+        const owned = working.filter((r) => r.owner === owner);
+        const ownedNodes = owned.flatMap((r) => r.nodes);
+        const done = ownedNodes.filter((n) => n.status === 'done').length;
+        return {
+          title: owner,
+          total: owned.length,
+          active: owned.filter((r) => r.active).length,
+          delivered: owned.filter((r) => r.deliveredAt).length,
+          waiting: ownedNodes.filter((n) => n.status === 'waiting').length,
+          failed: ownedNodes.filter((n) => n.status === 'failed').length,
+          progress: ownedNodes.length ? Math.round((done / ownedNodes.length) * 100) : 0,
+        };
+      });
+      const statusCounts = [
+        ['推进中', active.filter((r) => !r.blocked && !r.paused).length],
+        ['受阻', active.filter((r) => r.blocked && !r.paused).length],
+        ['已交付', rows.filter((r) => r.deliveredAt).length],
+        ['草稿', rows.filter((r) => r.draft).length],
+        ['已暂停', active.filter((r) => r.paused).length],
+      ];
+      let offset = 0;
+      const statuses = statusCounts.map(([title, count]) => {
+        const fraction = rows.length ? count / rows.length : 0;
+        const item = { title, count, path: donut(offset, fraction) };
+        offset += fraction;
+        return item;
+      });
+      const dates = Array.from({ length: days }, (_, i) => dateKey(now - (days - i - 1) * day));
+      const trend = dates.map((key, i) => ({
+        date: key,
+        label: key.slice(5),
+        x: 12 + (i * 456) / Math.max(1, days - 1),
+        created: working.filter((r) => r.createdAt <= now && dateKey(r.createdAt) === key).length,
+        delivered: working.filter(
+          (r) => r.deliveredAt && r.deliveredAt <= now && dateKey(r.deliveredAt) === key,
+        ).length,
+      }));
+      const max = Math.max(1, ...trend.flatMap((p) => [p.created, p.delivered]));
+      trend.forEach((p) => {
+        p.createdY = 118 - (p.created / max) * 92;
+        p.deliveredY = 118 - (p.delivered / max) * 92;
+        p.height = (p.delivered / max) * 92;
+        p.y = 118 - p.height;
+        p.barWidth = Math.max(4, 320 / days);
+        p.barX = Math.min(480 - p.barWidth, Math.max(0, p.x - p.barWidth / 2));
+      });
+      const path = (field) =>
+        trend.map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(2)} ${p[field].toFixed(2)}`).join(' ');
+      const delivered = trend.reduce((sum, p) => sum + p.delivered, 0);
+      const previousStart = dateKey(now - (days * 2 - 1) * day),
+        previousEnd = dateKey(now - days * day);
+      const previous = working.filter(
+        (r) =>
+          r.deliveredAt &&
+          dateKey(r.deliveredAt) >= previousStart &&
+          dateKey(r.deliveredAt) <= previousEnd,
+      ).length;
+      const calendar = Array.from({ length: 30 }, (_, i) => {
+        const key = dateKey(now - (29 - i) * day);
+        const count = snapshot.eventsAll.filter(
+          (ev) => dateKey(ev.at) === key && (!mine || rows.some((r) => r.id === ev.requestId)),
+        ).length;
+        return {
+          date: key,
+          count,
+          color: ['#f0f2f9', '#dce0fb', '#afb8ef', '#8590e7', '#5662dc'][
+            Math.min(4, Math.ceil(count / 3))
+          ],
+          x: (i % 15) * 22,
+          y: Math.floor(i / 15) * 24,
+          label: `${key} · ${count} 次事件`,
+        };
+      });
+      const nodeStates = Object.keys(statusNames).map((status) => ({
+        title: statusNames[status],
+        count: nodes.filter((n) => n.status === status).length,
+        color: colors[status],
+        width: nodes.length
+          ? (nodes.filter((n) => n.status === status).length / nodes.length) * 100
+          : 0,
+      }));
+      return {
+        days,
+        total: rows.length,
+        active: active.length,
+        blocked: active.filter((r) => r.blocked).length,
+        delivered,
+        created: trend.reduce((sum, p) => sum + p.created, 0),
+        previous,
+        change: previous
+          ? `${delivered >= previous ? '+' : ''}${Math.round(((delivered - previous) / previous) * 100)}%`
+          : '上期无交付',
+        nodes: nodes.length,
+        completedNodes: nodes.filter((n) => n.status === 'done').length,
+        failedNodes: nodes.filter((n) => n.status === 'failed').length,
+        waitingNodes: nodes.filter((n) => n.status === 'waiting').length,
+        completion: nodes.length
+          ? Math.round((nodes.filter((n) => n.status === 'done').length / nodes.length) * 100)
+          : 0,
+        avgProgress: working.length
+          ? Math.round(working.reduce((sum, r) => sum + r.progress, 0) / working.length)
+          : 0,
+        startLabel: dates[0],
+        endLabel: dates.at(-1),
+        max,
+        trend,
+        createdPath: path('createdY'),
+        deliveredPath: path('deliveredY'),
+        areaPath: `${path('deliveredY')} L468 118 L12 118 Z`,
+        stages,
+        owners,
+        statuses,
+        calendar,
+        nodeStates,
+        todos: snapshot.todos.filter((n) => rows.some((r) => r.id === n.requestId)),
+        reviews: snapshot.reviews.filter((n) => rows.some((r) => r.id === n.requestId)),
+        events: snapshot.events.filter((ev) => rows.some((r) => r.id === ev.requestId)),
+      };
+    }
+    snapshot.insights = {
+      project7: scope(false, 7),
+      project30: scope(false, 30),
+      mine7: scope(true, 7),
+      mine30: scope(true, 30),
+    };
+    delete snapshot.eventsAll;
+    return snapshot;
+  }
+  return { populate, enrich };
+})();
+
+</script>
+    <script>
 var AidePersonal = (() => {
   const limit = 150000;
+  const svgAttributes = ['width', 'height', 'x', 'y', 'd', 'fill', 'title', 'aria-label'];
   function page(db, member = db.member) {
     db.personalPages ||= {};
     if (!Object.hasOwn(db.personalPages, member))
@@ -2442,7 +2786,7 @@ var AidePersonal = (() => {
           r.deliveredAt >= now - days * 86400000 &&
           r.deliveredAt <= now,
       ).length;
-    const events = db.requests
+    const eventsAll = db.requests
       .flatMap((r) =>
         r.events.map((event) => ({
           title: event.text,
@@ -2453,45 +2797,50 @@ var AidePersonal = (() => {
           requestTitle: r.title,
         })),
       )
-      .sort((a, b) => b.at - a.at)
-      .slice(0, 30);
+      .sort((a, b) => b.at - a.at);
+    const events = eventsAll.slice(0, 30);
     const blocked = requests.filter((r) => r.active && r.blocked);
     const stages = ['需求理解', '技术方案', '数据开发', '数据测试', '发布上线'].map((title) => ({
       title,
       count: requests.filter((r) => r.active && r.stage === title).length,
     }));
-    return {
-      schema: 1,
-      member,
-      project: '电商数据项目',
-      date: date(now),
-      updatedAt: now,
-      updatedTime: new Date(now).toLocaleTimeString('zh-CN', {
-        timeZone: 'Asia/Shanghai',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      }),
-      summary: {
-        active: requests.filter((r) => r.active).length,
-        todo: todos.length,
-        blocked: blocked.length,
-        reviews: reviews.length,
-        delivered: inDays(7),
-        delivered30: inDays(30),
-        mineActive: requests.filter((r) => r.active && r.owner === member).length,
-        mineDelivered: inDays(7, true),
-        mineDelivered30: inDays(30, true),
-        total: requests.length,
+    return AidePersonalData.enrich(
+      {
+        schema: 1,
+        member,
+        project: '电商数据项目',
+        date: date(now),
+        updatedAt: now,
+        updatedTime: new Date(now).toLocaleTimeString('zh-CN', {
+          timeZone: 'Asia/Shanghai',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        }),
+        summary: {
+          active: requests.filter((r) => r.active).length,
+          todo: todos.length,
+          blocked: blocked.length,
+          reviews: reviews.length,
+          delivered: inDays(7),
+          delivered30: inDays(30),
+          mineActive: requests.filter((r) => r.active && r.owner === member).length,
+          mineDelivered: inDays(7, true),
+          mineDelivered30: inDays(30, true),
+          total: requests.length,
+        },
+        requests,
+        todos,
+        blocked,
+        reviews,
+        deliveries,
+        events,
+        eventsAll,
+        stages,
+        sampleCount: db.requests.filter((r) => r.samplePortfolio).length,
       },
-      requests,
-      todos,
-      blocked,
-      reviews,
-      deliveries,
-      events,
-      stages,
-    };
+      now,
+    );
   }
   function agentPrompt(db, prompt = '') {
     return `请为 Aide 数据开发工作台编写个性化总览。用户目标：${prompt || '按当前成员的工作安排设计首页'}。
@@ -2501,86 +2850,164 @@ var AidePersonal = (() => {
 动态绑定契约：data-aide-text="summary.active" 填文本；data-aide-each="requests" 在该元素内部重复渲染其子元素（条目中用 data-aide-text="title" 等字段）。可嵌套重复 nodes。空列表用 data-aide-empty="暂无事项"。
 重复容器可加 data-aide-filter="mine|active|blocked|delivered"、data-aide-sort="updated|progress"、data-aide-limit="6"。
 data-aide-open="id"（需求）或 data-aide-open="requestId"（任务）让按钮打开对应需求；任务按钮加 data-aide-node="id"。
-data-aide-attr-width="progress" 可绑定 SVG width；可绑定 height/x/y/d/title/aria-label。自由创造所有 HTML 结构与 CSS，不要写脚本、事件属性、meta/base、iframe、外部资源或表单。
+data-aide-attr-width="progress" 可绑定 SVG width；可绑定属性：${svgAttributes.join('/')}。自由创造所有 HTML 结构与 CSS，不要写脚本、事件属性、meta/base、iframe、外部资源或表单。
 可用根字段 member/project/date/updatedTime/summary；列表 requests/todos/blocked/reviews/deliveries/events/stages。
+可视化统计在 insights.project7/project30/mine7/mine30：trend 为北京时间最近 7/30 个自然日的新建与交付；createdPath/deliveredPath/areaPath 可直接绑定 SVG d；stages 为阶段数量和 width；statuses 为数量和环形图 path；owners 为成员负载；calendar 为最近 30 天完整工作事件的 x/y/color/label；nodeStates 为节点状态数量与 width/color。统计均从需求、节点与事件计算，不是模型估算。需求 nodes 提供 x/color/statusText，可自由创作进度矩阵。
 示例：<section data-aide-each="todos" data-aide-empty="全部处理完成"><article><h2 data-aide-text="title"></h2><p data-aide-text="requestTitle"></p><button data-aide-open="requestId" data-aide-node="id">去处理</button></article></section>
 当前数据样本（虚构演示数据，实际显示由工作台每次注入最新快照）：
 ${JSON.stringify(snapshot(db), null, 2)}
 请仅返回 HTML 源码，用户会在“个性化 → HTML/CSS”中粘贴、预览并保存。`;
   }
-  return { page, validate, apply, undo, snapshot, agentPrompt };
+  return { page, validate, apply, undo, snapshot, agentPrompt, svgAttributes };
 })();
 
 </script>
     <script>
 var AidePersonalGenerate = (() => {
   const examples = [
-    '保持工作台风格，按工作优先级排版，优先看受阻任务，最近30天，只看我负责的需求',
-    '保持工作台风格，做成双栏简报，标题叫每日交付简报，重点展示待办和评审',
-    '保持工作台风格，做成简洁时间线，展示今天的待办，不要统计卡片',
+    '保持工作台风格，做成交付驾驶舱，最近30天，展示趋势、阶段分布、需求矩阵和成员负载',
+    '保持工作台风格，做成风险与质量巡检，最近30天，优先看受阻任务和待评审，展示节点状态与趋势',
+    '保持工作台风格，做成团队协作全景，最近30天，展示成员负载、节点进度矩阵和交付热力图',
+    '保持工作台风格，做成双栏简报，标题叫每日交付简报，展示趋势、待办和评审',
+    '保持工作台风格，做成时间线，展示今天的待办、事件热力图与需求进展，不要统计卡片',
+    '保持工作台风格，做成我的交付驾驶舱，最近30天，只看我负责的需求，展示趋势和阶段分布',
+  ];
+  const labels = [
+    '交付驾驶舱',
+    '风险与质量巡检',
+    '团队协作全景',
+    '每日交付简报',
+    '工作事件时间线',
+    '我的交付驾驶舱',
   ];
   function create(prompt) {
     if (!prompt.trim()) throw Error('请先描述想要的页面。');
     if (/薪资|银行|账户余额|真实收入|天气|股票/.test(prompt))
       throw Error('当前数据来源只有需求、任务、评审、交付与执行记录，请描述基于这些数据的页面。');
     const e = Aide.escape;
-    const dark = /深色|暗色|黑色|赛博|指挥/.test(prompt);
+    const dark = /深色|暗色|黑色|赛博/.test(prompt);
     const editorial = /杂志|简报|暖色|报纸/.test(prompt);
     const timeline = /时间线|极简|清单/.test(prompt) && !editorial;
+    const risk = /巡检|风险|质量/.test(prompt) && !editorial && !timeline;
+    const team = /团队|协作全景/.test(prompt) && !risk && !editorial && !timeline;
     const mine = /我负责|我的需求/.test(prompt);
     const days = /30|三十/.test(prompt) ? 30 : 7;
     const title =
       prompt.match(/标题(?:叫|改成|设为|为|是)[“"「]?([^，。；\n”"」]{1,30})/)?.[1] ||
       (editorial
-        ? '每天，交付一点更好的数据。'
+        ? '每日交付简报'
         : timeline
           ? '把今天，安排清楚。'
-          : '数据交付指挥中心');
-    const bg = dark ? '#202535' : '#fff';
-    const ink = dark ? '#e9edf6' : '#242b3d';
-    const muted = dark ? '#9da7be' : '#8690a3';
-    const accent = dark ? '#a8b1ff' : '#5662dc';
-    const line = dark ? '#394157' : '#e9edf3';
-    const text = (path, tag = 'span') => `<${tag} data-aide-text="${path}"></${tag}>`;
-    const list = (
-      key,
-      kind = 'task',
-    ) => `<div class="items ${kind}" data-aide-each="${key}" data-aide-limit="8" data-aide-empty="${key === 'blocked' ? '当前没有受阻需求。' : key === 'reviews' ? '当前没有待评审事项。' : '暂无事项，新的进展会出现在这里。'}" ${key === 'requests' ? 'data-aide-sort="updated"' : ''} ${mine && ['requests', 'blocked', 'deliveries'].includes(key) ? 'data-aide-filter="mine"' : ''}>
-      <article class="item"><div class="item-top"><span class="small">${text(['requests', 'blocked', 'deliveries'].includes(key) ? 'stage' : key === 'events' ? 'date' : 'category')}</span><span class="small">${text(key === 'events' ? 'actor' : 'owner')}</span></div>
-      ${text('title', 'h3')}${key === 'events' ? text('requestTitle', 'p') : `<p>${text(['requests', 'blocked', 'deliveries'].includes(key) ? 'reason' : 'requestTitle')}</p><button data-aide-open="${['requests', 'blocked', 'deliveries'].includes(key) ? 'id' : 'requestId'}" ${key === 'todos' || key === 'reviews' ? 'data-aide-node="id"' : ''}>${['requests', 'blocked', 'deliveries'].includes(key) ? '查看需求' : '处理任务'} ↗</button>`}
-      ${key === 'requests' ? '<svg class="progress" viewBox="0 0 100 2" preserveAspectRatio="none" aria-label="完成进度"><rect width="100" height="2" fill="currentColor" opacity=".1"/><rect data-aide-attr-width="progress" height="2" fill="currentColor"/></svg>' : ''}</article>
-    </div>`;
-    const section = (label, key, kind = 'task') =>
-      `<section class="section"><h2>${label}</h2>${list(key, kind)}</section>`;
+          : risk
+            ? '风险与质量巡检'
+            : team
+              ? '团队协作全景'
+              : mine
+                ? '我的交付驾驶舱'
+                : '数据交付驾驶舱');
+    const prefix = `insights.${mine ? 'mine' : 'project'}${days}`;
+    const t = (path, tag = 'span') => `<${tag} data-aide-text="${path}"></${tag}>`;
+    const v = (field, tag) => t(`${prefix}.${field}`, tag);
+    const bind = (attr, field) => `data-aide-attr-${attr}="${prefix}.${field}"`;
+    const scope = mine ? '我负责的需求' : '项目全部需求';
+    const filter = mine ? 'data-aide-filter="mine"' : '';
+    const card = (heading, content, note = '') =>
+      `<section class="panel"><div class="panel-head"><h2>${heading}</h2><span class="muted tiny">${note}</span></div>${content}</section>`;
+    const metric = (label, field, foot, className = '') =>
+      `<div class="metric ${className}"><p>${label}</p>${v(field, 'b')}<small>${foot}</small></div>`;
     const metrics = /不要统计|隐藏统计|不要卡片/.test(prompt)
       ? ''
-      : `<div class="numbers"><p>${text('summary.todo', 'b')}<span>待我处理</span></p><p>${text(mine ? 'summary.mineActive' : 'summary.active', 'b')}<span>${mine ? '我负责的进行中需求' : '项目进行中需求'}</span></p><p>${text(`summary.${mine ? 'mineDelivered' : 'delivered'}${days === 30 ? '30' : ''}`, 'b')}<span>${mine ? '我负责的' : ''}近 ${days} 天交付</span></p></div>`;
-    const risk = /受阻|风险|失败/.test(prompt) ? section('先解决这些阻塞', 'blocked', 'risk') : '';
-    const reviews = /评审|审核/.test(prompt) ? section('等待一次认真审阅', 'reviews') : '';
+      : `<div class="metrics">${metric('全部需求', 'total', scope)}${metric('进行中', 'active', '当前在途需求')}${metric(`近 ${days} 天交付`, 'delivered', `上期 ${v('previous')} · ${v('change')}`)}${metric('受阻需求', 'blocked', '需要先解决', 'danger')}${metric('节点完成率', 'completion', `${v('completedNodes')} / ${v('nodes')} 个节点`)}${metric('待确认节点', 'waitingNodes', `失败节点 ${v('failedNodes')}`)}</div>`;
+    const trend = () =>
+      card(
+        '需求与交付趋势',
+        `<div class="chart-legend"><i class="dot purple"></i>新建需求 <i class="dot green"></i>完成交付 <span class="chart-total">本期新增 <strong>${v('created')}</strong> · 交付 <strong>${v('delivered')}</strong></span></div><div class="trend-chart"><span class="axis-max">${v('max')}</span><svg viewBox="0 0 480 138" role="img" aria-label="按日新建需求与交付数量趋势"><path d="M12 26H468 M12 72H468 M12 118H468" class="grid-line"/><path ${bind('d', 'areaPath')} fill="#52a68a" opacity=".09"/><path ${bind('d', 'createdPath')} class="created-line"/><path ${bind('d', 'deliveredPath')} class="delivered-line"/><g data-aide-each="${prefix}.trend" data-aide-limit="30"><rect data-aide-attr-x="barX" data-aide-attr-y="y" data-aide-attr-width="barWidth" data-aide-attr-height="height" fill="#52a68a" opacity=".16"><title data-aide-text="label"></title></rect></g></svg><span class="axis-zero">0</span></div><div class="axis-labels">${v('startLabel')}<span>北京时间 · ${days} 个自然日</span>${v('endLabel')}</div>`,
+        scope,
+      );
+    const distribution = () =>
+      card(
+        '需求状态分布',
+        `<div class="donut-wrap"><div class="donut"><svg viewBox="0 0 96 96" role="img" aria-label="需求状态环形图"><circle cx="48" cy="48" r="31" fill="none" stroke="#f0f2f8" stroke-width="10"/><g class="segments" data-aide-each="${prefix}.statuses"><path data-aide-attr-d="path"/></g></svg><div class="donut-center">${v('total', 'strong')}<span>全部需求</span></div></div><div class="donut-legend" data-aide-each="${prefix}.statuses"><div><i></i>${t('title')}<b>${t('count')}</b></div></div></div>`,
+        '当前快照',
+      );
+    const stages = () =>
+      card(
+        '在途需求 · 阶段分布',
+        `<div class="stage-bars" data-aide-each="${prefix}.stages"><div class="stage-row">${t('title')}<svg viewBox="0 0 240 12" preserveAspectRatio="none" role="img" aria-label="阶段需求数量"><rect width="240" height="12" rx="4" fill="#f0f2f9"/><rect data-aide-attr-width="width" height="12" rx="4" fill="#8590e7"/></svg>${t('count', 'b')}</div></div>`,
+        '按当前阶段计数',
+      );
+    const owners = () =>
+      card(
+        '成员工作负载',
+        `<div class="owner-list" data-aide-each="${prefix}.owners"><div class="owner-row"><div class="owner-name"><span class="avatar">${t('title')}</span><div>${t('title', 'strong')}<small>在途 ${t('active')} · 待确认 ${t('waiting')} · 失败 ${t('failed')}</small></div><b>${t('delivered')}<small>已交付</small></b></div><svg viewBox="0 0 100 4" preserveAspectRatio="none" aria-label="成员节点完成率"><rect width="100" height="4" fill="#f0f2f9"/><rect data-aide-attr-width="progress" height="4" fill="#8590e7"/></svg></div></div>`,
+        mine ? '仅当前成员负责的数据' : '按需求负责人',
+      );
+    const calendar = () =>
+      card(
+        '工作事件热力图',
+        `<div class="calendar-info"><strong>最近 30 天</strong><span class="tiny muted">确认、交付、失败与协作事件</span></div><svg class="heatmap" viewBox="0 0 330 48" role="img" aria-label="最近三十天工作事件热力图"><g data-aide-each="${prefix}.calendar" data-aide-limit="30"><rect data-aide-attr-x="x" data-aide-attr-y="y" data-aide-attr-fill="color" width="18" height="18" rx="3"><title data-aide-text="label"></title></rect></g></svg><div class="heatmap-legend"><span>少</span><i></i><i></i><i></i><i></i><i></i><span>多</span></div><p class="tiny muted">悬停色块查看日期与事件数 · 从左到右按日期排列</p>`,
+        '从完整事件计算',
+      );
+    const nodes = () =>
+      card(
+        '节点执行状态',
+        `<div class="node-summary"><strong>${v('nodes')}</strong><span>个工作节点</span><b>${v('completion')}% 已完成</b></div><div class="node-state-list" data-aide-each="${prefix}.nodeStates"><div><span><svg viewBox="0 0 8 8"><rect width="8" height="8" rx="2" data-aide-attr-fill="color"/></svg>${t('title')}</span><svg class="node-bar" viewBox="0 0 100 7" preserveAspectRatio="none"><rect width="100" height="7" rx="3" fill="#f0f2f9"/><rect data-aide-attr-width="width" data-aide-attr-fill="color" height="7" rx="3"/></svg>${t('count', 'b')}</div></div>`,
+        '不含草稿',
+      );
+    const table = (matrix = false, blocked = false) =>
+      card(
+        matrix ? '需求 × 节点进度矩阵' : blocked ? '需要处理的阻塞' : '需求进展明细',
+        `<div class="table-scroll"><table><thead><tr><th>需求 / 当前阶段</th><th>负责人</th><th>${matrix ? '理解 · 方案 · 开发 · 测试 · 发布' : '完成进度'}</th><th>状态</th><th></th></tr></thead><tbody data-aide-each="${blocked ? 'blocked' : 'requests'}" data-aide-limit="40" data-aide-sort="updated" ${filter} data-aide-empty="当前没有匹配的需求"><tr><td>${t('title', 'strong')}<small>${t('stage')} · ${t('date')}</small></td><td>${t('owner')}</td><td>${matrix ? '<svg class="matrix" viewBox="0 0 180 18" aria-label="各节点执行状态"><g data-aide-each="nodes"><rect data-aide-attr-x="x" data-aide-attr-fill="color" width="14" height="14" rx="3"><title data-aide-text="statusText"></title></rect></g></svg>' : '<svg class="row-progress" viewBox="0 0 100 5" preserveAspectRatio="none"><rect width="100" height="5" rx="2" fill="#f0f2f9"/><rect data-aide-attr-width="progress" height="5" rx="2" fill="#8590e7"/></svg>'}<small>${t('progressText')} 个节点 · ${t('progressLabel')}</small></td><td>${t('status')}</td><td><button data-aide-open="id">查看 ↗</button></td></tr></tbody></table></div>${matrix ? '<p class="matrix-note"><i class="dot green"></i>已完成 <i class="dot purple"></i>待确认 <i class="dot red"></i>失败 <i class="dot pale"></i>未开始 · 悬停节点查看状态</p>' : ''}`,
+        `${scope} · 最多 40 条`,
+      );
+    const tasks = (key = 'todos', label = '今天需要你推进') =>
+      card(
+        label,
+        `<div class="tasks" data-aide-each="${mine ? prefix + '.' + key : key}" data-aide-limit="8" data-aide-empty="当前没有待处理事项"><article><div><span class="tag">${t('category')}</span><span class="tiny muted">${t('owner')}</span></div>${t('requestTitle', 'h3')}<p>${t('title')} · ${t('reason')}</p><button data-aide-open="requestId" data-aide-node="id">处理任务 ↗</button></article></div>`,
+        key === 'todos' ? '当前成员的待办' : '项目待评审成果',
+      );
+    const events = () =>
+      card(
+        '最近的工作现场',
+        `<div class="timeline" data-aide-each="${mine ? prefix + '.events' : 'events'}" data-aide-limit="12"><article><div class="tiny muted">${t('date')} · ${t('actor')}</div>${t('title', 'h3')}<p>${t('requestTitle')}</p><button data-aide-open="requestId">查看需求 ↗</button></article></div>`,
+        '最近 12 条事件',
+      );
     let body;
-    if (editorial)
-      body = `<header class="masthead"><strong>AIDE / DAILY EDITION</strong>${text('date')}</header><div class="editorial-lead"><h1>${e(title)}</h1><p><span data-aide-text="member"></span>，这里记录你的数据工作。<br>用更少的切换，完成更可靠的交付。</p></div>${metrics}${risk}<div class="spread"><div>${section('01 / 今天值得推进的事', 'todos')}${reviews}</div><div>${section('02 / 需求现场', 'requests')}${section('03 / 最近的交付', 'deliveries')}</div></div>`;
+    if (risk)
+      body = `${metrics}<div class="visual-grid">${nodes()}${stages()}${distribution()}</div><div class="split">${table(false, true)}${tasks('reviews', '等待评审的成果')}</div><div class="split">${trend()}${tasks()}</div>${table(true)}`;
+    else if (team)
+      body = `${metrics}<div class="visual-grid">${owners()}${trend()}${calendar()}</div>${table(true)}<div class="split">${stages()}${events()}</div>`;
     else if (timeline)
-      body = `<header class="minimal-head"><span class="small">AIDE / PERSONAL DESK</span>${text('date')}<h1>${e(title)}</h1><p>${text('member')}，你的待办清单会随工作推进自动更新。</p></header>${metrics}${risk}<div class="timeline-layout"><div>${section('现在，先推进这些任务', 'todos', 'timeline')}${reviews}${section('最近发生', 'events', 'timeline')}</div><aside>${section('我的需求', 'requests')}</aside></div>`;
+      body = `${metrics}<div class="split">${calendar()}${stages()}</div><div class="split">${tasks()}${events()}</div>${table(true)}`;
+    else if (editorial)
+      body = `${metrics}<div class="split">${trend()}${distribution()}</div><div class="split">${tasks()}${tasks('reviews', '等待一次认真审阅')}</div><div class="visual-grid">${stages()}${owners()}${calendar()}</div>${table()}`;
     else
-      body = `<header class="command-head"><span class="signal">● LIVE WORKSPACE</span>${text('updatedTime')}<h1>${e(title)}</h1><p>${text('member')}的工作现场 · ${text('project')} · 从决策到交付</p></header>${metrics}${risk}<div class="command-grid"><div>${section('需要你的决策', 'todos')}${reviews}${section(mine ? '我负责的需求' : '需求进展', 'requests')}</div><aside>${section('最近的交付', 'deliveries')}${section('执行动态', 'events')}</aside></div>`;
+      body = `${metrics}<div class="chart-grid">${trend()}${distribution()}</div><div class="visual-grid">${stages()}${owners()}${calendar()}</div>${/受阻/.test(prompt) ? table(false, true) : ''}<div class="split wide-left">${table(true)}${tasks()}</div>${/评审/.test(prompt) ? tasks('reviews', '待评审成果') : ''}`;
+    const bg = dark ? '#202535' : '#f8f9fc',
+      ink = dark ? '#e9edf6' : '#242b3d',
+      panel = dark ? '#272e41' : '#fff',
+      line = dark ? '#394157' : '#e9edf3',
+      muted = dark ? '#9da7be' : '#8690a3';
     const source = `<!doctype html><html lang="zh-CN"><head><title>${e(title)}</title><style>
-*{box-sizing:border-box}body{margin:0;background:${bg};color:${ink};font:13px/1.6 Inter,-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}main{max-width:1240px;margin:auto;padding:24px}h1,h2,h3,p{margin:0}h1{font-size:24px;font-weight:650;line-height:1.4;letter-spacing:-.6px;margin:12px 0}h2{font-size:14px;font-weight:600;margin-bottom:16px}h3{font-size:13px;font-weight:600;line-height:1.6}p,.small{color:${muted}}button{font:inherit;cursor:pointer;border:0;background:none;color:${accent};padding:6px 0}.section{margin:24px 0}.item{padding:18px 0;border-top:1px solid ${line}}.item p{margin-top:8px;font-size:12px}.item-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px}.small{font-size:11px}.numbers{display:flex;gap:40px;margin:24px 0;padding:20px 0;border-top:1px solid ${line};border-bottom:1px solid ${line}}.numbers p{display:grid;gap:4px}.numbers b{font-size:30px;line-height:1.2;font-weight:650;color:${ink}}.numbers span{font-size:12px}.progress{height:3px;width:100%;display:block;color:${accent};margin-top:10px}.risk{border-left:3px solid ${accent};padding-left:20px}.empty{padding:20px 0;color:${muted};font-size:13px}.masthead{border-bottom:1px solid ${ink};padding-bottom:14px;display:flex;justify-content:space-between;letter-spacing:.5px;font-size:11px}.editorial-lead{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;align-items:center;padding:12px 0}.editorial-lead h1{font-weight:650;font-size:24px}.editorial-lead p{padding-bottom:0}.spread{display:grid;grid-template-columns:1.2fr 1fr;gap:24px}.spread>.section{margin-top:0}.spread .section h2{color:${accent};text-transform:uppercase}.command-head{border-left:2px solid ${accent};padding-left:24px}.command-head>span:nth-child(2){float:right;color:${muted};font:12px monospace}.signal{font:11px monospace;color:${accent};letter-spacing:2px}.command-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:24px}.command-grid .task{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.command-grid .task .item{padding:18px;background:${dark ? '#272e41' : '#f8f9fc'};border:1px solid ${line};border-radius:8px}.command-grid aside{padding:0 22px;border-left:1px solid ${line}}.minimal-head{max-width:740px;margin-bottom:24px}.minimal-head>span:nth-child(2){float:right;font-size:12px;color:${muted}}.timeline-layout{display:grid;grid-template-columns:1.5fr 1fr;gap:32px}.timeline{border-left:1px solid ${line};margin-left:5px}.timeline .item{position:relative;border:0;padding:0 0 32px 30px}.timeline .item:before{content:'';position:absolute;left:-4px;top:5px;background:${accent};width:7px;height:7px;border-radius:50%}.timeline h3{font-size:13px}.footer{margin-top:36px;padding-top:16px;border-top:1px solid ${line};font-size:11px;color:${muted}}
-@media(max-width:720px){main{padding:20px 16px}.spread,.command-grid,.timeline-layout,.editorial-lead{grid-template-columns:1fr;gap:10px}.command-grid aside{border:0;padding:0}.command-grid .task{grid-template-columns:1fr}.numbers{gap:28px}.editorial-lead p{padding-bottom:0}}
-</style></head><body><main>${body}<footer class="footer">Aide 个性化总览 · 当前数据来自工作台 · 更新于 ${text('updatedTime')}</footer></main></body></html>`;
+*{box-sizing:border-box}body{margin:0;background:${bg};color:${ink};font:13px/1.6 Inter,-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif}main{max-width:1440px;margin:auto;padding:24px}h1,h2,h3,p{margin:0}h1{font-size:23px;font-weight:650;letter-spacing:-.5px;margin:6px 0}h2{font-size:13px;font-weight:600}h3{font-size:13px}button{font:inherit;color:#5662dc;cursor:pointer;border:0;background:none;padding:4px 0;white-space:nowrap}button:hover{text-decoration:underline}.muted,small{color:${muted}}.tiny{font-size:10px}header{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}header .eyebrow{font-size:10px;letter-spacing:1.5px;color:#8690a3}header p{font-size:11px;color:${muted}}header .live{background:${panel};border:1px solid ${line};border-radius:6px;padding:7px 10px;font-size:10px;white-space:nowrap}.live i{display:inline-block;width:6px;height:6px;background:#52a68a;border-radius:50%;margin-right:5px}.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:16px}.metric{background:${panel};border:1px solid ${line};border-radius:8px;padding:12px}.metric p{font-size:11px;color:${muted}}.metric>b{display:block;font-size:28px;line-height:1.3;margin:6px 0;font-weight:650}.metric small{font-size:10px;display:block}.metric:nth-child(5)>b:after{content:'%';font-size:15px}.metric.danger>b{color:#c5535c}.panel{background:${panel};border:1px solid ${line};border-radius:8px;padding:18px;min-width:0;margin-bottom:16px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px;flex-wrap:wrap}.chart-grid,.split{display:grid;grid-template-columns:1.65fr 1fr;gap:16px}.visual-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.split.wide-left{grid-template-columns:minmax(0,2.3fr) minmax(210px,1fr)}.chart-legend{display:flex;align-items:center;gap:6px;font-size:10px;color:${muted};flex-wrap:wrap}.chart-total{margin-left:auto}.chart-total strong{color:${ink}}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px}.purple{background:#8590e7}.green{background:#52a68a}.red{background:#d7737d}.pale{background:#e7eaf2}.trend-chart{position:relative;margin-top:12px;padding-left:14px}.trend-chart svg{width:100%;height:154px;display:block}.axis-max,.axis-zero{position:absolute;left:0;font-size:9px;color:${muted}}.axis-max{top:22px}.axis-zero{bottom:19px}.grid-line{stroke:${line};fill:none;stroke-dasharray:3 3}.created-line,.delivered-line{fill:none;stroke-width:2;stroke-linejoin:round}.created-line{stroke:#8590e7}.delivered-line{stroke:#52a68a}.axis-labels{display:flex;justify-content:space-between;font-size:9px;color:${muted};margin-top:5px}.donut-wrap{display:flex;align-items:center;justify-content:center;gap:20px;padding:18px 0}.donut{position:relative;width:132px;height:132px;flex-shrink:0}.donut svg{width:100%;height:100%}.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.donut-center strong{font-size:26px}.donut-center span{font-size:10px;color:${muted}}.segments path:nth-child(1){fill:#8590e7}.segments path:nth-child(2){fill:#d7737d}.segments path:nth-child(3){fill:#52a68a}.segments path:nth-child(4){fill:#ced4e3}.segments path:nth-child(5){fill:#d3b582}.donut-legend{font-size:10px;min-width:90px}.donut-legend>div{display:flex;gap:7px;align-items:center;margin:9px 0}.donut-legend b{margin-left:auto}.donut-legend i{width:7px;height:7px;border-radius:2px;background:#8590e7}.donut-legend>div:nth-child(2) i{background:#d7737d}.donut-legend>div:nth-child(3) i{background:#52a68a}.donut-legend>div:nth-child(4) i{background:#ced4e3}.donut-legend>div:nth-child(5) i{background:#d3b582}.stage-bars{display:grid;gap:19px;padding:8px 0}.stage-row{display:grid;grid-template-columns:58px 1fr 18px;align-items:center;gap:10px;font-size:11px}.stage-row svg{height:10px;width:100%}.stage-row b{text-align:right}.owner-row{margin-top:12px}.owner-name{display:flex;align-items:center;gap:8px;font-size:11px;margin-bottom:7px}.avatar{width:26px;height:26px;border-radius:50%;background:#eef0fc;color:#5662dc;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:10px}.owner-name strong{font-size:11px}.owner-name small{display:block;font-size:9px}.owner-name>b{margin-left:auto;text-align:right;font-size:14px}.owner-row>svg{display:block;width:100%;height:4px}.calendar-info{display:flex;flex-direction:column;margin:10px 0 24px;gap:6px}.calendar-info strong{font-size:18px}.heatmap{width:100%;height:72px}.heatmap-legend{display:flex;justify-content:flex-end;align-items:center;gap:4px;font-size:9px;color:${muted};margin:8px 0 14px}.heatmap-legend i{width:8px;height:8px;background:#f0f2f9;border-radius:2px}.heatmap-legend i:nth-of-type(2){background:#dce0fb}.heatmap-legend i:nth-of-type(3){background:#afb8ef}.heatmap-legend i:nth-of-type(4){background:#8590e7}.heatmap-legend i:nth-of-type(5){background:#5662dc}.node-summary{display:flex;align-items:baseline;gap:8px;margin-bottom:22px}.node-summary>strong{font-size:27px}.node-summary span{color:${muted};font-size:10px}.node-summary>b{margin-left:auto;font-size:11px;color:#52a68a}.node-state-list>div{display:grid;grid-template-columns:60px 1fr 25px;gap:10px;align-items:center;margin:14px 0;font-size:11px}.node-state-list span>svg{display:inline-block;width:8px;height:8px;margin-right:6px}.node-bar{height:7px;width:100%}.node-state-list b{text-align:right}.table-scroll{max-height:430px;overflow:auto}table{width:100%;border-collapse:collapse;text-align:left;font-size:11px}th{position:sticky;top:0;background:${bg};color:${muted};font-size:10px;padding:9px 8px;white-space:nowrap;font-weight:500}td{padding:12px 8px;border-bottom:1px solid ${line};vertical-align:middle}td:first-child{min-width:150px}td strong{font-weight:550}td small{display:block;font-size:9px;margin-top:4px}.row-progress{width:100px;height:5px}.matrix{width:160px;height:16px;display:block}.matrix-note{font-size:9px;color:${muted};padding-top:12px}.tasks{display:grid;gap:12px;max-height:430px;overflow:auto}.tasks article{padding:12px;border:1px solid ${line};border-radius:6px;background:${bg}}.tasks article>div{display:flex;justify-content:space-between}.tasks h3{margin:9px 0 5px}.tasks p,.timeline p{font-size:10px;color:${muted}}.tasks button,.timeline button{font-size:10px;margin-top:6px}.tag{font-size:9px;color:#5662dc;background:#eef0fb;border-radius:4px;padding:2px 5px}.timeline{max-height:340px;overflow:auto;border-left:1px solid ${line};margin-left:4px}.timeline article{position:relative;padding:0 0 18px 17px}.timeline article:before{content:'';position:absolute;left:-4px;top:6px;width:7px;height:7px;border-radius:50%;background:#8590e7}.timeline h3{font-size:11px;margin:5px 0}.empty{padding:20px;color:${muted};font-size:11px}.footer{font-size:10px;color:${muted};border-top:1px solid ${line};padding-top:14px;margin-top:6px}
+@media(max-width:1050px){.visual-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.visual-grid>.panel:last-child{grid-column:1/-1}.split.wide-left{grid-template-columns:1fr}.chart-grid .donut-wrap{padding:0}.split.wide-left .tasks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.chart-grid{grid-template-columns:1fr}}
+@media(max-width:620px){main{padding:16px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.metric{padding:12px}.metric>b{font-size:24px}.visual-grid,.split{grid-template-columns:1fr;gap:0}.visual-grid>.panel:last-child{grid-column:auto}.split.wide-left .tasks{grid-template-columns:1fr}header{align-items:flex-start}.live{display:none}.panel{padding:14px}.chart-total{margin-left:0}.chart-grid{gap:0}}
+</style></head><body><main><header><div><span class="eyebrow">AIDE / ${risk ? 'RISK REVIEW' : team ? 'TEAM OVERVIEW' : editorial ? 'DAILY BRIEF' : timeline ? 'WORK JOURNAL' : 'DELIVERY OVERVIEW'}</span><h1>${e(title)}</h1><p>${t('member')} · ${scope} · 近 ${days} 个自然日趋势 · 当前工作快照</p></div><div class="live"><i></i>数据已连接 · ${t('updatedTime')}</div></header>${body}<footer class="footer">虚构演示数据 · ${t('sampleCount')} 条补充样本 · 图表从底层需求、节点与事件计算 · 点击需求可进入原有流程</footer></main></body></html>`;
     return {
       source,
-      summary: `已生成${editorial ? '杂志式双栏' : timeline ? '极简时间线' : dark ? '深色指挥中心' : '工作现场'} HTML/CSS；${mine ? '需求限定为当前成员负责；' : ''}${days} 天交付口径。可以编辑任意结构和样式再预览。`,
+      summary: `已生成${risk ? '风险巡检' : team ? '团队全景' : editorial ? '双栏简报' : timeline ? '事件时间线' : '交付驾驶舱'} HTML/CSS，包含趋势、分布和进度等可视化；${scope}，${days} 天趋势。可补充 24 条虚构数据让图表更丰富，或继续自由修改源码。`,
     };
   }
-  return { create, examples };
+  return { create, examples, labels };
 })();
 
 </script>
     <script>
 var AidePersonalRuntime = (() => {
   // User HTML supplies presentation; this platform-owned bridge alone can execute.
-  function bridge() {
+  function bridge(svgAttributes) {
     const original = [...document.body.childNodes].map((n) => n.cloneNode(true));
     let snapshot;
     const send = (type, rest = {}) => parent.postMessage({ aidePersonal: 1, type, ...rest }, '*');
@@ -2645,7 +3072,7 @@ var AidePersonalRuntime = (() => {
         }
         const path = element.getAttribute('data-aide-text');
         if (path) element.textContent = String(read(scope, path) ?? '—');
-        for (const attr of ['width', 'height', 'x', 'y', 'd', 'title', 'aria-label']) {
+        for (const attr of svgAttributes) {
           const binding = element.getAttribute(`data-aide-attr-${attr}`);
           if (binding) element.setAttribute(attr, String(read(scope, binding) ?? ''));
         }
@@ -2704,7 +3131,7 @@ var AidePersonalRuntime = (() => {
     ).join('');
     const policy = `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'`;
     // The policy must precede user styles and markup so external resources never load.
-    return `<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="${policy}"><style>html{overflow-x:hidden}body{min-height:0}button:focus-visible{outline:3px solid #9cacf0}</style>${parsed.head.innerHTML}</head><body>${parsed.body.innerHTML}</body><script nonce="${nonce}">(${bridge.toString()})()<\/script></html>`;
+    return `<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="${policy}"><style>html{overflow-x:hidden}body{min-height:0}button:focus-visible{outline:3px solid #9cacf0}</style>${parsed.head.innerHTML}</head><body>${parsed.body.innerHTML}</body><script nonce="${nonce}">(${bridge.toString()})(${JSON.stringify(AidePersonal.svgAttributes)})<\/script></html>`;
   }
   function mount(db, ui) {
     document.querySelectorAll('iframe[data-personal-frame]').forEach((frame) => {
@@ -2966,6 +3393,7 @@ var AidePersonalUI = (() => {
               ['deliveries', '交付记录', '首次交付时间与成果入口'],
               ['events', '执行记录', '决策、失败和交接事件'],
               ['summary', '统计', '当前待办、受阻、7 / 30 天交付'],
+              ['insights', '可视化统计', '趋势、环形分布、成员负载、热力图与节点状态'],
             ]
               .map(
                 ([key, name, desc]) =>
@@ -2974,7 +3402,7 @@ var AidePersonalUI = (() => {
               .join(
                 '',
               )}</div><details><summary>查看当前 JSON 数据</summary><pre class="personal-json">${e(JSON.stringify(snapshot, null, 2))}</pre></details><p class="notice">原型只提供虚构工作台数据，不包含真实业务数据或成员聊天内容。</p>`
-          : `<div class="personal-agent"><div class="flex">${AideUI.avatar('Aide')}<div><h3>让首页适应你的工作</h3><p class="tiny muted">直接编写 HTML/CSS · 演示生成</p></div></div><p class="personal-agent-response">${e(draft.summary)}</p><div class="personal-examples">${AidePersonalGenerate.examples.map((prompt, i) => `<button data-action="personal-example" data-id="${i}">${e(prompt)}</button>`).join('')}</div><label for="personal-prompt">描述页面，或继续提出修改</label><textarea id="personal-prompt" maxlength="2000" placeholder="比如：做成杂志式简报，突出今天需要我决策的事…">${e(draft.prompt)}</textarea><button class="primary" data-action="personal-generate">${AideUI.icon('spark')} 生成演示草稿</button><p class="tiny muted">本地规则生成风格示例，尚未接入真实大模型。每次生成会重写整份草稿；已有手动修改请先导出。</p><div class="external-agent-note"><h3>交给你自己的 Agent</h3><p>复制目标、数据样本与绑定契约给 Codex / Claude，自由编写页面，再到“HTML/CSS”粘贴或导入结果。</p><button data-action="personal-agent-prompt">复制 Agent 任务与数据契约</button></div></div>`;
+          : `<div class="personal-agent"><div class="personal-data-banner"><div><strong>${snapshot.sampleCount ? `已补充 ${snapshot.sampleCount} 条虚构需求` : '让图表有更多可展示的数据'}</strong><p>保留已有需求，补充 24 条历史交付与在途示例。</p></div><button data-action="personal-data" ${snapshot.sampleCount ? 'disabled' : ''}>${snapshot.sampleCount ? '已加载' : '补充演示数据'}</button></div><div class="flex">${AideUI.avatar('Aide')}<div><h3>让首页适应你的工作</h3><p class="tiny muted">直接编写 HTML/CSS · 演示生成</p></div></div><p class="personal-agent-response">${e(draft.summary)}</p><div class="personal-examples">${AidePersonalGenerate.examples.map((prompt, i) => `<button data-action="personal-example" data-id="${i}"><strong>${e(AidePersonalGenerate.labels[i])}</strong><span>趋势 · 进度 · 数据分布 →</span></button>`).join('')}</div><label for="personal-prompt">描述页面，或继续提出修改</label><textarea id="personal-prompt" maxlength="2000" placeholder="比如：做成杂志式简报，突出今天需要我决策的事…">${e(draft.prompt)}</textarea><button class="primary" data-action="personal-generate">${AideUI.icon('spark')} 生成演示草稿</button><p class="tiny muted">本地规则生成风格示例，尚未接入真实大模型。每次生成会重写整份草稿；已有手动修改请先导出。</p><div class="external-agent-note"><h3>交给你自己的 Agent</h3><p>复制目标、数据样本与绑定契约给 Codex / Claude，自由编写页面，再到“HTML/CSS”粘贴或导入结果。</p><button data-action="personal-agent-prompt">复制 Agent 任务与数据契约</button></div></div>`;
     return `<div class="overlay personal-overlay"><section class="personal-designer" role="dialog" aria-modal="true" aria-label="个性化总览"><header class="personal-designer-header"><div><div class="eyebrow">MAKE IT YOURS</div><h2>个性化总览 <span class="pill">${e(db.member)}的首页</span></h2><p class="subtitle">告诉 Agent 你想关注什么，让它重新设计整页。</p></div><button class="text-button" data-action="personal-close" aria-label="关闭个性化">${AideUI.icon('close')}</button></header><div class="personal-designer-body"><aside class="personal-compose"><div class="personal-tabs">${[
       ['ask', '描述目标'],
       ['code', 'HTML/CSS'],
@@ -2986,7 +3414,7 @@ var AidePersonalUI = (() => {
       )
       .join(
         '',
-      )}</div><div class="personal-compose-content">${body}</div></aside><div class="personal-canvas"><div class="personal-canvas-heading"><span><i class="live-dot"></i> 实时数据预览</span><span class="pill ${stale ? 'amber' : ''}" id="personal-preview-state">${stale ? '源码有未预览修改' : '未应用的草稿'}</span><button class="text-button tiny" data-action="personal-export">导出 HTML 源码</button></div><iframe class="personal-preview" data-personal-frame="preview" sandbox="allow-scripts" title="个性化页面预览"></iframe><div class="personal-binding-status" id="personal-binding-status">正在连接工作台数据…</div></div></div><footer class="personal-designer-footer"><span class="tiny muted">${saved.source ? `当前保存版本 V${saved.revision} · ` : ''}只修改 ${e(db.member)} 的首页，不改变需求或任务</span><div class="toolbar"><button data-action="personal-undo" ${saved.history.length ? '' : 'disabled'}>撤销上次保存</button><button data-action="personal-close">取消</button><button class="primary" data-action="personal-save" ${stale ? 'disabled' : ''}>保存为我的总览</button></div></footer></section></div>`;
+      )}</div><div class="personal-compose-content">${body}</div></aside><div class="personal-canvas"><div class="personal-canvas-heading"><span><i class="live-dot"></i> 实时数据预览</span><span class="pill ${stale ? 'amber' : ''}" id="personal-preview-state">${stale ? '源码有未预览修改' : '未应用的草稿'}</span><button class="text-button tiny" data-action="personal-export">导出 HTML 源码</button></div><iframe class="personal-preview" data-personal-frame="preview" sandbox="allow-scripts" title="个性化页面预览"></iframe><div class="personal-binding-status" id="personal-binding-status">正在连接工作台数据…</div></div></div><footer class="personal-designer-footer"><span class="tiny muted">${saved.source ? `当前保存版本 V${saved.revision} · ` : ''}保存仅修改 ${e(db.member)} 的首页 · 演示数据保存在当前浏览器</span><div class="toolbar"><button data-action="personal-undo" ${saved.history.length ? '' : 'disabled'}>撤销上次保存</button><button data-action="personal-close">取消</button><button class="primary" data-action="personal-save" ${stale ? 'disabled' : ''}>保存为我的总览</button></div></footer></section></div>`;
   }
   function handle(action, id, db, ui, helpers) {
     if (action === 'personalize') {
@@ -3010,6 +3438,13 @@ var AidePersonalUI = (() => {
       const generated = AidePersonalGenerate.create(draft.prompt);
       draft.source = draft.previewSource = generated.source;
       draft.summary = generated.summary;
+    }
+    if (action === 'personal-data') {
+      const count = AidePersonalData.populate(db);
+      draft.summary = count
+        ? '已补充 24 条虚构需求：12 条历史交付、12 条在途/草稿，包含受阻与评审。图表从当前数据重新计算。选择一种排版预览。'
+        : '演示样本已加载，不会重复添加。';
+      helpers.toast(count ? '已补充 24 条虚构演示需求，保留已有需求' : '演示样本已加载');
     }
     if (action === 'personal-generate') {
       const generated = AidePersonalGenerate.create(draft.prompt);
