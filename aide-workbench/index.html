@@ -733,7 +733,7 @@ tbody tr:last-child td {
   padding: 3px 0 10px;
 }
 .time-number {
-  font-size: 21px;
+  font-size: 18px;
   font-weight: 600;
   margin: 5px 0 7px;
   color: #525f7b;
@@ -1407,12 +1407,40 @@ tbody tr:last-child td {
     height: 112px;
   }
 }
+.page-heading,
+.personal-overview-bar {
+  position: relative;
+}
+.page-heading > .toolbar,
+.personal-overview-bar > .toolbar {
+  align-self: flex-end;
+}
 .personal-button {
-  color: var(--accent);
-  border-color: #cdd3ee;
+  position: absolute;
+  top: -6px;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  padding: 6px;
+  border: 0;
+  border-radius: 6px;
+  color: #8992a5;
+  background: transparent;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+}
+.personal-button svg {
+  width: 16px;
+  height: 16px;
+}
+.personal-button:hover {
+  color: var(--accent);
+  background: #eef0fb;
+}
+.personal-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 .personal-overview-bar {
   display: flex;
@@ -1428,7 +1456,7 @@ tbody tr:last-child td {
 .personal-overview {
   display: block;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 8px;
   width: 100%;
   height: 700px;
   background: white;
@@ -1444,13 +1472,13 @@ tbody tr:last-child td {
   height: min(960px, calc(100dvh - 48px));
   display: flex;
   flex-direction: column;
-  border-radius: 16px;
+  border-radius: 10px;
   background: white;
   overflow: hidden;
-  box-shadow: 0 24px 90px #1c274138;
+  box-shadow: 0 16px 60px #1c27412b;
 }
 .personal-designer-header {
-  padding: 20px 26px;
+  padding: 18px 22px;
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: flex-start;
@@ -1459,7 +1487,7 @@ tbody tr:last-child td {
 }
 .personal-designer-header h2 {
   margin-top: 5px;
-  font-size: 21px;
+  font-size: 18px;
 }
 .personal-designer-header .subtitle {
   margin: 6px 0 0;
@@ -1496,7 +1524,7 @@ tbody tr:last-child td {
   font-weight: 600;
 }
 .personal-compose-content {
-  padding: 22px;
+  padding: 18px;
   overflow: auto;
   flex: 1;
 }
@@ -1505,7 +1533,7 @@ tbody tr:last-child td {
   margin: 18px 0;
   background: #f4f6fc;
   line-height: 1.8;
-  border-radius: 10px;
+  border-radius: 7px;
   color: #667087;
 }
 .personal-examples {
@@ -2469,6 +2497,7 @@ var AidePersonal = (() => {
     return `请为 Aide 数据开发工作台编写个性化总览。用户目标：${prompt || '按当前成员的工作安排设计首页'}。
 直接输出完整 HTML/CSS，布局、排版、色彩、SVG 和内容组织均可自由创造，不需要使用固定组件。仅使用给定数据，不编造统计；不要把示例值硬编码。
 使用 <style> 写 CSS。此页面在隔离环境渲染，无外部网络和自定义 JavaScript。
+默认与外层工作台保持视觉一致：白色背景，主文字 #242b3d，辅助文字 #8690a3，强调色 #5662dc，边框 #e9edf3；使用 Inter、系统无衬线字体，正文 13px，标题 24px，卡片圆角 8px，间距 16–24px。可自由设计 HTML 结构与布局；只有用户明确要求时才切换整体配色或字体风格。
 动态绑定契约：data-aide-text="summary.active" 填文本；data-aide-each="requests" 在该元素内部重复渲染其子元素（条目中用 data-aide-text="title" 等字段）。可嵌套重复 nodes。空列表用 data-aide-empty="暂无事项"。
 重复容器可加 data-aide-filter="mine|active|blocked|delivered"、data-aide-sort="updated|progress"、data-aide-limit="6"。
 data-aide-open="id"（需求）或 data-aide-open="requestId"（任务）让按钮打开对应需求；任务按钮加 data-aide-node="id"。
@@ -2486,9 +2515,9 @@ ${JSON.stringify(snapshot(db), null, 2)}
     <script>
 var AidePersonalGenerate = (() => {
   const examples = [
-    '做成深色指挥中心，优先看受阻任务，最近30天，只看我负责的需求',
-    '做成暖色杂志，标题叫每日交付简报，重点展示待办和评审',
-    '做成极简时间线，用大字展示今天的待办，不要统计卡片',
+    '保持工作台风格，按工作优先级排版，优先看受阻任务，最近30天，只看我负责的需求',
+    '保持工作台风格，做成双栏简报，标题叫每日交付简报，重点展示待办和评审',
+    '保持工作台风格，做成简洁时间线，展示今天的待办，不要统计卡片',
   ];
   function create(prompt) {
     if (!prompt.trim()) throw Error('请先描述想要的页面。');
@@ -2507,11 +2536,11 @@ var AidePersonalGenerate = (() => {
         : timeline
           ? '把今天，安排清楚。'
           : '数据交付指挥中心');
-    const bg = dark ? '#101922' : editorial ? '#f5f0e5' : '#fff';
-    const ink = dark ? '#e8f4f3' : '#273631';
-    const muted = dark ? '#8fa9b0' : '#777d75';
-    const accent = dark ? '#a7ebc6' : editorial ? '#b84c30' : '#5662dc';
-    const line = dark ? '#30454d' : '#deded5';
+    const bg = dark ? '#202535' : '#fff';
+    const ink = dark ? '#e9edf6' : '#242b3d';
+    const muted = dark ? '#9da7be' : '#8690a3';
+    const accent = dark ? '#a8b1ff' : '#5662dc';
+    const line = dark ? '#394157' : '#e9edf3';
     const text = (path, tag = 'span') => `<${tag} data-aide-text="${path}"></${tag}>`;
     const list = (
       key,
@@ -2536,8 +2565,8 @@ var AidePersonalGenerate = (() => {
     else
       body = `<header class="command-head"><span class="signal">● LIVE WORKSPACE</span>${text('updatedTime')}<h1>${e(title)}</h1><p>${text('member')}的工作现场 · ${text('project')} · 从决策到交付</p></header>${metrics}${risk}<div class="command-grid"><div>${section('需要你的决策', 'todos')}${reviews}${section(mine ? '我负责的需求' : '需求进展', 'requests')}</div><aside>${section('最近的交付', 'deliveries')}${section('执行动态', 'events')}</aside></div>`;
     const source = `<!doctype html><html lang="zh-CN"><head><title>${e(title)}</title><style>
-*{box-sizing:border-box}body{margin:0;background:${bg};color:${ink};font:14px/1.6 -apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif}main{max-width:1240px;margin:auto;padding:36px}h1,h2,h3,p{margin:0}h1{font-size:clamp(32px,4vw,54px);line-height:1.15;letter-spacing:-1.6px;margin:20px 0}h2{font-size:14px;font-weight:600;letter-spacing:.5px;margin-bottom:18px}h3{font-size:17px;line-height:1.5}p,.small{color:${muted}}button{font:inherit;cursor:pointer;border:0;background:none;color:${accent};padding:10px 0}.section{margin:28px 0}.item{padding:18px 0;border-top:1px solid ${line}}.item p{margin-top:8px;font-size:12px}.item-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px}.small{font-size:11px}.numbers{display:flex;gap:48px;margin:30px 0;padding:24px 0;border-top:1px solid ${line};border-bottom:1px solid ${line}}.numbers p{display:grid;gap:4px}.numbers b{font-size:38px;line-height:1.15;font-weight:500;color:${ink}}.numbers span{font-size:12px}.progress{height:3px;width:100%;display:block;color:${accent};margin-top:10px}.risk{border-left:3px solid ${accent};padding-left:20px}.empty{padding:20px 0;color:${muted};font-size:13px}.masthead{border-bottom:2px solid ${ink};padding-bottom:14px;display:flex;justify-content:space-between;letter-spacing:1px;font-size:11px}.editorial-lead{display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:end;padding:26px 0}.editorial-lead h1{font-family:Georgia,'Songti SC',serif;font-weight:500;font-size:clamp(36px,5vw,66px)}.editorial-lead p{padding-bottom:22px}.spread{display:grid;grid-template-columns:1.2fr 1fr;gap:60px}.spread>.section{margin-top:0}.spread .section h2{color:${accent};text-transform:uppercase}.command-head{border-left:3px solid ${accent};padding-left:24px}.command-head>span:nth-child(2){float:right;color:${muted};font:12px monospace}.signal{font:11px monospace;color:${accent};letter-spacing:2px}.command-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:32px}.command-grid .task{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.command-grid .task .item{padding:18px;background:${dark ? '#182830' : '#f5f7fa'};border:1px solid ${line};border-radius:12px}.command-grid aside{padding:0 22px;border-left:1px solid ${line}}.minimal-head{max-width:740px;margin-bottom:42px}.minimal-head>span:nth-child(2){float:right;font-size:12px;color:${muted}}.timeline-layout{display:grid;grid-template-columns:1.5fr 1fr;gap:80px}.timeline{border-left:1px solid ${line};margin-left:5px}.timeline .item{position:relative;border:0;padding:0 0 32px 30px}.timeline .item:before{content:'';position:absolute;left:-4px;top:5px;background:${accent};width:7px;height:7px;border-radius:50%}.timeline h3{font-size:20px}.footer{margin-top:36px;padding-top:16px;border-top:1px solid ${line};font-size:11px;color:${muted}}
-@media(max-width:720px){main{padding:24px 18px}.spread,.command-grid,.timeline-layout,.editorial-lead{grid-template-columns:1fr;gap:10px}.command-grid aside{border:0;padding:0}.command-grid .task{grid-template-columns:1fr}.numbers{gap:28px}.editorial-lead p{padding-bottom:0}}
+*{box-sizing:border-box}body{margin:0;background:${bg};color:${ink};font:13px/1.6 Inter,-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}main{max-width:1240px;margin:auto;padding:24px}h1,h2,h3,p{margin:0}h1{font-size:24px;font-weight:650;line-height:1.4;letter-spacing:-.6px;margin:12px 0}h2{font-size:14px;font-weight:600;margin-bottom:16px}h3{font-size:13px;font-weight:600;line-height:1.6}p,.small{color:${muted}}button{font:inherit;cursor:pointer;border:0;background:none;color:${accent};padding:6px 0}.section{margin:24px 0}.item{padding:18px 0;border-top:1px solid ${line}}.item p{margin-top:8px;font-size:12px}.item-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px}.small{font-size:11px}.numbers{display:flex;gap:40px;margin:24px 0;padding:20px 0;border-top:1px solid ${line};border-bottom:1px solid ${line}}.numbers p{display:grid;gap:4px}.numbers b{font-size:30px;line-height:1.2;font-weight:650;color:${ink}}.numbers span{font-size:12px}.progress{height:3px;width:100%;display:block;color:${accent};margin-top:10px}.risk{border-left:3px solid ${accent};padding-left:20px}.empty{padding:20px 0;color:${muted};font-size:13px}.masthead{border-bottom:1px solid ${ink};padding-bottom:14px;display:flex;justify-content:space-between;letter-spacing:.5px;font-size:11px}.editorial-lead{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;align-items:center;padding:12px 0}.editorial-lead h1{font-weight:650;font-size:24px}.editorial-lead p{padding-bottom:0}.spread{display:grid;grid-template-columns:1.2fr 1fr;gap:24px}.spread>.section{margin-top:0}.spread .section h2{color:${accent};text-transform:uppercase}.command-head{border-left:2px solid ${accent};padding-left:24px}.command-head>span:nth-child(2){float:right;color:${muted};font:12px monospace}.signal{font:11px monospace;color:${accent};letter-spacing:2px}.command-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:24px}.command-grid .task{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.command-grid .task .item{padding:18px;background:${dark ? '#272e41' : '#f8f9fc'};border:1px solid ${line};border-radius:8px}.command-grid aside{padding:0 22px;border-left:1px solid ${line}}.minimal-head{max-width:740px;margin-bottom:24px}.minimal-head>span:nth-child(2){float:right;font-size:12px;color:${muted}}.timeline-layout{display:grid;grid-template-columns:1.5fr 1fr;gap:32px}.timeline{border-left:1px solid ${line};margin-left:5px}.timeline .item{position:relative;border:0;padding:0 0 32px 30px}.timeline .item:before{content:'';position:absolute;left:-4px;top:5px;background:${accent};width:7px;height:7px;border-radius:50%}.timeline h3{font-size:13px}.footer{margin-top:36px;padding-top:16px;border-top:1px solid ${line};font-size:11px;color:${muted}}
+@media(max-width:720px){main{padding:20px 16px}.spread,.command-grid,.timeline-layout,.editorial-lead{grid-template-columns:1fr;gap:10px}.command-grid aside{border:0;padding:0}.command-grid .task{grid-template-columns:1fr}.numbers{gap:28px}.editorial-lead p{padding-bottom:0}}
 </style></head><body><main>${body}<footer class="footer">Aide 个性化总览 · 当前数据来自工作台 · 更新于 ${text('updatedTime')}</footer></main></body></html>`;
     return {
       source,
@@ -2878,7 +2907,7 @@ var AideUI = (() => {
       ['活跃协作会话', threads.length, 'sessions', 'chat', '当前项目 · 每个节点一个线程'],
     ];
     const title = ui.tab === 'all' ? '全部需求' : ui.tab === 'sessions' ? '协作记录' : '工作台总览';
-    return `<main class="page"><div class="page-heading flex between"><div><div class="eyebrow" style="margin-bottom:9px">DATA DEVELOPMENT WORKSPACE</div><h1>${title}</h1><p class="subtitle">从一句需求，到一份可靠的数据交付。</p></div><div class="toolbar"><span class="pill">${icon('folder')} 电商数据项目</span><select id="range" aria-label="时间范围"><option value="7" ${ui.range === 7 ? 'selected' : ''}>最近 7 天</option><option value="30" ${ui.range === 30 ? 'selected' : ''}>最近 30 天</option></select><button class="personal-button" data-action="personalize">✦ 个性化</button><button class="primary" data-action="create">${icon('plus')} 新建需求</button></div></div>${ui.tab === 'overview' ? `<div class="metrics">${metrics.map(([name, number, filter, glyph, foot]) => `<button class="metric" data-action="filter" data-id="${filter}"><span class="metric-label">${name}</span><span class="metric-icon">${icon(glyph)}</span><div class="metric-number">${number}</div><div class="metric-foot">${foot}</div></button>`).join('')}</div><div class="charts">${distribution(db)}${chart(db, ui)}</div>${todos.length ? `<div class="task-strip flex between"><div class="flex"><span class="strip-icon">${icon('spark')}</span><div><h3>${e(todos[0].r.title)}<span class="pill blue" style="margin-left:10px">需要你处理</span></h3><p>${todos[0].n.id === 'understand' ? '退款归属日期尚未确认，补充口径后 Aide 将自动生成技术方案。' : `${e(todos[0].n.name)}等待你处理，完成后自动交接。`}</p></div></div><button data-action="open" data-id="${todos[0].r.id}" data-node="${todos[0].n.id}">去处理 ${icon('arrow')}</button></div>` : ''}` : ''}<section class="panel workspace-list"><div class="table-head flex between"><h2>${ui.tab === 'sessions' ? '节点协作线程' : ui.tab === 'all' ? '需求列表' : '近期需求'} <span class="badge-count">${ui.tab === 'sessions' ? threads.length : filtered(db, ui).length}</span></h2><input class="search" id="search" placeholder="搜索需求名称…" value="${e(ui.search)}" aria-label="搜索需求"/></div>${ui.filter ? `<div class="filter-note">已应用筛选 <button class="text-button" data-action="clear-filter">清空筛选</button></div>` : ''}${ui.tab === 'sessions' ? sessions(db, ui) : `<table><thead><tr><th style="width:30%">需求名称 / 当前任务</th><th>状态</th><th>完成进度</th><th>负责人</th><th>更新时间</th><th>下一步</th></tr></thead><tbody>${requestRows(filtered(db, ui), db.member)}</tbody></table>${!filtered(db, ui).length ? '<div class="empty">暂无匹配需求，清空筛选或新建需求。</div>' : ''}`}</section><div class="session-summary">${icon('chat')}<span>会话情况</span><span>待回复 <strong>${threads.filter((t) => t.n.status === 'waiting').length}</strong></span><span>处理中 <strong>${threads.filter((t) => t.n.status !== 'waiting').length}</strong></span><span>未读 <strong>${threads.filter((t) => t.n.messages.length > (t.n.seen[db.member] || 0)).length}</strong></span><button class="text-button tiny" data-action="nav" data-id="sessions">查看协作记录 →</button></div><p class="bottom-note">演示数据 · AI、测试执行、发布与首跑均为本地模拟 · 状态自动保存在当前浏览器</p></main>`;
+    return `<main class="page"><div class="page-heading flex between"><button class="personal-button" data-action="personalize" aria-label="个性化总览" title="个性化总览">${icon('spark')}</button><div><div class="eyebrow" style="margin-bottom:9px">DATA DEVELOPMENT WORKSPACE</div><h1>${title}</h1><p class="subtitle">从一句需求，到一份可靠的数据交付。</p></div><div class="toolbar"><span class="pill">${icon('folder')} 电商数据项目</span><select id="range" aria-label="时间范围"><option value="7" ${ui.range === 7 ? 'selected' : ''}>最近 7 天</option><option value="30" ${ui.range === 30 ? 'selected' : ''}>最近 30 天</option></select><button class="primary" data-action="create">${icon('plus')} 新建需求</button></div></div>${ui.tab === 'overview' ? `<div class="metrics">${metrics.map(([name, number, filter, glyph, foot]) => `<button class="metric" data-action="filter" data-id="${filter}"><span class="metric-label">${name}</span><span class="metric-icon">${icon(glyph)}</span><div class="metric-number">${number}</div><div class="metric-foot">${foot}</div></button>`).join('')}</div><div class="charts">${distribution(db)}${chart(db, ui)}</div>${todos.length ? `<div class="task-strip flex between"><div class="flex"><span class="strip-icon">${icon('spark')}</span><div><h3>${e(todos[0].r.title)}<span class="pill blue" style="margin-left:10px">需要你处理</span></h3><p>${todos[0].n.id === 'understand' ? '退款归属日期尚未确认，补充口径后 Aide 将自动生成技术方案。' : `${e(todos[0].n.name)}等待你处理，完成后自动交接。`}</p></div></div><button data-action="open" data-id="${todos[0].r.id}" data-node="${todos[0].n.id}">去处理 ${icon('arrow')}</button></div>` : ''}` : ''}<section class="panel workspace-list"><div class="table-head flex between"><h2>${ui.tab === 'sessions' ? '节点协作线程' : ui.tab === 'all' ? '需求列表' : '近期需求'} <span class="badge-count">${ui.tab === 'sessions' ? threads.length : filtered(db, ui).length}</span></h2><input class="search" id="search" placeholder="搜索需求名称…" value="${e(ui.search)}" aria-label="搜索需求"/></div>${ui.filter ? `<div class="filter-note">已应用筛选 <button class="text-button" data-action="clear-filter">清空筛选</button></div>` : ''}${ui.tab === 'sessions' ? sessions(db, ui) : `<table><thead><tr><th style="width:30%">需求名称 / 当前任务</th><th>状态</th><th>完成进度</th><th>负责人</th><th>更新时间</th><th>下一步</th></tr></thead><tbody>${requestRows(filtered(db, ui), db.member)}</tbody></table>${!filtered(db, ui).length ? '<div class="empty">暂无匹配需求，清空筛选或新建需求。</div>' : ''}`}</section><div class="session-summary">${icon('chat')}<span>会话情况</span><span>待回复 <strong>${threads.filter((t) => t.n.status === 'waiting').length}</strong></span><span>处理中 <strong>${threads.filter((t) => t.n.status !== 'waiting').length}</strong></span><span>未读 <strong>${threads.filter((t) => t.n.messages.length > (t.n.seen[db.member] || 0)).length}</strong></span><button class="text-button tiny" data-action="nav" data-id="sessions">查看协作记录 →</button></div><p class="bottom-note">演示数据 · AI、测试执行、发布与首跑均为本地模拟 · 状态自动保存在当前浏览器</p></main>`;
   }
   function sessions(db, ui) {
     return `<table><thead><tr><th>话题 / 关联需求</th><th>参与者</th><th>最近消息</th><th>状态</th><th>未读</th></tr></thead><tbody>${db.requests
@@ -2919,7 +2948,7 @@ var AidePersonalUI = (() => {
   }
   function overview(db) {
     const saved = AidePersonal.page(db);
-    return `<main class="page personal-page"><div class="personal-overview-bar"><div><span class="eyebrow">YOUR WORKSPACE</span><h1>我的总览 <span class="pill blue">${e(db.member)} · V${saved.revision}</span></h1><p class="subtitle">这份页面由 HTML/CSS 定义，数据随工作推进更新。</p></div><div class="toolbar"><button data-action="personal-undo" ${saved.history.length ? '' : 'disabled'}>撤销上次保存</button><button data-action="personal-reset">恢复默认</button><button class="personal-button" data-action="personalize">${AideUI.icon('spark')} 个性化</button><button class="primary" data-action="create">${AideUI.icon('plus')} 新建需求</button></div></div><iframe class="personal-overview" data-personal-frame="overview" sandbox="allow-scripts" title="个人总览"></iframe><p class="bottom-note">虚构演示数据 · 个人页面仅保存在当前浏览器 · 原有需求流程继续可用</p></main>`;
+    return `<main class="page personal-page"><div class="personal-overview-bar"><button class="personal-button" data-action="personalize" aria-label="个性化总览" title="个性化总览">${AideUI.icon('spark')}</button><div><span class="eyebrow">YOUR WORKSPACE</span><h1>我的总览 <span class="pill blue">${e(db.member)} · V${saved.revision}</span></h1><p class="subtitle">这份页面由 HTML/CSS 定义，数据随工作推进更新。</p></div><div class="toolbar"><button data-action="personal-undo" ${saved.history.length ? '' : 'disabled'}>撤销上次保存</button><button data-action="personal-reset">恢复默认</button><button class="primary" data-action="create">${AideUI.icon('plus')} 新建需求</button></div></div><iframe class="personal-overview" data-personal-frame="overview" sandbox="allow-scripts" title="个人总览"></iframe><p class="bottom-note">虚构演示数据 · 个人页面仅保存在当前浏览器 · 原有需求流程继续可用</p></main>`;
   }
   function dialog(db, ui) {
     const draft = ui.personal,
