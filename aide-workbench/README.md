@@ -1,7 +1,7 @@
 # Aide 数据工作台演示
 
 - `index.html`：数据需求从口径确认、方案、开发、测试到模拟发布与首跑验收的交互演示。
-- `product-explainer.html`：产品介绍、协作对比与持续演进的画面说明。
+- `product-explainer.html`：产品介绍、协作对比与持续演进的画面说明。“理解需求”以两张关联卡片展示 Meego 业务原话如何转为业务目标与负责人待确认问题。
 - `product-explainer-detail.html`：详细产品动线说明。
 
 ## 上线后的持续演进
