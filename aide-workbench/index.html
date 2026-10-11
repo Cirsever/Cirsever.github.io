@@ -1097,6 +1097,21 @@ tbody tr:last-child td {
   gap: 10px;
   margin-top: 25px;
 }
+.intake-mode { display: flex; gap: 8px; margin-top: 20px; }
+.intake-mode button, .intake-candidate { border: 1px solid #e1e4f1; border-radius: 9px; background: #fff; color: #65718b; }
+.intake-mode button { flex: 1; padding: 10px 8px; }
+.intake-mode .active, .intake-candidate.active { border-color: #929beb; background: #f5f4ff; color: #5c63b4; }
+.intake-card { border: 1px solid #e8e8f3; border-radius: 12px; background: #fbfaff; padding: 16px; margin-top: 16px; color: #5d6881; }
+.intake-card h3 { margin: 8px 0; font-size: 14px; }
+.intake-card p, .intake-card li { font-size: 12px; line-height: 1.65; }
+.intake-card ul { padding-left: 18px; }
+.intake-candidates { display: grid; gap: 7px; margin: 12px 0; }
+.intake-candidate { text-align: left; padding: 11px; }
+.intake-candidate strong, .intake-candidate small { display: block; }
+.intake-candidate small { margin-top: 5px; line-height: 1.5; }
+.intake-inherited { border-top: 1px solid #e7e7f3; padding-top: 12px; }
+.intake-detail-source { margin-bottom: 16px; padding: 18px; }
+.intake-detail-source h2 { font-size: 15px; margin: 7px 0; }
 .record {
   border-left: 2px solid #dfe4fa;
   padding: 2px 0 16px 15px;
@@ -2130,6 +2145,8 @@ var AideKnowledge = (() => {
       evidence: request.events.map((record) => ({ ...record })),
       sourceRefs: ['ods_orders', 'ods_refunds', '固定虚构订单与退款样本'],
       change: request.changeContext ? structuredClone(request.changeContext) : null,
+      requestSource: request.requestSource ? structuredClone(request.requestSource) : null,
+      linkedSources: request.linkedSources ? structuredClone(request.linkedSources) : [],
     };
     request.deliverySnapshot = snapshot;
     return snapshot;
@@ -2236,6 +2253,8 @@ var AideKnowledge = (() => {
       `- 交付时间：${new Date(snapshot.deliveredAt).toISOString()}`,
       `- 负责人：${snapshot.owner}`,
       `- 来源类型：${snapshot.provenance === 'accepted' ? '模拟首跑验收沉淀' : '历史演示归档'}`,
+      ...(snapshot.requestSource ? [`- 需求来源：Meego ${snapshot.requestSource.project} / ${snapshot.requestSource.itemId}（${snapshot.requestSource.mode === 'simulated' ? '模拟样例' : '手动录入，未读取链接'}）`] : []),
+      ...(snapshot.linkedSources || []).map((source) => `- 关联来源：Meego ${source.project} / ${source.itemId}（${source.mode === 'simulated' ? '模拟样例' : '手动录入，未读取链接'}）`),
       '', '## 业务目标与验收', snapshot.businessGoal,
       `- 统计粒度：${snapshot.definitions.grain}`,
       `- 退款口径：${snapshot.definitions.refundBasis === 'refund' ? '退款发生日' : snapshot.definitions.refundBasis === 'order' ? '订单日' : '历史记录缺失，待确认'}`,
@@ -2289,6 +2308,7 @@ Object.assign(
       );
     }
     function advance(request) {
+      if (request.pendingManualScope) return;
       if (request.paused || request.deliveredAt) return;
       for (const node of request.nodes)
         if (
@@ -2299,6 +2319,7 @@ Object.assign(
           start(request, node);
     }
     function confirm(request, id, actor) {
+      if (request.pendingManualScope) throw Error('需求范围待澄清，请重新分析并确认受支持范围');
       const node = get(request, id);
       allowed(request, node, actor);
       if (request.paused) throw Error('请先继续执行');
@@ -2325,6 +2346,7 @@ Object.assign(
       advance(request);
     }
     function tick(request, now = Date.now()) {
+      if (request.pendingManualScope) return false;
       if (request.paused) return false;
       let changed = false;
       for (const node of request.nodes) {
@@ -2555,6 +2577,247 @@ Object.assign(
 );
 
 </script>
+    <script>
+var AideIntake = (() => {
+  const fixture = {
+    project: '电商数据项目 · 演示空间',
+    itemId: 'DEMO-1042',
+    title: '渠道日报增加店铺维度',
+    description: '在已交付渠道交易日报 ads_channel_trade_di 中增加店铺维度，沿用每日任务 channel_trade_daily、退款发生日口径与最近 30 天历史范围；请确认店铺标识和新的统计粒度。',
+    requester: '运营分析（虚构）',
+    status: '待分析（演示）',
+  };
+  function emptyDraft() {
+    return { mode: 'direct', title: '', description: '', scenario: 'happy', meegoUrl: '', source: null, analysis: null, selectedDeliveryId: null };
+  }
+  function sourceKey(source) {
+    return source && `${source.provider}:${source.project}:${source.itemId}`;
+  }
+  function bind(db) {
+    db.meegoBinding ||= { provider: 'meego', workspace: '演示空间', project: fixture.project, mode: 'simulated', boundAt: Date.now() };
+    return db.meegoBinding;
+  }
+  function chooseFixture(db, draft) {
+    if (!db.meegoBinding) throw Error('请先绑定 Meego 演示空间');
+    AideKnowledge.ensureDemo(db);
+    draft.mode = 'meego';
+    draft.title = fixture.title;
+    draft.description = fixture.description;
+    draft.meegoUrl = '';
+    draft.source = {
+      provider: 'meego', project: db.meegoBinding.project, itemId: fixture.itemId,
+      title: fixture.title, body: fixture.description, mode: 'simulated',
+      requester: fixture.requester, status: fixture.status,
+      importedAt: Date.now(), sourceVersion: '演示样例 V1',
+    };
+    draft.analysis = null;
+    draft.selectedDeliveryId = null;
+    return draft;
+  }
+  function chooseDirectFixture(db, draft) {
+    AideKnowledge.ensureDemo(db);
+    draft.mode = 'direct';
+    draft.title = fixture.title;
+    draft.description = fixture.description;
+    draft.meegoUrl = '';
+    draft.source = null;
+    draft.analysis = null;
+    draft.selectedDeliveryId = null;
+    return draft;
+  }
+  function manualSource(db, draft) {
+    const url = draft.meegoUrl.trim();
+    if (!url) return null;
+    let parsed;
+    try { parsed = new URL(url); } catch { throw Error('请输入完整的 https Meego 链接'); }
+    if (parsed.protocol !== 'https:' || !/(^|\.)project\.feishu\.cn$/.test(parsed.hostname))
+      throw Error('手动来源仅接受 project.feishu.cn 的 https 链接');
+    const itemId = `manual:${parsed.hostname}${parsed.pathname}${parsed.search}`;
+    return {
+      provider: 'meego', project: db.meegoBinding?.project || fixture.project,
+      itemId, title: draft.title.trim(),
+      body: draft.description.trim(), url, mode: 'manual', importedAt: Date.now(),
+    };
+  }
+  function candidates(db, text) {
+    const channel = /渠道(?:交易)?日报|渠道交易|ads_channel_trade_di|channel_trade_daily/.test(text);
+    const member = /会员复购/.test(text);
+    const names = [
+      ['ads_channel_trade_di', /ads_channel_trade_di|渠道(?:交易)?日报|渠道交易/],
+      ['channel_trade_daily', /channel_trade_daily|每日调度|调度任务/],
+      ['dwd_order_detail_di', /dwd_order_detail_di|订单明细表/],
+      ['dwd_refund_detail_di', /dwd_refund_detail_di|退款明细表/],
+    ].filter(([, pattern]) => pattern.test(text)).map(([name]) => name);
+    if (!channel && !member && !names.length) return [];
+    return AideKnowledge.all(db).filter((snapshot) =>
+      AideKnowledge.latest(db, snapshot.rootRequestId)?.id === snapshot.id &&
+      ((channel && /渠道/.test(snapshot.title)) || (member && /会员复购/.test(snapshot.title)) ||
+       (names.some((name) => snapshot.assets.some((asset) => asset.name === name)) &&
+        !/会员复购/.test(snapshot.title) && !member))
+    ).map((snapshot) => ({
+      deliveryId: snapshot.id, rootRequestId: snapshot.rootRequestId,
+      title: snapshot.title, edition: snapshot.edition, deliveredAt: snapshot.deliveredAt,
+      provenance: snapshot.provenance, matchedAssets: snapshot.assets.filter((asset) => names.includes(asset.name)).map((asset) => asset.name),
+      reason: channel && /渠道/.test(snapshot.title) ? '需求提到渠道日报，匹配历史交付主线' :
+        member && /会员复购/.test(snapshot.title) ? '需求提到会员复购，匹配历史交付主线' : '需求提到已交付产物',
+    }));
+  }
+  function analyze(db, draft) {
+    const title = draft.title.trim(), description = draft.description.trim();
+    if (!title || !description) throw Error('请填写需求名称和业务目标');
+    if (draft.mode === 'meego' && !db.meegoBinding) throw Error('请先绑定 Meego 演示空间');
+    const source = draft.mode === 'meego'
+      ? (draft.source?.mode === 'simulated' && draft.source.itemId === fixture.itemId ? draft.source : manualSource(db, draft))
+      : null;
+    if (draft.mode === 'meego' && !source) throw Error('请选择演示需求，或填写 Meego 链接与需求原文');
+    const text = `${title}\n${description}`;
+    const matched = candidates(db, text);
+    const selectedDeliveryId = matched.length === 1 ? matched[0].deliveryId :
+      matched.some((candidate) => candidate.deliveryId === draft.selectedDeliveryId) ? draft.selectedDeliveryId : null;
+    const snapshot = selectedDeliveryId && AideKnowledge.find(db, selectedDeliveryId);
+    let change = snapshot ? AideKnowledge.analyzeChange(snapshot, text) : null;
+    const requestedDays = Number(text.match(/(?:历史|最近|保留)\s*(\d+)\s*天/)?.[1] || 0);
+    const unsupportedScope = text.split(/[，。；;\n]/).some((clause) =>
+      /(?:未知|新的|其他|自定义).{0,8}口径/.test(clause) ||
+      (/(?:增加|新增|修改|调整|改为).{0,12}口径/.test(clause) &&
+       !/改为订单日|改为退款发生日/.test(clause) && !/增加店铺维度|新增店铺维度/.test(clause)));
+    const conflicts = snapshot ? [
+      unsupportedScope ? '需求还包含演示未支持的新口径' : '',
+      /订单日/.test(text) && snapshot.definitions.refundBasis !== 'order' ? '需求提出按订单日统计，与已交付退款发生日口径冲突' : '',
+      /退款发生日/.test(text) && snapshot.definitions.refundBasis !== 'refund' ? '需求提出按退款发生日统计，与历史口径冲突' : '',
+      requestedDays && requestedDays !== snapshot.definitions.historyDays ? `需求提出最近 ${requestedDays} 天，与历史 ${snapshot.definitions.historyDays} 天范围冲突` : '',
+    ].filter(Boolean) : [];
+    if (change?.supported && conflicts.length)
+      change = { supported: false, reason: `${conflicts.join('；')}。需人工确认后才能生成方案。` };
+    const pending = snapshot ? (change.supported
+      ? ['确认店铺标识 shop_id 与新粒度“统计日期 × 渠道 × 店铺”', '新版本的数据测试、发布授权与模拟首跑需重新完成']
+      : [change.reason, '需要人工确认具体实现范围；演示不会生成未支持的方案'])
+      : ['未找到可引用的交付说明书', '需要人工确认表、任务、粒度和口径后再进入开发'];
+    draft.analysis = {
+      kind: matched.length > 1 && !selectedDeliveryId ? 'ambiguous' : snapshot ? 'matched' : 'none',
+      title, description, source: source ? structuredClone(source) : null, mode: draft.mode, meegoUrl: draft.meegoUrl.trim(),
+      candidates: matched, selectedDeliveryId,
+      change, pending, analyzedAt: Date.now(),
+    };
+    return draft.analysis;
+  }
+  function create(db, draft, actor) {
+    const analysis = draft.analysis;
+    if (!analysis || analysis.title !== draft.title.trim() || analysis.description !== draft.description.trim() ||
+        analysis.mode !== draft.mode || analysis.meegoUrl !== draft.meegoUrl.trim() ||
+        (draft.mode === 'meego' && analysis.source?.mode === 'simulated' &&
+         JSON.stringify(analysis.source) !== JSON.stringify(draft.source)))
+      throw Error('需求原文已变化，请重新分析');
+    if (analysis.kind === 'ambiguous') throw Error('发现多条交付主线，请先选择一条并重新分析');
+    const source = analysis.source;
+    if (source) {
+      const existing = db.requests.find((request) =>
+        sourceKey(request.requestSource) === sourceKey(source) ||
+        request.linkedSources?.some((item) => sourceKey(item) === sourceKey(source)));
+      if (existing) return existing;
+    }
+    const snapshot = analysis.selectedDeliveryId && AideKnowledge.find(db, analysis.selectedDeliveryId);
+    if (snapshot && AideKnowledge.latest(db, snapshot.rootRequestId)?.id !== snapshot.id)
+      throw Error('引用的交付说明书已有更新版本，请重新分析需求');
+    let next;
+    if (snapshot && analysis.change?.supported) {
+      const existingIds = new Set(db.requests.map((request) => request.id));
+      next = AideKnowledge.createChange(db, snapshot, analysis.change, actor);
+      if (!existingIds.has(next.id)) next.scenario = draft.scenario;
+      if (source && next.requestSource && sourceKey(next.requestSource) !== sourceKey(source))
+        (next.linkedSources ||= []).push(structuredClone(source));
+      else if (source) next.requestSource = structuredClone(source);
+    } else {
+      next = Aide.createRequest(analysis.title, actor, draft.scenario);
+      next.description = analysis.description;
+      next.pendingManualScope = true;
+      next.paused = true;
+      next.nodes[0].messages = [{ author: 'Aide', text: '本地演示分析未找到可执行的已支持方案。请人工确认表、任务、口径和粒度；此需求尚未进入开发。', at: Date.now(), id: `scope-${next.id}` }];
+      next.intakeContext = snapshot ? {
+        baseDeliveryId: snapshot.id, baseEdition: snapshot.edition,
+        reason: analysis.change?.reason || '需要人工澄清',
+      } : null;
+      if (source) next.requestSource = structuredClone(source);
+      db.requests.unshift(next);
+    }
+    return next;
+  }
+  return { fixture, emptyDraft, sourceKey, bind, chooseFixture, chooseDirectFixture, candidates, analyze, create };
+})();
+var AideIntakeUI = (() => {
+  const e = Aide.escape;
+  function sourceCard(source) {
+    if (!source) return '';
+    return `<section class="intake-card" id="intake-source-card"><div class="eyebrow">需求来源 · 飞书项目（Meego）工作项</div><h3>${e(source.title)}</h3><p class="tiny muted">工作项 ${e(source.itemId)} · ${source.mode === 'manual' ? '本地关联项目：' : ''}${e(source.project)} · ${source.mode === 'simulated' ? '固定虚构样例' : '手动录入，未读取链接内容'}</p>${source.requester ? `<p class="tiny muted">提出人：${e(source.requester)} · 工作项状态：${e(source.status)}</p>` : ''}<p>${e(source.body || '')}</p><p class="tiny muted">本地状态：待回写（未接入）</p></section>`;
+  }
+  function resultCard(db, draft) {
+    const analysis = draft.analysis;
+    if (!analysis) return '';
+    const snapshot = analysis.selectedDeliveryId && AideKnowledge.find(db, analysis.selectedDeliveryId);
+    const candidates = analysis.candidates.map((candidate) =>
+      `<button type="button" class="intake-candidate ${candidate.deliveryId === snapshot?.id ? 'active' : ''}" data-action="intake-select-delivery" data-id="${e(candidate.deliveryId)}"><strong>${e(candidate.title)} · V${candidate.edition}</strong><small>${e(candidate.reason)} · ${new Date(candidate.deliveredAt).toLocaleDateString('zh-CN')} · ${candidate.provenance === 'historical-demo' ? '历史演示归档' : '模拟交付沉淀'}</small><small>命中产物：${e(candidate.matchedAssets.join('、') || '业务场景')}</small></button>`
+    ).join('');
+    return `<section class="intake-card" id="intake-analysis" aria-live="polite"><div class="eyebrow">本地演示分析 · 自动检索交付知识</div><h3>${analysis.kind === 'ambiguous' ? '发现多条可能的交付主线' : snapshot ? '找到可引用的最新交付' : '没有匹配的历史交付'}</h3>${candidates ? `<div class="intake-candidates">${candidates}</div>` : '<p class="tiny muted">未识别到已归档的相关表、任务或业务主线。</p>'}${snapshot ? `<div class="intake-inherited"><strong>从交付说明书 V${snapshot.edition} 继承</strong><p>退款口径：${snapshot.definitions.refundBasis === 'refund' ? '退款发生日' : snapshot.definitions.refundBasis === 'order' ? '订单日' : '历史记录缺失，待确认'}；历史范围：${snapshot.definitions.historyDays} 天；当前粒度：${e(snapshot.definitions.grain)}。</p><p class="tiny muted">交付快照 ${e(snapshot.id)} · ${new Date(snapshot.deliveredAt).toLocaleString('zh-CN')} · ${snapshot.provenance === 'historical-demo' ? '虚构历史样例' : '模拟首跑验收'}</p></div>` : ''}<strong>待确认</strong><ul>${analysis.pending.map((item) => `<li>${e(item)}</li>`).join('')}</ul>${analysis.kind === 'ambiguous' ? '<p class="tiny muted">请选定一条主线，然后重新分析。不会自动合并不同主线。</p>' : ''}</section>`;
+  }
+  function drawer(db, ui) {
+    const draft = ui.intakeDraft ||= AideIntake.emptyDraft();
+    const meego = draft.mode === 'meego';
+    return `<div class="intake-mode" role="group" aria-label="需求来源"><button type="button" class="${!meego ? 'active' : ''}" data-action="intake-mode" data-id="direct">直接提出需求</button><button type="button" class="${meego ? 'active' : ''}" data-action="intake-mode" data-id="meego">从 Meego 发起</button></div>${meego ? `<section class="intake-card"><div class="eyebrow">飞书项目（Meego）· 模拟连接</div>${db.meegoBinding ? `<p>已绑定：${e(db.meegoBinding.workspace)} / ${e(db.meegoBinding.project)}</p><button type="button" data-action="intake-fixture">使用演示工作项 · ${e(AideIntake.fixture.itemId)}</button><p class="tiny muted">也可粘贴官方项目链接并自行填写原文；不会读取链接内容。<a href="https://project.feishu.cn/b/helpcenter/1ykiuvvj/4ek1avnv" target="_blank" rel="noopener noreferrer">了解飞书项目 ↗</a></p>` : '<p>演示绑定只选择固定虚构空间和项目，无登录、凭证或外部 API。</p><button type="button" data-action="meego-bind">绑定 Meego（演示）</button>'}</section>` : '<button type="button" class="text-button tiny" data-action="intake-direct-fixture">填入演示需求（含历史样例）</button>'}<form id="intake-form"><label for="intake-title">需求名称</label><input id="intake-title" name="title" value="${e(draft.title)}" required maxlength="80" placeholder="例如：渠道日报增加店铺维度"/><label for="intake-description">业务需求原文</label><textarea id="intake-description" name="description" required placeholder="描述目标、涉及的表或任务、口径与待确认项">${e(draft.description)}</textarea>${meego ? `<label for="intake-meego-url">Meego 工作项链接 · 手动录入可选</label><input id="intake-meego-url" name="meegoUrl" inputmode="url" value="${e(draft.meegoUrl)}" placeholder="https://project.feishu.cn/…"/><p class="tiny muted">未读取链接内容，请补充需求描述。仅验证官方项目域名；不请求网络。</p>` : ''}<label for="intake-scenario">演示场景</label><select id="intake-scenario" name="scenario"><option value="happy" ${draft.scenario === 'happy' ? 'selected' : ''}>顺畅交付</option><option value="refund-failure" ${draft.scenario === 'refund-failure' ? 'selected' : ''}>退款核对失败 → 修复重测</option><option value="publish-failure" ${draft.scenario === 'publish-failure' ? 'selected' : ''}>首跑失败 → 重新授权发布</option></select><div class="drawer-footer"><button type="submit" class="primary">读取需求并分析</button><button type="button" data-action="close-drawer">取消</button></div><p class="error-text" id="form-error"></p></form>${meego ? sourceCard(draft.analysis?.source || draft.source) : ''}${resultCard(db, draft)}${draft.analysis?.kind !== 'ambiguous' && draft.analysis ? '<div class="drawer-footer"><button type="button" class="primary" data-action="intake-confirm">确认上下文并创建需求</button></div>' : ''}`;
+  }
+  function sourceBanner(request) {
+    const source = request.requestSource;
+    if (!source) return '';
+    return `<section class="panel intake-detail-source"><div class="eyebrow">需求来源 · 飞书项目（Meego）工作项</div><h2>${e(source.title)}</h2><p class="tiny muted">${e(source.project)} · ${e(source.itemId)} · ${source.mode === 'simulated' ? '虚构演示工作项' : '手动录入，未读取链接内容'} · 待回写（未接入）</p><details><summary>查看工作项需求原文</summary><p>${e(source.body || request.description)}</p></details>${(request.linkedSources || []).map((linked) => `<p class="tiny muted">关联工作项 ${e(linked.project)} / ${e(linked.itemId)} · ${e(linked.title)}</p>`).join('')}</section>`;
+  }
+  function input(target, ui) {
+    const key = ({ 'intake-title': 'title', 'intake-description': 'description', 'intake-meego-url': 'meegoUrl', 'intake-scenario': 'scenario' })[target.id];
+    if (!key) return false;
+    const draft = ui.intakeDraft ||= AideIntake.emptyDraft();
+    draft[key] = target.value;
+    if (key === 'meegoUrl' && draft.source?.mode === 'simulated') draft.source = null;
+    draft.analysis = null;
+    return true;
+  }
+  function handle(action, id, db, ui, helpers) {
+    const draft = ui.intakeDraft ||= AideIntake.emptyDraft();
+    if (action === 'intake-mode') {
+      draft.mode = id;
+      draft.analysis = null;
+      return true;
+    }
+    if (action === 'meego-bind') {
+      AideIntake.bind(db);
+      helpers.toast('已绑定固定虚构项目；未连接真实 Meego');
+      return true;
+    }
+    if (action === 'intake-fixture') {
+      AideIntake.chooseFixture(db, draft);
+      return true;
+    }
+    if (action === 'intake-direct-fixture') {
+      AideIntake.chooseDirectFixture(db, draft);
+      return true;
+    }
+    if (action === 'intake-select-delivery') {
+      draft.selectedDeliveryId = id;
+      draft.analysis = null;
+      return true;
+    }
+    if (action === 'intake-confirm') {
+      const next = AideIntake.create(db, draft, db.member);
+      ui.requestId = next.id;
+      ui.nodeId = 'understand';
+      ui.artifactTab = 'sql';
+      ui.drawer = null;
+      helpers.toast(next.pendingManualScope ? '已保存待澄清需求；未生成开发方案' : '已创建关联变更需求，请确认新粒度');
+      return true;
+    }
+    return false;
+  }
+  return { drawer, sourceBanner, input, handle };
+})();
+</script>
+
     <script>
 var AidePersonalData = (() => {
   const day = 86400000;
@@ -3886,7 +4149,9 @@ Object.assign(
     function detail(db, ui) {
       const request = db.requests.find((r) => r.id === ui.requestId),
         node = Aide.get(request, ui.nodeId);
-      return `<main class="page detail-page"><div class="flex between" style="margin-bottom:20px"><button class="text-button tiny" data-action="nav" data-id="overview">${icon('back')} 返回工作台</button><div class="flex"><button class="text-button tiny" data-action="records">${icon('clock')} 执行记录</button>${!request.deliveredAt ? `<button class="text-button tiny" data-action="pause">${request.paused ? '继续' : '暂停'}执行</button>` : ''}</div></div><div class="detail-title"><div class="flex between"><h1>${e(request.title)}</h1>${pill(Aide.status(request, db.member))}</div><p class="subtitle">${e(request.description)}</p><div class="detail-meta"><span>${avatar(request.owner)} 需求负责人 ${request.owner}</span><span>需求 R${request.version} · 流程 F${request.flowVersion}</span><span>必需任务 ${request.nodes.filter((n) => n.status === 'done').length} / ${request.nodes.length}</span><span>电商数据项目</span></div></div>${AideKnowledgeUI.contextBanner(db, request)}<section class="dag-panel"><div class="dag-area"><div class="dag-toolbar"><div class="flex"><h3>交付流程</h3><span class="tiny muted">可组合 DAG</span></div><div class="flex"><button class="text-button tiny" data-action="expand">${ui.expanded ? '收起编排' : '展开编排'}</button><button class="text-button tiny" data-action="flow" ${request.deliveredAt ? 'disabled' : ''}>${icon('settings')} 编辑流程</button></div></div><div class="dag-legend">${[
+      if (request.pendingManualScope)
+        return `<main class="page detail-page"><button class="text-button tiny" data-action="nav" data-id="overview">← 返回工作台</button><div class="detail-title"><h1>${e(request.title)}</h1><p class="subtitle">${e(request.description)}</p><span class="pill">待澄清</span></div>${AideIntakeUI.sourceBanner(request)}<section class="panel intake-card"><h2>范围待人工确认</h2><p>本地演示未找到可执行的已支持方案。需确认业务表、调度任务、统计口径与粒度；此需求尚未进入开发，不展示渠道日报 SQL。</p>${request.intakeContext ? `<p class="tiny muted">参考交付快照 ${e(request.intakeContext.baseDeliveryId)} · V${request.intakeContext.baseEdition}；${e(request.intakeContext.reason)}</p>` : ''}</section></main>`;
+      return `<main class="page detail-page"><div class="flex between" style="margin-bottom:20px"><button class="text-button tiny" data-action="nav" data-id="overview">${icon('back')} 返回工作台</button><div class="flex"><button class="text-button tiny" data-action="records">${icon('clock')} 执行记录</button>${!request.deliveredAt ? `<button class="text-button tiny" data-action="pause">${request.paused ? '继续' : '暂停'}执行</button>` : ''}</div></div><div class="detail-title"><div class="flex between"><h1>${e(request.title)}</h1>${pill(Aide.status(request, db.member))}</div><p class="subtitle">${e(request.description)}</p><div class="detail-meta"><span>${avatar(request.owner)} 需求负责人 ${request.owner}</span><span>需求 R${request.version} · 流程 F${request.flowVersion}</span><span>必需任务 ${request.nodes.filter((n) => n.status === 'done').length} / ${request.nodes.length}</span><span>电商数据项目</span></div></div>${AideIntakeUI.sourceBanner(request)}${AideKnowledgeUI.contextBanner(db, request)}<section class="dag-panel"><div class="dag-area"><div class="dag-toolbar"><div class="flex"><h3>交付流程</h3><span class="tiny muted">可组合 DAG</span></div><div class="flex"><button class="text-button tiny" data-action="expand">${ui.expanded ? '收起编排' : '展开编排'}</button><button class="text-button tiny" data-action="flow" ${request.deliveredAt ? 'disabled' : ''}>${icon('settings')} 编辑流程</button></div></div><div class="dag-legend">${[
         ['未开始', '#c7cdd9'],
         ['等待人工', '#b3c9ef'],
         ['执行中', '#eac86f'],
@@ -4007,8 +4272,7 @@ var AideController = (() => {
     const close =
       '<button class="text-button" data-action="close-drawer" aria-label="关闭">×</button>';
     let body = '';
-    if (ui.drawer === 'create')
-      body = `<form id="create-form"><label for="request-title">需求名称</label><input id="request-title" name="title" value="渠道交易日报建设" required maxlength="80"/><label for="request-description">业务需求</label><textarea id="request-description" name="description" required>每天 09:00 前获得各渠道支付金额和退款金额，交付订单明细表、渠道日报与每日调度任务。退款按发生日统计，保留最近30天。</textarea><label for="scenario">演示场景</label><select id="scenario" name="scenario"><option value="happy">顺畅交付</option><option value="refund-failure">退款核对失败 → 修复重测</option><option value="publish-failure">首跑失败 → 重新授权发布</option></select><p class="notice">创建后进入需求理解，同一份需求贯穿全部阶段。新节点默认由当前成员负责。</p><div class="drawer-footer"><button type="submit" class="primary">提取需求并创建</button><button type="button" data-action="close-drawer">取消</button></div><p class="error-text" id="form-error"></p></form>`;
+    if (ui.drawer === 'create') body = AideIntakeUI.drawer(db, ui);
     if (ui.drawer === 'transfer')
       body = `<form id="transfer-form"><label>目标负责人</label><select name="target">${Aide.members
         .filter((member) => member !== node.owner)
@@ -4045,6 +4309,7 @@ var AideController = (() => {
     return `<div class="overlay"><section class="drawer" role="dialog" aria-modal="true" aria-label="${title}"><div class="flex between"><h2>${title}</h2>${close}</div><p class="subtitle">${subtitle}</p>${body}</section></div>`;
   }
   function handle(action, id, db, ui, helpers, button) {
+    if (AideIntakeUI.handle(action, id, db, ui, helpers)) return;
     const request = db.requests.find((r) => r.id === ui.requestId),
       node = request && Aide.get(request, ui.nodeId);
     const member = db.member;
@@ -4063,7 +4328,10 @@ var AideController = (() => {
       ui.filter = '';
       ui.search = '';
     }
-    if (action === 'create') ui.drawer = 'create';
+    if (action === 'create') {
+      ui.intakeDraft = AideIntake.emptyDraft();
+      ui.drawer = 'create';
+    }
     if (action === 'open') {
       if (!helpers.leaveEditor()) return;
       ui.requestId = id;
@@ -4221,6 +4489,15 @@ var AideController = (() => {
   function submit(form, db, ui) {
     const data = new FormData(form),
       request = db.requests.find((r) => r.id === ui.requestId);
+    if (form.id === 'intake-form') {
+      const draft = ui.intakeDraft ||= AideIntake.emptyDraft();
+      draft.title = String(data.get('title') || '');
+      draft.description = String(data.get('description') || '');
+      draft.meegoUrl = String(data.get('meegoUrl') || '');
+      draft.scenario = String(data.get('scenario') || 'happy');
+      AideIntake.analyze(db, draft);
+      return;
+    }
     if (form.id === 'create-form') {
       const title = String(data.get('title') || '').trim(),
         description = String(data.get('description') || '').trim();
@@ -4372,6 +4649,7 @@ var AideKnowledgeUI = (() => {
     knowledgeAsset: '',
     changeText: '',
     changePreview: null,
+    intakeDraft: null,
   };
   try {
     Object.assign(ui, JSON.parse(sessionStorage.getItem(`${storageKey}-view`) || '{}'), {
@@ -4527,6 +4805,10 @@ var AideKnowledgeUI = (() => {
   });
   app.addEventListener('input', (event) => {
     if (AidePersonalUI.input(event.target, ui)) return;
+    if (AideIntakeUI.input(event.target, ui)) {
+      save();
+      return;
+    }
     if (event.target.id === 'search') {
       ui.search = event.target.value;
       render();
@@ -4553,6 +4835,10 @@ var AideKnowledgeUI = (() => {
     }
   });
   app.addEventListener('change', (event) => {
+    if (AideIntakeUI.input(event.target, ui)) {
+      save();
+      return;
+    }
     if (event.target.id === 'personal-file') {
       AidePersonalUI.importFile(event.target.files[0], ui, { toast, render });
       return;
