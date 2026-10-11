@@ -1759,6 +1759,24 @@ tbody tr:last-child td {
   }
 }
 
+.knowledge-page .knowledge-toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:18px 0; }
+.knowledge-page .knowledge-toolbar input { min-width:260px; flex:1; }
+.knowledge-page .knowledge-toolbar input, .knowledge-page .knowledge-toolbar select, .knowledge-page .knowledge-change textarea { font:inherit; padding:10px 12px; border:1px solid #e1e5ed; border-radius:8px; background:white; color:inherit; }
+.knowledge-page .knowledge-toolbar input:focus, .knowledge-page .knowledge-toolbar select:focus, .knowledge-page .knowledge-change textarea:focus { outline:none; border-color:#6873dd; box-shadow:0 0 0 3px #e9ebff; }
+.knowledge-page .knowledge-toolbar select { max-width:100%; }
+.knowledge-page .knowledge-grid { display:grid; grid-template-columns:minmax(270px, .8fr) minmax(0, 1.7fr); gap:18px; align-items:start; }
+.knowledge-page .knowledge-card { width:100%; text-align:left; display:block; border:1px solid #e5e9f2; border-radius:10px; padding:14px; margin-bottom:10px; background:white; color:inherit; }
+.knowledge-page .knowledge-card.active { border-color:#6873dd; box-shadow:0 0 0 2px #e9ebff; }
+.knowledge-page .knowledge-card strong, .knowledge-page .knowledge-card small { display:block; }
+.knowledge-page .knowledge-card small { color:#7a8292; margin-top:5px; }
+.knowledge-page .knowledge-doc h3 { margin:16px 0 8px; }
+.knowledge-page .knowledge-doc pre { max-height:250px; overflow:auto; white-space:pre-wrap; background:#f7f8fc; border:1px solid #e8ebf3; padding:12px; border-radius:8px; font-size:11px; }
+.knowledge-page .knowledge-asset-list { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.knowledge-page .knowledge-asset-list button { border:1px solid #e1e5ed; border-radius:6px; padding:6px 9px; }
+.knowledge-page .knowledge-change textarea { width:100%; min-height:76px; }
+.knowledge-page .knowledge-change { margin-top:16px; }
+.knowledge-page .knowledge-change .toolbar { display:flex; gap:10px; margin-top:10px; }
+@media(max-width:850px) { .knowledge-page .knowledge-grid { grid-template-columns:1fr; } }
 </style>
   </head>
   <body>
@@ -2066,6 +2084,187 @@ Object.assign(
 
 </script>
     <script>
+var AideKnowledge = (() => {
+  const assets = [
+    { id: 'table:dwd_order_detail_di', name: 'dwd_order_detail_di', type: '数据表', nodeId: 'orders' },
+    { id: 'table:dwd_refund_detail_di', name: 'dwd_refund_detail_di', type: '数据表', nodeId: 'refunds' },
+    { id: 'table:ads_channel_trade_di', name: 'ads_channel_trade_di', type: '数据表', nodeId: 'daily' },
+    { id: 'task:channel_trade_daily', name: 'channel_trade_daily', type: '调度任务', nodeId: 'schedule' },
+  ];
+  function archive(request, provenance = 'accepted') {
+    if (!request.deliveredAt || request.deliverySnapshot) return request.deliverySnapshot || null;
+    const report = Aide.report(request);
+    const snapshot = {
+      id: `delivery:${request.id}:${request.deliveredAt}`,
+      requestId: request.id,
+      rootRequestId: request.rootRequestId || request.id,
+      baseDeliveryId: request.baseDeliveryId || null,
+      edition: request.edition || 1,
+      title: request.title,
+      owner: request.owner,
+      deliveredAt: request.deliveredAt,
+      provenance,
+      businessGoal: request.description,
+      definitions: {
+        refundBasis: request.refundBasis,
+        historyDays: request.historyDays,
+        grain: `统计日期 × 渠道${request.dimension ? ' × 店铺' : ''}`,
+        shopDimension: Boolean(request.dimension),
+        acceptance: '金额核对、粒度与空值检查、来源依赖、模拟首跑按时完成',
+      },
+      versionMap: Object.fromEntries(request.nodes.map((node) => [node.id, node.version])),
+      nodeNames: Object.fromEntries(request.nodes.map((node) => [node.id, node.name])),
+      nodeOwnership: Object.fromEntries(request.nodes.map((node) => [node.id, node.owner])),
+      reviews: request.nodes.flatMap((node) => [...node.reviewHistory, ...node.reviews]
+        .map((review) => ({ nodeId: node.id, ...structuredClone(review) }))),
+      flowVersion: request.flowVersion,
+      assets: assets.map((asset) => ({ ...asset, version: Aide.get(request, asset.nodeId).version })),
+      sql: Object.fromEntries(assets.map((asset) => {
+        const node = Aide.get(request, asset.nodeId);
+        const resolved = node.customSql || (asset.nodeId === 'daily' && !request.refundBasis
+          ? '历史记录缺失退款口径，无法还原这份日报的已接受 SQL。'
+          : Aide.sql(request, asset.nodeId));
+        return [asset.id, resolved];
+      })),
+      report: structuredClone(report),
+      evidence: request.events.map((record) => ({ ...record })),
+      sourceRefs: ['ods_orders', 'ods_refunds', '固定虚构订单与退款样本'],
+      change: request.changeContext ? structuredClone(request.changeContext) : null,
+    };
+    request.deliverySnapshot = snapshot;
+    return snapshot;
+  }
+  function migrate(db) {
+    let changed = false;
+    for (const request of db.requests) {
+      if (request.deliveredAt && !request.deliverySnapshot) {
+        archive(request, 'historical-demo');
+        changed = true;
+      }
+    }
+    return changed;
+  }
+  function all(db) {
+    return db.requests.map((request) => request.deliverySnapshot).filter(Boolean)
+      .sort((a, b) => b.deliveredAt - a.deliveredAt);
+  }
+  function find(db, id) {
+    return all(db).find((snapshot) => snapshot.id === id) || null;
+  }
+  function latest(db, rootRequestId) {
+    return all(db).filter((snapshot) => snapshot.rootRequestId === rootRequestId)
+      .sort((a, b) => b.edition - a.edition || b.deliveredAt - a.deliveredAt)[0] || null;
+  }
+  function lookup(db, query = '', assetId = '') {
+    const term = query.trim().toLowerCase();
+    return all(db).filter((snapshot) =>
+      (!assetId || snapshot.assets.some((asset) => asset.id === assetId)) &&
+      (!term || [snapshot.title, snapshot.businessGoal, ...snapshot.assets.map((asset) => asset.name)]
+        .some((part) => part.toLowerCase().includes(term))));
+  }
+  function analyzeChange(snapshot, input) {
+    const text = input.trim();
+    if (!text) return { supported: false, reason: '请描述要调整的业务口径或维度。' };
+    if (/(?:删除|移除|去掉|不要|不增加|不新增|不添加|取消|减少)/.test(text) ||
+        !/(?:增加|新增|添加)店铺维度/.test(text))
+      return { supported: false, reason: '当前演示仅支持“渠道日报增加店铺维度”。其他变更需要人工澄清，尚未生成方案。' };
+    if (snapshot.definitions.shopDimension)
+      return { supported: false, reason: '所选版本已包含店铺维度，请检查最新交付或描述其他变更。' };
+    return {
+      supported: true,
+      kind: 'shop-dimension',
+      text,
+      affectedNodes: ['understand', 'plan', 'daily', 'test', 'publish'],
+      confirmation: '需确认店铺标识与日报粒度；新版本仍要经过数据测试、负责人发布授权与模拟首跑。',
+    };
+  }
+  function createChange(db, snapshot, analysis, actor) {
+    if (!snapshot || !analysis.supported) throw Error('请先选择交付版本并预览支持的变更');
+    if (latest(db, snapshot.rootRequestId)?.id !== snapshot.id)
+      throw Error('所选交付已有更新版本，请切换到最新交付后再创建变更');
+    const existing = db.requests.find((request) => !request.deliveredAt &&
+      request.baseDeliveryId === snapshot.id && request.changeContext?.kind === analysis.kind);
+    if (existing) return existing;
+    const next = Aide.createRequest(`${snapshot.title.replace(/ · 上线后变更.*/, '')} · 上线后变更`, actor);
+    next.description = `${snapshot.businessGoal}\n上线后变更：${analysis.text}`;
+    next.refundBasis = snapshot.definitions.refundBasis;
+    next.historyDays = snapshot.definitions.historyDays;
+    next.dimension = true;
+    next.rootRequestId = snapshot.rootRequestId;
+    next.baseDeliveryId = snapshot.id;
+    next.edition = snapshot.edition + 1;
+    next.changeContext = {
+      kind: analysis.kind,
+      text: analysis.text,
+      baseDeliveryId: snapshot.id,
+      baseEdition: snapshot.edition,
+      baseAcceptedAt: snapshot.deliveredAt,
+      sourceRefs: [...snapshot.sourceRefs, ...snapshot.assets.map((asset) => asset.name)],
+      affectedNodes: [...analysis.affectedNodes],
+      confirmation: analysis.confirmation,
+    };
+    next.nodes[0].messages.push({ author: 'Aide', text: `引用已交付说明书 V${snapshot.edition}：${analysis.confirmation}`, at: Date.now(), id: `context-${next.id}` });
+    db.requests.unshift(next);
+    return next;
+  }
+  function ensureDemo(db) {
+    let request = db.requests.find((entry) => entry.knowledgeDemoFixture);
+    if (!request) {
+      request = Aide.createRequest('渠道交易日报 · 历史演示交付');
+      request.knowledgeDemoFixture = true;
+      request.refundBasis = 'refund';
+      request.createdAt = Date.now() - 3 * 86400000;
+      request.deliveredAt = Date.now() - 2 * 86400000;
+      request.nodes.forEach((node) => {
+        node.status = 'done';
+        node.startedAt = request.createdAt;
+        node.endedAt = request.deliveredAt;
+        node.closed = true;
+      });
+      request.events.push({ node: 'publish', type: 'historical-demo', text: '历史演示交付数据，用于体验上线后变更；不代表本次模拟首跑。', actor: 'Aide', at: request.deliveredAt, version: 1 });
+      db.requests.unshift(request);
+    }
+    return archive(request, 'historical-demo');
+  }
+  function markdown(snapshot) {
+    const lines = [
+      `# ${snapshot.title} · 交付说明书 V${snapshot.edition}`,
+      `- 快照 ID：${snapshot.id}`,
+      `- 来源需求 ID：${snapshot.requestId}`,
+      `- 需求主线 ID：${snapshot.rootRequestId}`,
+      `- 前版快照 ID：${snapshot.baseDeliveryId || '无'}`,
+      `- 交付时间：${new Date(snapshot.deliveredAt).toISOString()}`,
+      `- 负责人：${snapshot.owner}`,
+      `- 来源类型：${snapshot.provenance === 'accepted' ? '模拟首跑验收沉淀' : '历史演示归档'}`,
+      '', '## 业务目标与验收', snapshot.businessGoal,
+      `- 统计粒度：${snapshot.definitions.grain}`,
+      `- 退款口径：${snapshot.definitions.refundBasis === 'refund' ? '退款发生日' : snapshot.definitions.refundBasis === 'order' ? '订单日' : '历史记录缺失，待确认'}`,
+      `- 历史范围：${snapshot.definitions.historyDays} 天`,
+      `- 验收：${snapshot.definitions.acceptance}`,
+      `- 流程版本：F${snapshot.flowVersion}`,
+      `- 来源：${snapshot.sourceRefs.join('、')}`,
+      '', '## 节点版本与负责人',
+      ...Object.entries(snapshot.versionMap).map(([id, version]) => `- ${snapshot.nodeNames?.[id] || id} (${id})：V${version}，${snapshot.nodeOwnership?.[id] || snapshot.owner}`),
+      '', '## 上线后变更',
+      snapshot.change ? `- 原因：${snapshot.change.text}\n- 基于：${snapshot.change.baseDeliveryId} (V${snapshot.change.baseEdition})\n- 受影响节点：${snapshot.change.affectedNodes.join('、')}\n- 待确认：${snapshot.change.confirmation}` : '首版交付，无前版变更。',
+      '', '## 产物与 SQL / 调度配置',
+      ...snapshot.assets.flatMap((asset) => [`### ${asset.type} ${asset.name} · V${asset.version}`, `稳定引用：${asset.id}`, '~~~~sql', snapshot.sql[asset.id], '~~~~']),
+      '', '## 样本检查',
+      ...snapshot.report.checks.map((check) => `- ${check.name}：${check.passed ? '通过' : '失败'}；预期 ${check.expected}；实际 ${check.actual}`),
+      `- 样本支付：${snapshot.report.payment} 分；样本退款：${snapshot.report.refund} 分`,
+      '', '## 确认与评审',
+      ...(snapshot.reviews?.length ? snapshot.reviews.map((review) => `- ${review.nodeId} V${review.version}：${review.reviewer} ${review.status}${review.opinion ? `；${review.opinion}` : ''}`) : ['- 无正式评审记录']),
+      '', '## 关键执行事件',
+      ...(snapshot.evidence.length ? snapshot.evidence.map((record) => `- ${new Date(record.at).toISOString()} · ${record.node} V${record.version} · ${record.actor}：${record.text}`) : ['- 无事件记录；历史演示归档不证明本次首跑。']),
+      '', '本说明书来自本地虚构演示。发布与首跑均为模拟；固定样本检查不执行自定义 SQL，也不连接 Hive 或 Dorado。',
+    ];
+    return lines.join('\n');
+  }
+  return { assets, archive, migrate, all, find, latest, lookup, analyzeChange, createChange, ensureDemo, markdown };
+})();
+
+</script>
+    <script>
 Object.assign(
   Aide,
   (() => {
@@ -2154,6 +2353,7 @@ Object.assign(
           request.nodes.forEach((n) => {
             n.closed = true;
           });
+          AideKnowledge.archive(request);
           continue;
         }
         if (node.id === 'test' && Aide.report(request).checks.some((c) => !c.passed)) {
@@ -2493,6 +2693,7 @@ var AidePersonalData = (() => {
           version: 1,
         });
       }
+      if (r.deliveredAt) AideKnowledge.archive(r, 'historical-demo');
       db.requests.push(r);
     }
     return titles.length;
@@ -3246,6 +3447,7 @@ var AideUI = (() => {
       ['overview', 'grid', '总览'],
       ['all', 'list', '全部需求'],
       ['sessions', 'chat', '协作记录'],
+      ['knowledge', 'folder', '交付知识'],
     ]
       .map(
         ([id, glyph, name]) =>
@@ -3253,7 +3455,7 @@ var AideUI = (() => {
       )
       .join(
         '',
-      )}<div class="nav-label">CURRENT PROJECT</div><div class="project-card"><div class="flex">${icon('folder')}电商数据项目</div><p class="tiny muted" style="margin-top:8px">示例空间 · 北京时间</p></div><div class="side-footer"><div class="flex">${avatar('Aide')}<div><h3>Aide 助手</h3><p class="tiny muted">与你一起完成数据交付</p></div></div><p class="brand-note" style="margin-top:15px">让想法成为可靠的数据。</p></div></aside><div class="main"><header class="topbar"><div class="breadcrumb">工作空间 <span style="margin:0 11px">/</span><span>${ui.requestId ? '需求交付' : '数据开发工作台'}</span></div><div class="flex"><span class="pill">◉ 演示模式</span><span class="tiny muted">待办 ${count}</span><span class="muted">│</span>${avatar(db.member)}<select class="member-select" id="member" aria-label="切换演示成员">${Aide.members.map((name) => `<option ${name === db.member ? 'selected' : ''}>${name}</option>`).join('')}</select></div></header>${content}</div></div>`;
+      )}<div class="nav-label">CURRENT PROJECT</div><div class="project-card"><div class="flex">${icon('folder')}电商数据项目</div><p class="tiny muted" style="margin-top:8px">示例空间 · 北京时间</p></div><div class="side-footer"><div class="flex">${avatar('Aide')}<div><h3>Aide 助手</h3><p class="tiny muted">与你一起完成数据交付</p></div></div><p class="brand-note" style="margin-top:15px">让想法成为可靠的数据。</p><a class="tiny muted" href="./product-explainer.html">产品介绍 →</a></div></aside><div class="main"><header class="topbar"><div class="breadcrumb">工作空间 <span style="margin:0 11px">/</span><span>${ui.requestId ? '需求交付' : ui.tab === 'knowledge' ? '交付知识' : '数据开发工作台'}</span></div><div class="flex"><span class="pill">◉ 演示模式</span><span class="tiny muted">待办 ${count}</span><span class="muted">│</span>${avatar(db.member)}<select class="member-select" id="member" aria-label="切换演示成员">${Aide.members.map((name) => `<option ${name === db.member ? 'selected' : ''}>${name}</option>`).join('')}</select></div></header>${content}</div></div>`;
   }
   function filtered(db, ui) {
     return db.requests.filter((r) => {
@@ -3684,7 +3886,7 @@ Object.assign(
     function detail(db, ui) {
       const request = db.requests.find((r) => r.id === ui.requestId),
         node = Aide.get(request, ui.nodeId);
-      return `<main class="page detail-page"><div class="flex between" style="margin-bottom:20px"><button class="text-button tiny" data-action="nav" data-id="overview">${icon('back')} 返回工作台</button><div class="flex"><button class="text-button tiny" data-action="records">${icon('clock')} 执行记录</button>${!request.deliveredAt ? `<button class="text-button tiny" data-action="pause">${request.paused ? '继续' : '暂停'}执行</button>` : ''}</div></div><div class="detail-title"><div class="flex between"><h1>${e(request.title)}</h1>${pill(Aide.status(request, db.member))}</div><p class="subtitle">${e(request.description)}</p><div class="detail-meta"><span>${avatar(request.owner)} 需求负责人 ${request.owner}</span><span>需求 R${request.version} · 流程 F${request.flowVersion}</span><span>必需任务 ${request.nodes.filter((n) => n.status === 'done').length} / ${request.nodes.length}</span><span>电商数据项目</span></div></div><section class="dag-panel"><div class="dag-area"><div class="dag-toolbar"><div class="flex"><h3>交付流程</h3><span class="tiny muted">可组合 DAG</span></div><div class="flex"><button class="text-button tiny" data-action="expand">${ui.expanded ? '收起编排' : '展开编排'}</button><button class="text-button tiny" data-action="flow" ${request.deliveredAt ? 'disabled' : ''}>${icon('settings')} 编辑流程</button></div></div><div class="dag-legend">${[
+      return `<main class="page detail-page"><div class="flex between" style="margin-bottom:20px"><button class="text-button tiny" data-action="nav" data-id="overview">${icon('back')} 返回工作台</button><div class="flex"><button class="text-button tiny" data-action="records">${icon('clock')} 执行记录</button>${!request.deliveredAt ? `<button class="text-button tiny" data-action="pause">${request.paused ? '继续' : '暂停'}执行</button>` : ''}</div></div><div class="detail-title"><div class="flex between"><h1>${e(request.title)}</h1>${pill(Aide.status(request, db.member))}</div><p class="subtitle">${e(request.description)}</p><div class="detail-meta"><span>${avatar(request.owner)} 需求负责人 ${request.owner}</span><span>需求 R${request.version} · 流程 F${request.flowVersion}</span><span>必需任务 ${request.nodes.filter((n) => n.status === 'done').length} / ${request.nodes.length}</span><span>电商数据项目</span></div></div>${AideKnowledgeUI.contextBanner(db, request)}<section class="dag-panel"><div class="dag-area"><div class="dag-toolbar"><div class="flex"><h3>交付流程</h3><span class="tiny muted">可组合 DAG</span></div><div class="flex"><button class="text-button tiny" data-action="expand">${ui.expanded ? '收起编排' : '展开编排'}</button><button class="text-button tiny" data-action="flow" ${request.deliveredAt ? 'disabled' : ''}>${icon('settings')} 编辑流程</button></div></div><div class="dag-legend">${[
         ['未开始', '#c7cdd9'],
         ['等待人工', '#b3c9ef'],
         ['执行中', '#eac86f'],
@@ -4062,6 +4264,83 @@ var AideController = (() => {
 
 </script>
     <script>
+var AideKnowledgeUI = (() => {
+  const e = Aide.escape;
+  const date = (at) => new Date(at).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+  const provenance = (snapshot) => snapshot.provenance === 'accepted' ? '模拟首跑验收沉淀' : '历史演示归档';
+  function contextBanner(db, request) {
+    const base = request.baseDeliveryId && AideKnowledge.find(db, request.baseDeliveryId);
+    const current = request.deliverySnapshot;
+    if (!base && !current) return '';
+    return `<section class="panel" id="delivery-lineage" style="margin-bottom:16px"><div class="flex between"><div><h2>${current ? `交付说明书 V${current.edition} 已沉淀` : `基于已交付说明书 V${base.edition} 的上线后变更`}</h2><p class="tiny muted">${current ? `${provenance(current)} · ${date(current.deliveredAt)}` : `原交付 ${date(base.deliveredAt)} · ${e(request.changeContext?.text || '')}`}</p></div><button data-action="knowledge-view" data-id="${e(current?.id || base.id)}">查看${current ? '本版' : '原版'}说明书 →</button></div>${base ? `<p class="tiny muted">原版 ${e(base.title)} · V${base.edition} · ${e(base.definitions.grain)} · 退款${base.definitions.refundBasis === 'refund' ? '按发生日' : base.definitions.refundBasis === 'order' ? '按订单日' : '口径待确认'}；关联表 ads_channel_trade_di，任务 channel_trade_daily。</p>` : ''}${base && request.changeContext ? `<details><summary>查看引用的 V${base.edition} SQL 与调度配置</summary>${base.assets.map((asset) => `<div class="tiny muted">${e(asset.name)} · V${asset.version}</div><pre style="max-height:170px;overflow:auto;white-space:pre-wrap">${e(base.sql[asset.id])}</pre>`).join('')}</details>` : ''}${request.changeContext ? `<p class="tiny muted">待确认：${e(request.changeContext.confirmation)} · 受影响节点 ${request.changeContext.affectedNodes.join('、')}</p>` : ''}${current?.baseDeliveryId ? `<button data-action="knowledge-view" data-id="${e(current.baseDeliveryId)}">查看上一版 V${current.edition - 1}</button>` : ''}</section>`;
+  }
+  function page(db, ui) {
+    const found = AideKnowledge.lookup(db, ui.knowledgeQuery || '', ui.knowledgeAsset || '');
+    const candidate = AideKnowledge.find(db, ui.deliveryId);
+    const selected = found.some((snapshot) => snapshot.id === candidate?.id) ? candidate : null;
+    const latest = selected && AideKnowledge.latest(db, selected.rootRequestId);
+    const superseded = selected && latest.id !== selected.id;
+    const lineage = selected && AideKnowledge.all(db).filter((snapshot) => snapshot.rootRequestId === selected.rootRequestId)
+      .sort((a, b) => a.edition - b.edition);
+    const change = selected && AideKnowledge.analyzeChange(selected, ui.changeText || '');
+    const context = selected ? `<section class="panel knowledge-doc" id="knowledge-document"><div class="flex between"><div><div class="eyebrow">DELIVERY SPECIFICATION</div><h2>${e(selected.title)} · V${selected.edition}</h2><p class="tiny muted">${provenance(selected)} · ${date(selected.deliveredAt)} · 负责人 ${e(selected.owner)}</p></div><button class="text-button" data-action="knowledge-download">下载 Markdown</button></div>${superseded ? `<div class="notice">此说明书已被 V${latest.edition} 取代。旧版可查阅，发起新变更请先切换最新版本。<button data-action="knowledge-latest">查看最新 V${latest.edition}</button></div>` : ''}<h3>业务目标与口径</h3><p>${e(selected.businessGoal)}</p><table><tbody><tr><td>统计粒度</td><td>${e(selected.definitions.grain)}</td></tr><tr><td>退款归属</td><td>${selected.definitions.refundBasis === 'order' ? '订单日' : selected.definitions.refundBasis === 'refund' ? '退款发生日' : '历史记录缺失，待确认'}</td></tr><tr><td>历史范围</td><td>${selected.definitions.historyDays} 天</td></tr><tr><td>验收条件</td><td>${e(selected.definitions.acceptance)}</td></tr><tr><td>需求 / 流程版本</td><td>V${selected.edition} / F${selected.flowVersion}</td></tr></tbody></table><h3>数据表与调度任务</h3><div class="knowledge-asset-list">${selected.assets.map((asset) => `<button data-action="knowledge-asset" data-id="${asset.id}">${e(asset.type)} ${e(asset.name)} · V${asset.version}</button>`).join('')}</div><h3>版本与来源</h3><p class="tiny muted">来源：${selected.sourceRefs.map(e).join('、')} · 节点版本：${e(JSON.stringify(selected.versionMap))}</p>${selected.change ? `<div class="notice">本版变更：${e(selected.change.text)}<br>基于 V${selected.change.baseEdition} · ${date(selected.change.baseAcceptedAt)} · <button data-action="knowledge-select" data-id="${e(selected.baseDeliveryId)}">查看上一版说明书</button></div>` : ''}<div class="knowledge-asset-list">${lineage.map((snapshot) => `<button data-action="knowledge-select" data-id="${e(snapshot.id)}">V${snapshot.edition} · ${date(snapshot.deliveredAt)}</button>`).join('')}</div><h3>成果 SQL 与调度配置</h3>${selected.assets.map((asset) => `<details><summary>${e(asset.name)} · V${asset.version}</summary><pre>${e(selected.sql[asset.id])}</pre></details>`).join('')}<h3>样本验收证据</h3><p>支付 ${selected.report.payment.toLocaleString()} 分 · 退款 ${selected.report.refund.toLocaleString()} 分 · ${selected.report.checks.filter((check) => check.passed).length}/${selected.report.checks.length} 项样本检查通过</p><p class="tiny muted">测试基于固定虚构样本；自定义 SQL 未在 Hive 中执行。${selected.provenance === 'historical-demo' ? '此历史演示记录不证明本次首跑。' : '发布与首跑均为本地模拟。'}</p><details><summary>历史决策与证据 · ${selected.evidence.length} 条</summary><div class="tiny muted">${selected.reviews?.length ? selected.reviews.map((review) => `${e(review.nodeId)} V${review.version} · ${e(review.reviewer)} · ${e(review.status)}${review.opinion ? ` · ${e(review.opinion)}` : ""}`).join("<br>") : "无正式评审记录"}</div>${selected.evidence.map((record) => `<p class="tiny muted">${date(record.at)} · ${e(record.actor)} · ${e(record.text)}</p>`).join("")}</details><button data-action="knowledge-open-request" data-id="${e(selected.requestId)}">打开对应需求与执行记录 →</button></section>` : '<section class="panel knowledge-doc"><div class="empty">选择一份交付说明书，查看已接受版本、成果与上下文。</div></section>';
+    const changePanel = selected ? `<section class="panel knowledge-change" id="knowledge-change"><h2>基于已交付版本提出变更</h2><p class="tiny muted">引用 V${selected.edition} 的业务口径、表与任务。原交付保持只读，新需求从需求理解开始。</p><label for="knowledge-change-input">变更描述</label><textarea id="knowledge-change-input" placeholder="例如：渠道日报增加店铺维度">${e(ui.changeText || '')}</textarea><div class="toolbar"><button data-action="knowledge-preview-change">检索依据与预览影响</button></div>${ui.changePreview && ui.changePreview.deliveryId === selected.id ? `<div class="notice" id="knowledge-change-preview">${change.supported ? `<strong>可演示变更：${e(change.text)}</strong><br>引用 ${e(selected.title)} V${selected.edition} · ${date(selected.deliveredAt)}；受影响节点：${change.affectedNodes.map((id) => e(selected.versionMap[id] ? `${selected.nodeNames?.[id] || id} V${selected.versionMap[id]}` : id)).join('、')}。<br>继承：${e(selected.definitions.grain)}；退款${selected.definitions.refundBasis === 'refund' ? '按发生日' : selected.definitions.refundBasis === 'order' ? '按订单日' : '口径待确认'}；来源 ${selected.sourceRefs.map(e).join('、')}。<br>${e(change.confirmation)}<br>日报 SQL 与样本报告将加入 shop_id，需人工确认及发布授权。` : e(change.reason)}</div>${change.supported && !superseded ? '<button class="primary" data-action="knowledge-create-change">引用说明书，创建变更需求</button>' : ''}` : ''}${superseded ? '<p class="tiny muted">请先选最新版本再创建变更。</p>' : ''}</section>` : '';
+    return `<main class="page knowledge-page"><div class="page-heading flex between"><div><div class="eyebrow">DELIVERY KNOWLEDGE</div><h1>交付知识</h1><p class="subtitle">按数据表或调度任务找到已交付版本，再引用说明书创建上线后变更。</p></div><button class="primary" data-action="knowledge-demo" id="knowledge-demo">体验上线后变更</button></div><div class="knowledge-toolbar"><input id="knowledge-search" aria-label="搜索交付说明书" placeholder="搜索需求、数据表或调度任务" value="${e(ui.knowledgeQuery || '')}"/><select id="knowledge-asset" aria-label="按产物筛选"><option value="">全部产物</option>${AideKnowledge.assets.map((asset) => `<option value="${asset.id}" ${ui.knowledgeAsset === asset.id ? 'selected' : ''}>${e(asset.type)} · ${e(asset.name)}</option>`).join('')}</select></div><div class="knowledge-grid"><section class="panel"><h2>已交付说明书 · ${found.length}</h2><div id="knowledge-results">${found.map((snapshot) => `<button class="knowledge-card ${selected?.id === snapshot.id ? 'active' : ''}" data-action="knowledge-select" data-id="${e(snapshot.id)}"><strong>${e(snapshot.title)} · V${snapshot.edition}</strong><small>${e(provenance(snapshot))} · ${date(snapshot.deliveredAt)}</small><small>${snapshot.assets.map((asset) => e(asset.name)).join(' · ')}</small></button>`).join('') || '<div class="empty">没有匹配的交付说明书。请调整搜索词或产物筛选。</div>'}</div></section><div>${context}${changePanel}</div></div><p class="bottom-note">本地演示数据 · 历史样例与模拟首跑分别标注 · 快照保存在当前浏览器</p></main>`;
+  }
+  function handle(action, id, db, ui, helpers) {
+    if (action === 'knowledge-demo') {
+      const snapshot = AideKnowledge.ensureDemo(db);
+      ui.tab = 'knowledge'; ui.requestId = null; ui.deliveryId = snapshot.id;
+      ui.knowledgeAsset = 'table:ads_channel_trade_di'; ui.knowledgeQuery = '';
+      ui.changeText = '渠道日报增加店铺维度'; ui.changePreview = null;
+      helpers.toast('已打开渠道日报历史演示交付 V1；可检索并引用创建变更');
+      return true;
+    }
+    if (action === 'knowledge-select' || action === 'knowledge-latest') {
+      ui.deliveryId = action === 'knowledge-latest' ? AideKnowledge.latest(db, AideKnowledge.find(db, ui.deliveryId).rootRequestId).id : id;
+      ui.changePreview = null;
+      return true;
+    }
+    if (action === 'knowledge-asset') { ui.knowledgeAsset = id; return true; }
+    if (action === 'knowledge-preview-change') {
+      const snapshot = AideKnowledge.find(db, ui.deliveryId);
+      if (!snapshot) throw Error('请先选择交付说明书');
+      ui.changePreview = { deliveryId: snapshot.id, text: ui.changeText || '' };
+      return true;
+    }
+    if (action === 'knowledge-create-change') {
+      const snapshot = AideKnowledge.find(db, ui.deliveryId);
+      if (!ui.changePreview || ui.changePreview.deliveryId !== snapshot?.id || ui.changePreview.text !== ui.changeText)
+        throw Error('变更描述已变化，请重新预览影响');
+      const request = AideKnowledge.createChange(db, snapshot, AideKnowledge.analyzeChange(snapshot, ui.changeText), db.member);
+      ui.requestId = request.id; ui.nodeId = 'understand'; ui.artifactTab = 'sql'; ui.changePreview = null;
+      helpers.toast('已创建关联变更需求；请确认口径并沿现有流程交付');
+      return true;
+    }
+    if (action === 'knowledge-open-request') {
+      ui.requestId = id; ui.nodeId = 'publish'; return true;
+    }
+    if (action === 'knowledge-view') {
+      ui.tab = 'knowledge'; ui.requestId = null; ui.deliveryId = id;
+      ui.knowledgeQuery = ''; ui.knowledgeAsset = ''; ui.changePreview = null;
+      return true;
+    }
+    if (action === 'knowledge-download') {
+      const snapshot = AideKnowledge.find(db, ui.deliveryId);
+      if (!snapshot) throw Error('请先选择交付说明书');
+      const markdown = AideKnowledge.markdown(snapshot);
+      const url = URL.createObjectURL(new Blob([markdown], { type: 'text/markdown;charset=utf-8' }));
+      const link = document.createElement('a'); link.href = url; link.download = `aide-delivery-v${snapshot.edition}.md`; link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      return true;
+    }
+    return false;
+  }
+  return { page, handle, contextBanner };
+})();
+
+</script>
+    <script>
 (() => {
   const storageKey = 'aide-data-workbench-demo-v1';
   let db,
@@ -4072,6 +4351,7 @@ var AideController = (() => {
     storageWarning = true;
   }
   if (!db || db.schema !== 1 || !Array.isArray(db.requests)) db = Aide.seed();
+  AideKnowledge.migrate(db);
   const ui = {
     tab: 'overview',
     requestId: null,
@@ -4087,6 +4367,11 @@ var AideController = (() => {
     editingSql: false,
     sqlDraft: '',
     personal: null,
+    deliveryId: null,
+    knowledgeQuery: '',
+    knowledgeAsset: '',
+    changeText: '',
+    changePreview: null,
   };
   try {
     Object.assign(ui, JSON.parse(sessionStorage.getItem(`${storageKey}-view`) || '{}'), {
@@ -4099,6 +4384,9 @@ var AideController = (() => {
   }
   if (!db.requests.some((r) => r.id === ui.requestId)) ui.requestId = null;
   const app = document.getElementById('app');
+  let rendering = false;
+  let renderPending = false;
+  let knowledgeSearchTimer = null;
   function toast(text) {
     const box = document.getElementById('toast');
     box.textContent = text;
@@ -4116,31 +4404,44 @@ var AideController = (() => {
     }
   }
   function render() {
-    const focus = document.activeElement?.id,
-      selection = document.activeElement?.selectionStart;
-    if (ui.requestId) {
-      const request = db.requests.find((r) => r.id === ui.requestId);
-      if (!Aide.get(request, ui.nodeId)) ui.nodeId = 'understand';
-      const node = Aide.get(request, ui.nodeId);
-      node.seen[db.member] = node.messages.length;
+    if (rendering) {
+      renderPending = true;
+      return;
     }
-    app.innerHTML =
-      AideUI.shell(db, ui, ui.requestId ? AideUI.detail(db, ui) : AideUI.workspace(db, ui)) +
-      AideController.drawer(db, ui);
-    AidePersonalRuntime.mount(db, ui);
-    if (focus && document.getElementById(focus)) {
-      const input = document.getElementById(focus);
-      input.focus();
-      if (
-        selection !== null &&
-        typeof input.setSelectionRange === 'function' &&
-        !['number', 'radio', 'checkbox'].includes(input.type)
-      )
-        input.setSelectionRange(selection, selection);
+    rendering = true;
+    try {
+      const focus = document.activeElement?.id,
+        selection = document.activeElement?.selectionStart;
+      if (ui.requestId) {
+        const request = db.requests.find((r) => r.id === ui.requestId);
+        if (!Aide.get(request, ui.nodeId)) ui.nodeId = 'understand';
+        const node = Aide.get(request, ui.nodeId);
+        node.seen[db.member] = node.messages.length;
+      }
+      app.innerHTML =
+        AideUI.shell(db, ui, ui.requestId ? AideUI.detail(db, ui) : ui.tab === 'knowledge' ? AideKnowledgeUI.page(db, ui) : AideUI.workspace(db, ui)) +
+        AideController.drawer(db, ui);
+      AidePersonalRuntime.mount(db, ui);
+      if (focus && document.getElementById(focus)) {
+        const input = document.getElementById(focus);
+        input.focus();
+        if (
+          selection !== null &&
+          typeof input.setSelectionRange === 'function' &&
+          !['number', 'radio', 'checkbox'].includes(input.type)
+        )
+          input.setSelectionRange(selection, selection);
+      }
+      const feed = app.querySelector('.chat-feed');
+      if (feed) feed.scrollTop = feed.scrollHeight;
+      save();
+    } finally {
+      rendering = false;
+      if (renderPending) {
+        renderPending = false;
+        queueMicrotask(render);
+      }
     }
-    const feed = app.querySelector('.chat-feed');
-    if (feed) feed.scrollTop = feed.scrollHeight;
-    save();
   }
   function leaveEditor() {
     if (ui.editingSql && !confirm('有未保存的 SQL 修改。放弃修改并离开编辑？')) return false;
@@ -4196,7 +4497,8 @@ var AideController = (() => {
     const button = event.target.closest('[data-action]');
     if (!button || button.disabled) return;
     try {
-      if (!AidePersonalUI.handle(button.dataset.action, button.dataset.id, db, ui, { toast, copy }))
+      if (!AideKnowledgeUI.handle(button.dataset.action, button.dataset.id, db, ui, { toast }) &&
+          !AidePersonalUI.handle(button.dataset.action, button.dataset.id, db, ui, { toast, copy }))
         AideController.handle(
           button.dataset.action,
           button.dataset.id,
@@ -4229,6 +4531,17 @@ var AideController = (() => {
       ui.search = event.target.value;
       render();
     }
+    if (event.target.id === 'knowledge-search') {
+      ui.knowledgeQuery = event.target.value;
+      save();
+      clearTimeout(knowledgeSearchTimer);
+      knowledgeSearchTimer = setTimeout(render, 120);
+    }
+    if (event.target.id === 'knowledge-change-input') {
+      ui.changeText = event.target.value;
+      ui.changePreview = null;
+      save();
+    }
     const request = db.requests.find((r) => r.id === ui.requestId);
     if (event.target.id === 'chat-input') {
       Aide.get(request, ui.nodeId).drafts[db.member] = event.target.value;
@@ -4244,6 +4557,8 @@ var AideController = (() => {
       AidePersonalUI.importFile(event.target.files[0], ui, { toast, render });
       return;
     }
+    if (!['member', 'range', 'knowledge-asset', 'history-days'].includes(event.target.id) &&
+        event.target.name !== 'basis') return;
     if (event.target.id === 'member') {
       if (ui.drawer === 'personalize') {
         ui.drawer = null;
@@ -4257,6 +4572,11 @@ var AideController = (() => {
       }
     }
     if (event.target.id === 'range') ui.range = Number(event.target.value);
+    if (event.target.id === 'knowledge-asset') {
+      ui.knowledgeAsset = event.target.value;
+      render();
+      return;
+    }
     const request = db.requests.find((r) => r.id === ui.requestId);
     if (event.target.name === 'basis') request.refundBasis = event.target.value;
     if (event.target.id === 'history-days')
