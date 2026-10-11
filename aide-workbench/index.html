@@ -919,6 +919,22 @@ tbody tr:last-child td {
   line-height: 1.7;
   margin-top: 16px;
 }
+.meego-discovery-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 12px 0 18px;
+  padding: 14px 18px;
+  border: 1px solid #dce4f7;
+  border-radius: 9px;
+  background: #f7f9ff;
+}
+.meego-discovery-notice strong { color: #344481; }
+.meego-discovery-notice p { margin: 4px 0 0; }
+@media (max-width: 640px) {
+  .meego-discovery-notice { align-items: flex-start; flex-direction: column; }
+}
 .chat {
   display: flex;
   flex-direction: column;
@@ -2587,6 +2603,23 @@ var AideIntake = (() => {
     requester: '运营分析（虚构）',
     status: '待分析（演示）',
   };
+  const discoveredFixtures = [{
+    project: fixture.project,
+    itemId: 'DEMO-1043',
+    title: '会员复购看板补充新客口径',
+    description: '会员复购看板希望补充新客定义和统计口径；请先确认业务范围、来源表与验收条件。',
+    requester: '会员运营（虚构）',
+    status: '待分析（演示）',
+  }, {
+    project: fixture.project,
+    itemId: 'DEMO-1044',
+    title: '渠道日报增加店铺维度并调整历史范围',
+    description: '在渠道交易日报增加店铺维度，并将历史范围调整为最近 60 天；请确认店铺标识、统计粒度和回算范围。',
+    requester: '运营分析（虚构）',
+    status: '待分析（演示）',
+  }];
+  const selectableFixtures = [fixture, ...discoveredFixtures];
+  const pollIntervalMs = 60000;
   function emptyDraft() {
     return { mode: 'direct', title: '', description: '', scenario: 'happy', meegoUrl: '', source: null, analysis: null, selectedDeliveryId: null };
   }
@@ -2595,19 +2628,57 @@ var AideIntake = (() => {
   }
   function bind(db) {
     db.meegoBinding ||= { provider: 'meego', workspace: '演示空间', project: fixture.project, mode: 'simulated', boundAt: Date.now() };
+    poll(db);
     return db.meegoBinding;
   }
-  function chooseFixture(db, draft) {
+  function linkedRequest(db, source) {
+    return db.requests.find((request) =>
+      sourceKey(request.requestSource) === sourceKey(source) ||
+      request.linkedSources?.some((item) => sourceKey(item) === sourceKey(source)));
+  }
+  function discovery(db) {
+    return db.meegoDiscovery ||= { lastCheckedAt: 0, items: [] };
+  }
+  function poll(db, now = Date.now()) {
+    if (!db.meegoBinding || db.meegoBinding.mode !== 'simulated') return false;
+    const state = discovery(db);
+    if (state.lastCheckedAt && now - state.lastCheckedAt < pollIntervalMs) return false;
+    for (const fixtureItem of discoveredFixtures) {
+      const source = { provider: 'meego', project: db.meegoBinding.project, itemId: fixtureItem.itemId };
+      const key = sourceKey(source);
+      const linked = Boolean(linkedRequest(db, source));
+      const found = state.items.find((item) => item.key === key);
+      if (!found) {
+        state.items.push({ key, project: source.project, itemId: source.itemId, status: linked ? 'linked' : 'pending', discoveredAt: now });
+      } else if (linked && found.status !== 'linked') {
+        found.status = 'linked';
+      }
+    }
+    state.lastCheckedAt = now;
+    return true;
+  }
+  function pending(db) {
+    if (!db.meegoBinding) return [];
+    return (db.meegoDiscovery?.items || []).filter((item) =>
+      item.status === 'pending' && !linkedRequest(db, { provider: 'meego', project: item.project, itemId: item.itemId }));
+  }
+  function confirmSource(db, source) {
+    const item = db.meegoDiscovery?.items?.find((candidate) => candidate.key === sourceKey(source));
+    if (item && linkedRequest(db, source)) item.status = 'linked';
+  }
+  function chooseFixture(db, draft, itemId = fixture.itemId) {
     if (!db.meegoBinding) throw Error('请先绑定 Meego 演示空间');
+    const selected = selectableFixtures.find((item) => item.itemId === itemId);
+    if (!selected) throw Error('演示工作项不存在');
     AideKnowledge.ensureDemo(db);
     draft.mode = 'meego';
-    draft.title = fixture.title;
-    draft.description = fixture.description;
+    draft.title = selected.title;
+    draft.description = selected.description;
     draft.meegoUrl = '';
     draft.source = {
-      provider: 'meego', project: db.meegoBinding.project, itemId: fixture.itemId,
-      title: fixture.title, body: fixture.description, mode: 'simulated',
-      requester: fixture.requester, status: fixture.status,
+      provider: 'meego', project: db.meegoBinding.project, itemId: selected.itemId,
+      title: selected.title, body: selected.description, mode: 'simulated',
+      requester: selected.requester, status: selected.status,
       importedAt: Date.now(), sourceVersion: '演示样例 V1',
     };
     draft.analysis = null;
@@ -2667,7 +2738,7 @@ var AideIntake = (() => {
     if (!title || !description) throw Error('请填写需求名称和业务目标');
     if (draft.mode === 'meego' && !db.meegoBinding) throw Error('请先绑定 Meego 演示空间');
     const source = draft.mode === 'meego'
-      ? (draft.source?.mode === 'simulated' && draft.source.itemId === fixture.itemId ? draft.source : manualSource(db, draft))
+      ? (draft.source?.mode === 'simulated' && selectableFixtures.some((item) => item.itemId === draft.source.itemId) ? draft.source : manualSource(db, draft))
       : null;
     if (draft.mode === 'meego' && !source) throw Error('请选择演示需求，或填写 Meego 链接与需求原文');
     const text = `${title}\n${description}`;
@@ -2711,10 +2782,11 @@ var AideIntake = (() => {
     if (analysis.kind === 'ambiguous') throw Error('发现多条交付主线，请先选择一条并重新分析');
     const source = analysis.source;
     if (source) {
-      const existing = db.requests.find((request) =>
-        sourceKey(request.requestSource) === sourceKey(source) ||
-        request.linkedSources?.some((item) => sourceKey(item) === sourceKey(source)));
-      if (existing) return existing;
+      const existing = linkedRequest(db, source);
+      if (existing) {
+        confirmSource(db, source);
+        return existing;
+      }
     }
     const snapshot = analysis.selectedDeliveryId && AideKnowledge.find(db, analysis.selectedDeliveryId);
     if (snapshot && AideKnowledge.latest(db, snapshot.rootRequestId)?.id !== snapshot.id)
@@ -2740,12 +2812,19 @@ var AideIntake = (() => {
       if (source) next.requestSource = structuredClone(source);
       db.requests.unshift(next);
     }
+    if (source) confirmSource(db, source);
     return next;
   }
-  return { fixture, emptyDraft, sourceKey, bind, chooseFixture, chooseDirectFixture, candidates, analyze, create };
+  return { fixture, discoveredFixtures, pollIntervalMs, emptyDraft, sourceKey, bind, poll, pending, chooseFixture, chooseDirectFixture, candidates, analyze, create };
 })();
 var AideIntakeUI = (() => {
   const e = Aide.escape;
+  function discoveryNotice(db) {
+    if (!db.meegoBinding) return '';
+    const count = AideIntake.pending(db).length;
+    const checked = db.meegoDiscovery?.lastCheckedAt;
+    return `<section class="meego-discovery-notice" aria-live="polite"><div><strong>Meego 已发现 ${count} 条新需求，待你确认</strong><p class="tiny muted">${checked ? `上次检查 ${new Date(checked).toLocaleTimeString('zh-CN')} · ` : ''}演示：页面打开时每分钟检查固定虚构项目</p></div>${count ? '<button type="button" data-action="meego-review-pending">查看待确认需求 →</button>' : ''}</section>`;
+  }
   function sourceCard(source) {
     if (!source) return '';
     return `<section class="intake-card" id="intake-source-card"><div class="eyebrow">需求来源 · 飞书项目（Meego）工作项</div><h3>${e(source.title)}</h3><p class="tiny muted">工作项 ${e(source.itemId)} · ${source.mode === 'manual' ? '本地关联项目：' : ''}${e(source.project)} · ${source.mode === 'simulated' ? '固定虚构样例' : '手动录入，未读取链接内容'}</p>${source.requester ? `<p class="tiny muted">提出人：${e(source.requester)} · 工作项状态：${e(source.status)}</p>` : ''}<p>${e(source.body || '')}</p><p class="tiny muted">本地状态：待回写（未接入）</p></section>`;
@@ -2794,6 +2873,14 @@ var AideIntakeUI = (() => {
       AideIntake.chooseFixture(db, draft);
       return true;
     }
+    if (action === 'meego-review-pending') {
+      const next = AideIntake.pending(db)[0];
+      if (!next) return true;
+      ui.intakeDraft = AideIntake.emptyDraft();
+      AideIntake.chooseFixture(db, ui.intakeDraft, next.itemId);
+      ui.drawer = 'create';
+      return true;
+    }
     if (action === 'intake-direct-fixture') {
       AideIntake.chooseDirectFixture(db, draft);
       return true;
@@ -2814,7 +2901,7 @@ var AideIntakeUI = (() => {
     }
     return false;
   }
-  return { drawer, sourceBanner, input, handle };
+  return { drawer, sourceBanner, discoveryNotice, input, handle };
 })();
 </script>
 
@@ -3799,7 +3886,7 @@ var AideUI = (() => {
       ['活跃协作会话', threads.length, 'sessions', 'chat', '当前项目 · 每个节点一个线程'],
     ];
     const title = ui.tab === 'all' ? '全部需求' : ui.tab === 'sessions' ? '协作记录' : '工作台总览';
-    return `<main class="page"><div class="page-heading flex between"><button class="personal-button" data-action="personalize" aria-label="个性化总览" title="个性化总览">${icon('spark')}</button><div><div class="eyebrow" style="margin-bottom:9px">DATA DEVELOPMENT WORKSPACE</div><h1>${title}</h1><p class="subtitle">从一句需求，到一份可靠的数据交付。</p></div><div class="toolbar"><span class="pill">${icon('folder')} 电商数据项目</span><select id="range" aria-label="时间范围"><option value="7" ${ui.range === 7 ? 'selected' : ''}>最近 7 天</option><option value="30" ${ui.range === 30 ? 'selected' : ''}>最近 30 天</option></select><button class="primary" data-action="create">${icon('plus')} 新建需求</button></div></div>${ui.tab === 'overview' ? `<div class="metrics">${metrics.map(([name, number, filter, glyph, foot]) => `<button class="metric" data-action="filter" data-id="${filter}"><span class="metric-label">${name}</span><span class="metric-icon">${icon(glyph)}</span><div class="metric-number">${number}</div><div class="metric-foot">${foot}</div></button>`).join('')}</div><div class="charts">${distribution(db)}${chart(db, ui)}</div>${todos.length ? `<div class="task-strip flex between"><div class="flex"><span class="strip-icon">${icon('spark')}</span><div><h3>${e(todos[0].r.title)}<span class="pill blue" style="margin-left:10px">需要你处理</span></h3><p>${todos[0].n.id === 'understand' ? '退款归属日期尚未确认，补充口径后 Aide 将自动生成技术方案。' : `${e(todos[0].n.name)}等待你处理，完成后自动交接。`}</p></div></div><button data-action="open" data-id="${todos[0].r.id}" data-node="${todos[0].n.id}">去处理 ${icon('arrow')}</button></div>` : ''}` : ''}<section class="panel workspace-list"><div class="table-head flex between"><h2>${ui.tab === 'sessions' ? '节点协作线程' : ui.tab === 'all' ? '需求列表' : '近期需求'} <span class="badge-count">${ui.tab === 'sessions' ? threads.length : filtered(db, ui).length}</span></h2><input class="search" id="search" placeholder="搜索需求名称…" value="${e(ui.search)}" aria-label="搜索需求"/></div>${ui.filter ? `<div class="filter-note">已应用筛选 <button class="text-button" data-action="clear-filter">清空筛选</button></div>` : ''}${ui.tab === 'sessions' ? sessions(db, ui) : `<table><thead><tr><th style="width:30%">需求名称 / 当前任务</th><th>状态</th><th>完成进度</th><th>负责人</th><th>更新时间</th><th>下一步</th></tr></thead><tbody>${requestRows(filtered(db, ui), db.member)}</tbody></table>${!filtered(db, ui).length ? '<div class="empty">暂无匹配需求，清空筛选或新建需求。</div>' : ''}`}</section><div class="session-summary">${icon('chat')}<span>会话情况</span><span>待回复 <strong>${threads.filter((t) => t.n.status === 'waiting').length}</strong></span><span>处理中 <strong>${threads.filter((t) => t.n.status !== 'waiting').length}</strong></span><span>未读 <strong>${threads.filter((t) => t.n.messages.length > (t.n.seen[db.member] || 0)).length}</strong></span><button class="text-button tiny" data-action="nav" data-id="sessions">查看协作记录 →</button></div><p class="bottom-note">演示数据 · AI、测试执行、发布与首跑均为本地模拟 · 状态自动保存在当前浏览器</p></main>`;
+    return `<main class="page"><div class="page-heading flex between"><button class="personal-button" data-action="personalize" aria-label="个性化总览" title="个性化总览">${icon('spark')}</button><div><div class="eyebrow" style="margin-bottom:9px">DATA DEVELOPMENT WORKSPACE</div><h1>${title}</h1><p class="subtitle">从一句需求，到一份可靠的数据交付。</p></div><div class="toolbar"><span class="pill">${icon('folder')} 电商数据项目</span><select id="range" aria-label="时间范围"><option value="7" ${ui.range === 7 ? 'selected' : ''}>最近 7 天</option><option value="30" ${ui.range === 30 ? 'selected' : ''}>最近 30 天</option></select><button class="primary" data-action="create">${icon('plus')} 新建需求</button></div></div>${ui.tab === 'overview' ? AideIntakeUI.discoveryNotice(db) : ''}${ui.tab === 'overview' ? `<div class="metrics">${metrics.map(([name, number, filter, glyph, foot]) => `<button class="metric" data-action="filter" data-id="${filter}"><span class="metric-label">${name}</span><span class="metric-icon">${icon(glyph)}</span><div class="metric-number">${number}</div><div class="metric-foot">${foot}</div></button>`).join('')}</div><div class="charts">${distribution(db)}${chart(db, ui)}</div>${todos.length ? `<div class="task-strip flex between"><div class="flex"><span class="strip-icon">${icon('spark')}</span><div><h3>${e(todos[0].r.title)}<span class="pill blue" style="margin-left:10px">需要你处理</span></h3><p>${todos[0].n.id === 'understand' ? '退款归属日期尚未确认，补充口径后 Aide 将自动生成技术方案。' : `${e(todos[0].n.name)}等待你处理，完成后自动交接。`}</p></div></div><button data-action="open" data-id="${todos[0].r.id}" data-node="${todos[0].n.id}">去处理 ${icon('arrow')}</button></div>` : ''}` : ''}<section class="panel workspace-list"><div class="table-head flex between"><h2>${ui.tab === 'sessions' ? '节点协作线程' : ui.tab === 'all' ? '需求列表' : '近期需求'} <span class="badge-count">${ui.tab === 'sessions' ? threads.length : filtered(db, ui).length}</span></h2><input class="search" id="search" placeholder="搜索需求名称…" value="${e(ui.search)}" aria-label="搜索需求"/></div>${ui.filter ? `<div class="filter-note">已应用筛选 <button class="text-button" data-action="clear-filter">清空筛选</button></div>` : ''}${ui.tab === 'sessions' ? sessions(db, ui) : `<table><thead><tr><th style="width:30%">需求名称 / 当前任务</th><th>状态</th><th>完成进度</th><th>负责人</th><th>更新时间</th><th>下一步</th></tr></thead><tbody>${requestRows(filtered(db, ui), db.member)}</tbody></table>${!filtered(db, ui).length ? '<div class="empty">暂无匹配需求，清空筛选或新建需求。</div>' : ''}`}</section><div class="session-summary">${icon('chat')}<span>会话情况</span><span>待回复 <strong>${threads.filter((t) => t.n.status === 'waiting').length}</strong></span><span>处理中 <strong>${threads.filter((t) => t.n.status !== 'waiting').length}</strong></span><span>未读 <strong>${threads.filter((t) => t.n.messages.length > (t.n.seen[db.member] || 0)).length}</strong></span><button class="text-button tiny" data-action="nav" data-id="sessions">查看协作记录 →</button></div><p class="bottom-note">演示数据 · AI、测试执行、发布与首跑均为本地模拟 · 状态自动保存在当前浏览器</p></main>`;
   }
   function sessions(db, ui) {
     return `<table><thead><tr><th>话题 / 关联需求</th><th>参与者</th><th>最近消息</th><th>状态</th><th>未读</th></tr></thead><tbody>${db.requests
@@ -3840,7 +3927,7 @@ var AidePersonalUI = (() => {
   }
   function overview(db) {
     const saved = AidePersonal.page(db);
-    return `<main class="page personal-page"><div class="personal-overview-bar"><button class="personal-button" data-action="personalize" aria-label="个性化总览" title="个性化总览">${AideUI.icon('spark')}</button><div><span class="eyebrow">YOUR WORKSPACE</span><h1>我的总览 <span class="pill blue">${e(db.member)} · V${saved.revision}</span></h1><p class="subtitle">这份页面由 HTML/CSS 定义，数据随工作推进更新。</p></div><div class="toolbar"><button data-action="personal-undo" ${saved.history.length ? '' : 'disabled'}>撤销上次保存</button><button data-action="personal-reset">恢复默认</button><button class="primary" data-action="create">${AideUI.icon('plus')} 新建需求</button></div></div><iframe class="personal-overview" data-personal-frame="overview" sandbox="allow-scripts" title="个人总览"></iframe><p class="bottom-note">虚构演示数据 · 个人页面仅保存在当前浏览器 · 原有需求流程继续可用</p></main>`;
+    return `<main class="page personal-page"><div class="personal-overview-bar"><button class="personal-button" data-action="personalize" aria-label="个性化总览" title="个性化总览">${AideUI.icon('spark')}</button><div><span class="eyebrow">YOUR WORKSPACE</span><h1>我的总览 <span class="pill blue">${e(db.member)} · V${saved.revision}</span></h1><p class="subtitle">这份页面由 HTML/CSS 定义，数据随工作推进更新。</p></div><div class="toolbar"><button data-action="personal-undo" ${saved.history.length ? '' : 'disabled'}>撤销上次保存</button><button data-action="personal-reset">恢复默认</button><button class="primary" data-action="create">${AideUI.icon('plus')} 新建需求</button></div></div>${AideIntakeUI.discoveryNotice(db)}<iframe class="personal-overview" data-personal-frame="overview" sandbox="allow-scripts" title="个人总览"></iframe><p class="bottom-note">虚构演示数据 · 个人页面仅保存在当前浏览器 · 原有需求流程继续可用</p></main>`;
   }
   function dialog(db, ui) {
     const draft = ui.personal,
@@ -4629,6 +4716,7 @@ var AideKnowledgeUI = (() => {
   }
   if (!db || db.schema !== 1 || !Array.isArray(db.requests)) db = Aide.seed();
   AideKnowledge.migrate(db);
+  AideIntake.poll(db);
   const ui = {
     tab: 'overview',
     requestId: null,
@@ -4909,6 +4997,16 @@ var AideKnowledgeUI = (() => {
     AidePersonalRuntime.receive(event, db, ui, { toast, render }),
   );
   setInterval(() => AidePersonalRuntime.sync(db), 10000);
+  function checkMeegoInbox() {
+    if (!AideIntake.poll(db)) return;
+    const editing = document.activeElement?.matches('input, textarea, [contenteditable="true"]');
+    if (!ui.drawer && !ui.editingSql && !editing && !document.hidden) render();
+    else save();
+  }
+  setInterval(checkMeegoInbox, 1000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) checkMeegoInbox();
+  });
   render();
   if (storageWarning) toast('存储读取失败，已恢复默认演示数据。');
 })();
