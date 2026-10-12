@@ -1808,6 +1808,20 @@ tbody tr:last-child td {
 .knowledge-page .knowledge-change { margin-top:16px; }
 .knowledge-page .knowledge-change .toolbar { display:flex; gap:10px; margin-top:10px; }
 @media(max-width:850px) { .knowledge-page .knowledge-grid { grid-template-columns:1fr; } }
+.sidepath-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:16px 0; }
+.sidepath-card { text-align:left; padding:18px; border:1px solid #dfe5f3; border-radius:12px; background:#fff; min-width:0; }
+.sidepath-card strong, .sidepath-card small { display:block; }
+.sidepath-card strong { font-size:16px; color:#344481; margin:5px 0; }
+.sidepath-card small { color:#778198; line-height:1.6; }
+.sidepath-card:hover, .sidepath-card.active { border-color:#6873dd; background:#f8f9ff; }
+.sidepath-panel { max-width:960px; }
+.sidepath-panel h3 { margin:18px 0 8px; }
+.sidepath-panel p { line-height:1.65; }
+.sidepath-evidence { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:14px 0; }
+.sidepath-evidence > div { background:#f7f9fd; border:1px solid #e8ecf5; padding:13px; border-radius:9px; min-width:0; overflow-wrap:anywhere; }
+.sidepath-history { margin-top:16px; }
+.sidepath-history button { display:block; width:100%; text-align:left; margin-top:8px; }
+@media(max-width:700px) { .sidepath-cards, .sidepath-evidence { grid-template-columns:1fr; } }
 </style>
   </head>
   <body>
@@ -3798,6 +3812,7 @@ var AideUI = (() => {
       ['all', 'list', '全部需求'],
       ['sessions', 'chat', '协作记录'],
       ['knowledge', 'folder', '交付知识'],
+      ['sidepaths', 'activity', '运维与治理'],
     ]
       .map(
         ([id, glyph, name]) =>
@@ -4703,6 +4718,117 @@ var AideKnowledgeUI = (() => {
   return { page, handle, contextBanner };
 })();
 
+var AideSidepaths = (() => {
+  const e = Aide.escape;
+  const config = {
+    operations: { title: '任务运维', asset: 'task:channel_trade_daily', event: '虚构告警：channel_trade_daily 今日 09:00 未按时产出。', role: '数据开发' },
+    governance: { title: '数据治理', asset: 'table:ads_channel_trade_di', event: '虚构反馈：ads_channel_trade_di 的店铺指标口径或质量待核查。', role: '数据分析' },
+  };
+  const date = (at) => new Date(at).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+  function source(db, kind = 'operations') {
+    const candidates = AideKnowledge.lookup(db, '', config[kind].asset)
+      .filter((snapshot) => /渠道/.test(snapshot.title) &&
+        AideKnowledge.latest(db, snapshot.rootRequestId)?.id === snapshot.id);
+    return candidates[0] || AideKnowledge.ensureDemo(db);
+  }
+  function cards(selected = '') {
+    return `<section id="sidepath-entry" aria-label="交付后的协作旁路"><div class="flex between"><h2>交付后的协作旁路</h2><span class="tiny muted">关联交付说明书，不增加主流程必经节点</span></div><div class="sidepath-cards">${Object.entries(config).map(([kind, item]) => `<button type="button" class="sidepath-card ${selected === kind ? 'active' : ''}" data-action="sidepath-open" data-id="${kind}"><small>${item.role} · 独立记录</small><strong>${item.title} →</strong><small>${e(item.event)}</small></button>`).join('')}</div></section>`;
+  }
+  function details(snapshot, kind) {
+    const asset = snapshot.assets.find((item) => item.id === config[kind].asset);
+    const refund = snapshot.assets.find((item) => item.id === 'table:dwd_refund_detail_di');
+    return `<div class="sidepath-evidence"><div><strong>交付目标与口径 · 继承事实</strong><p>${e(snapshot.businessGoal)}</p><p class="tiny muted">粒度 ${e(snapshot.definitions.grain)} · 退款${snapshot.definitions.refundBasis === 'refund' ? '按发生日' : snapshot.definitions.refundBasis === 'order' ? '按订单日' : '口径待确认'} · 验收：${e(snapshot.definitions.acceptance)}</p></div><div><strong>产物、依赖与负责人 · 继承事实</strong><p>${e(asset?.name || config[kind].asset)} V${asset?.version || '?'} · ${e(snapshot.nodeOwnership?.[asset?.nodeId] || snapshot.owner)}</p><p class="tiny muted">退款上游 ${e(refund?.name || 'dwd_refund_detail_di')} V${refund?.version || '?'} · 来源 ${e((snapshot.sourceRefs || []).join('、'))}</p></div></div>`;
+  }
+  function diagnosis(snapshot, kind) {
+    if (kind === 'operations') return {
+      finding: '演示定位：退款上游分区未到，可能阻断日报依赖。此为虚构告警的诊断假设，交付说明书并不证明当天真实分区状态。',
+      proposal: '建议由数据开发核验 ods_refunds 与 dwd_refund_detail_di 分区，补齐后检查依赖及金额，再按正式授权流程恢复调度；当前仅演示检查路径。',
+      result: '本地模拟验证：虚构退款分区标记为已到，依赖和金额样本检查通过；恢复方案已归档。未触发生产重跑、回填或发布。',
+    };
+    return snapshot.definitions.shopDimension ? {
+      finding: '演示定位：现有说明书已包含店铺粒度；本次指标异常应先核查店铺归属质量与退款口径，不能直接判定历史定义错误。',
+      proposal: '建议数据分析与一线业务核对异常样本、负责人和质量规则；如需改口径或表结构，创建关联变更需求走开发、测试和发布授权。',
+      result: '本地模拟复核：已形成质量排查清单并归档建议；异常是否真实存在仍待源表验证。未修改指标定义、数据表或交付说明书。',
+    } : {
+      finding: '演示定位：已交付说明书的统计粒度未含店铺。虚构反馈提出店铺指标，店铺标识及归属规则仍需一线业务确认。',
+      proposal: '建议一线业务确认 shop_id 定义，数据分析明确指标口径，数据开发评估表与血缘影响；通过关联变更需求完成开发、测试与发布授权。',
+      result: '本地模拟复核：说明书仍未定义店铺粒度；待确认清单与变更建议已归档。未批准新口径，未修改表、数据或交付说明书。',
+    };
+  }
+  function history(db, kind, ui) {
+    const cases = (db.sidepathCases || []).filter((entry) => entry.kind === kind).slice().reverse();
+    return `<section class="panel sidepath-history" id="sidepath-history"><h2>独立旁路记录 · ${cases.length}</h2>${cases.map((entry) => `<button type="button" data-action="sidepath-select" data-id="${e(entry.id)}">${date(entry.createdAt)} · ${entry.status === 'simulated' ? '已归档模拟结果' : '待确认建议'} · 来源 V${entry.sourceEdition} <span class="tiny muted">${e(entry.sourceId)}</span>${entry.id === ui.sidepathCaseId ? ' · 正在查看' : ''}</button>`).join('') || '<p class="tiny muted">尚无分析记录。打开告警后点击“检索交付依据并分析”。</p>'}</section>`;
+  }
+  function page(db, ui) {
+    const kind = config[ui.sidepathKind] ? ui.sidepathKind : 'operations';
+    const snapshot = source(db, kind);
+    const entry = (db.sidepathCases || []).find((item) => item.id === ui.sidepathCaseId && item.kind === kind);
+    const cited = entry ? AideKnowledge.find(db, entry.sourceId) : snapshot;
+    const stale = entry?.status === 'proposed' && (!cited || source(db, kind).id !== entry.sourceId || AideKnowledge.latest(db, cited.rootRequestId)?.id !== entry.sourceId);
+    const currentDiagnosis = cited && diagnosis(cited, kind);
+    const issue = entry && currentDiagnosis && {
+      finding: entry.finding || currentDiagnosis.finding,
+      proposal: entry.proposal || currentDiagnosis.proposal,
+    };
+    const provenance = cited?.provenance === 'accepted' ? '模拟首跑验收沉淀' : '历史演示归档';
+    return `<main class="page sidepath-page"><div class="page-heading"><div class="eyebrow">DELIVERY SIDE PATHS · 本地模拟</div><h1>交付后的协作</h1><p class="subtitle">一线业务、数据分析、数据开发可沿交付说明书处理告警与治理反馈；记录独立保存。</p></div>${cards(kind)}<section class="panel sidepath-panel" id="sidepath-panel" data-kind="${kind}"><div class="flex between"><div><h2>${config[kind].title}</h2><p class="tiny muted">${e(config[kind].event)}</p></div><span class="pill">虚构事件</span></div><div class="notice">${entry ? `分析记录 ${e(entry.id)} · ${date(entry.createdAt)}` : '先检索交付说明书。分析不会改动需求、任务、数据表或已接受快照。'}</div>${cited ? `<h3>召回的交付说明书</h3><p>《${e(cited.title)}》V${cited.edition} · 快照 ${e(cited.id)} · ${provenance} · ${date(cited.deliveredAt)}</p>${details(cited, kind)}<button type="button" data-action="sidepath-source" data-id="${e(cited.id)}">查看来源说明书 →</button>` : '<p class="notice">引用快照已失效，请重新分析。</p>'}${entry && issue ? `<h3>定位与建议 · ${entry.status === 'simulated' ? '已记录' : '待确认'}</h3><p>${e(issue.finding)}</p><p>${e(issue.proposal)}</p><p class="tiny muted">依据：交付说明书 V${entry.sourceEdition}、${e(config[kind].asset)} V${entry.assetVersion}；告警和异常是虚构输入，不是历史交付证据。</p>${stale ? '<div class="notice" id="sidepath-stale">交付说明书已有新版本或引用失效，旧确认不可沿用。请重新检索分析。</div>' : ''}${entry.status === 'proposed' ? `<button type="button" class="primary" data-action="sidepath-confirm" ${stale ? 'disabled' : ''}>${kind === 'operations' ? '确认本地模拟恢复' : '确认记录治理建议并模拟复核'}</button>` : `<div class="notice" id="sidepath-result"><strong>模拟结果 · ${date(entry.confirmedAt)}</strong><p>${e(entry.result)}</p><p class="tiny muted">确认人 ${e(entry.confirmedBy)} · 仅归档此旁路记录。口径或表结构变更需另建关联需求，经过原有开发、测试、发布授权。</p></div>`}` : ''}<div class="toolbar" style="margin-top:18px"><button type="button" data-action="sidepath-analyze">${entry ? '重新检索并分析' : '检索交付依据并分析'}</button>${kind === 'governance' ? '<button type="button" data-action="sidepath-change">到交付知识提出关联变更 →</button>' : ''}</div></section>${history(db, kind, ui)}<p class="bottom-note">所有告警、定位、验证与恢复均为本地虚构演示；生产调度、数据与已接受交付快照不会改变。</p></main>`;
+  }
+  function handle(action, id, db, ui, helpers) {
+    if (action === 'sidepath-open') {
+      if (!config[id]) throw Error('未知旁路场景');
+      ui.tab = 'sidepaths'; ui.requestId = null; ui.sidepathKind = id; ui.sidepathCaseId = null; ui.drawer = null;
+      source(db, id);
+      return true;
+    }
+    if (action === 'sidepath-analyze') {
+      const kind = config[ui.sidepathKind] ? ui.sidepathKind : 'operations';
+      const snapshot = source(db, kind);
+      const asset = snapshot.assets.find((item) => item.id === config[kind].asset);
+    const analysis = diagnosis(snapshot, kind);
+    const entry = { id: `sidepath:${Date.now()}:${Math.random().toString(36).slice(2, 6)}`, kind, sourceId: snapshot.id,
+        sourceEdition: snapshot.edition, assetVersion: asset?.version || 1, createdAt: Date.now(), status: 'proposed',
+        finding: analysis.finding, proposal: analysis.proposal, simulationResult: analysis.result };
+      (db.sidepathCases ||= []).push(entry);
+      ui.sidepathCaseId = entry.id;
+      helpers.toast('已召回交付说明书并生成待确认建议');
+      return true;
+    }
+    if (action === 'sidepath-select') {
+      const entry = (db.sidepathCases || []).find((item) => item.id === id);
+      if (!entry) throw Error('旁路记录不存在');
+      ui.sidepathKind = entry.kind; ui.sidepathCaseId = id;
+      return true;
+    }
+    if (action === 'sidepath-confirm') {
+      const entry = (db.sidepathCases || []).find((item) => item.id === ui.sidepathCaseId);
+      const snapshot = entry && AideKnowledge.find(db, entry.sourceId);
+      if (!entry || entry.status !== 'proposed') throw Error('请先完成分析');
+      if (!snapshot || source(db, entry.kind).id !== snapshot.id || AideKnowledge.latest(db, snapshot.rootRequestId)?.id !== snapshot.id)
+        throw Error('来源说明书已变化，请重新分析后确认');
+      entry.status = 'simulated'; entry.confirmedAt = Date.now(); entry.confirmedBy = db.member;
+      entry.result = entry.simulationResult || diagnosis(snapshot, entry.kind).result;
+      helpers.toast('本地模拟结果已归档；未执行生产操作');
+      return true;
+    }
+    if (action === 'sidepath-source') {
+      ui.tab = 'knowledge'; ui.requestId = null; ui.deliveryId = id;
+      ui.knowledgeQuery = ''; ui.knowledgeAsset = ''; ui.changePreview = null;
+      return true;
+    }
+    if (action === 'sidepath-change') {
+      const snapshot = source(db, 'governance');
+      ui.tab = 'knowledge'; ui.requestId = null; ui.deliveryId = snapshot.id;
+      ui.knowledgeQuery = ''; ui.knowledgeAsset = ''; ui.changeText = snapshot.definitions.shopDimension ? '' : '渠道日报增加店铺维度'; ui.changePreview = null;
+      helpers.toast(snapshot.definitions.shopDimension
+        ? '质量规则需先人工澄清；若调整口径或表结构，须创建关联需求并走原流程'
+        : '请在交付知识中预览影响并创建关联变更，随后完成原有交付流程');
+      return true;
+    }
+    return false;
+  }
+  return { cards, page, handle };
+})();
+
 </script>
     <script>
 (() => {
@@ -4785,8 +4911,11 @@ var AideKnowledgeUI = (() => {
         node.seen[db.member] = node.messages.length;
       }
       app.innerHTML =
-        AideUI.shell(db, ui, ui.requestId ? AideUI.detail(db, ui) : ui.tab === 'knowledge' ? AideKnowledgeUI.page(db, ui) : AideUI.workspace(db, ui)) +
+        AideUI.shell(db, ui, ui.requestId ? AideUI.detail(db, ui) : ui.tab === 'knowledge' ? AideKnowledgeUI.page(db, ui) : ui.tab === 'sidepaths' ? AideSidepaths.page(db, ui) : AideUI.workspace(db, ui)) +
         AideController.drawer(db, ui);
+      if (ui.tab === 'overview' && !ui.requestId) {
+        app.querySelector('.page-heading, .personal-overview-bar')?.insertAdjacentHTML('afterend', AideSidepaths.cards());
+      }
       AidePersonalRuntime.mount(db, ui);
       if (focus && document.getElementById(focus)) {
         const input = document.getElementById(focus);
@@ -4864,6 +4993,7 @@ var AideKnowledgeUI = (() => {
     if (!button || button.disabled) return;
     try {
       if (!AideKnowledgeUI.handle(button.dataset.action, button.dataset.id, db, ui, { toast }) &&
+          !AideSidepaths.handle(button.dataset.action, button.dataset.id, db, ui, { toast }) &&
           !AidePersonalUI.handle(button.dataset.action, button.dataset.id, db, ui, { toast, copy }))
         AideController.handle(
           button.dataset.action,

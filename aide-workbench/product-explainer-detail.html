@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="shadcn" data-mode="light" data-style="80">
+<html lang="zh-CN" data-theme="shadcn" data-mode="auto" data-style="80">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -691,9 +691,9 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 </style>
 </head>
 <body>
-<div class="am-toolbar" data-am-root-lang="zh-CN" data-am-root-theme="shadcn" data-am-root-mode="light" data-am-root-style="80">
+<div class="am-toolbar" data-am-root-lang="zh-CN" data-am-root-theme="shadcn" data-am-root-mode="auto" data-am-root-style="80">
 <label class="am-pick">主题<select data-am="theme"><option value="blueprint">图纸</option><option value="shadcn" selected>卡片</option><option value="paper">纸张</option></select></label>
-<label class="am-pick">明暗<select data-am="mode"><option value="auto">跟随系统</option><option value="light" selected>亮</option><option value="dark">暗</option></select></label>
+<label class="am-pick">明暗<select data-am="mode"><option value="auto" selected>跟随系统</option><option value="light">亮</option><option value="dark">暗</option></select></label>
 <button class="am-btn am-btn--reply" type="button" data-am="reply" data-ui="{&quot;button&quot;:&quot;回复&quot;,&quot;comment&quot;:&quot;评论&quot;,&quot;commentHint&quot;:&quot;对这个面板的意见&quot;,&quot;title&quot;:&quot;你的回复&quot;,&quot;hint&quot;:&quot;复制后粘贴到对话里。&quot;,&quot;copy&quot;:&quot;复制回复&quot;,&quot;close&quot;:&quot;关闭&quot;,&quot;suggested&quot;:&quot;建议&quot;,&quot;empty&quot;:&quot;先选择选项，或在面板上写评论。&quot;,&quot;decisions&quot;:&quot;决定&quot;,&quot;comments&quot;:&quot;评论&quot;,&quot;confirmed&quot;:&quot;确认了建议&quot;,&quot;untouched&quot;:&quot;未作答，保留建议&quot;,&quot;was&quot;:&quot;原为&quot;,&quot;typed&quot;:&quot;以 \&quot;&gt;\&quot; 开头的行是读者输入的文字。&quot;,&quot;done&quot;:&quot;已复制 ✓&quot;}">回复</button>
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
@@ -701,7 +701,7 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <header class="am-head"><h1>从对话协助，到需求交付</h1><p class="am-sub">Aide 数据工作台的产品动线与 数据分析、数据开发、一线业务的角色变化</p><div class="am-head-meta"><span><b>source</b>渠道交易日报公开 Demo · 产品动线解读</span></div><div class="am-intro am-md"><div class="am-md"><p><strong>需求是工作单元，会话是推进手段。</strong> Aide 把目标、分工、产物版本和验收证据放进同一条交付动线。Agent 帮助每个节点产出候选；人负责确认规则、把关质量和授权发布。</p>
 </div></div></header>
 <div class="am-doc-layout">
-<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 核心变化：围绕什么组织工作？</a><a href="#panel-B">B · 一条需求怎样走到交付？</a><a href="#panel-C">C · 节点接过什么，又交出什么？</a><a href="#panel-D">D · 多人协作：减少信息中转</a><a href="#panel-E">E · 一个具体变更：金额空值怎么处理？</a><a href="#panel-F">F · 三类角色的工作重心如何变化？</a><a href="#panel-G">G · 读者可以怎样看 Demo？</a><a href="#panel-H">H · 这页展示了什么边界？</a></nav><div class="am-doc-body">
+<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 核心变化：围绕什么组织工作？</a><a href="#panel-B">B · 一条需求怎样走到交付？</a><a href="#panel-C">C · 节点接过什么，又交出什么？</a><a href="#panel-D">D · 多人协作：减少信息中转</a><a href="#panel-E">E · 一个具体变更：金额空值怎么处理？</a><a href="#panel-F">F · 交付之外，任务运维与数据治理怎样接入？</a><a href="#panel-G">G · 三类角色的工作重心如何变化？</a><a href="#panel-H">H · 读者可以怎样看 Demo？</a><a href="#panel-I">I · 这页展示了什么边界？</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
 <header class="am-panel-head"><span class="am-panel-id">A</span><h2>核心变化：围绕什么组织工作？</h2></header>
 <div class="am-panel-body"><div class="am-md"><p>Mino 通用 Agent 也能产出文件、调用工具并与人协作。这里比较数据开发中的<strong>常见使用路径</strong>。</p>
@@ -848,7 +848,39 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 </div></div>
 </section>
 <section class="am-panel" id="panel-F">
-<header class="am-panel-head"><span class="am-panel-id">F</span><h2>三类角色的工作重心如何变化？</h2></header>
+<header class="am-panel-head"><span class="am-panel-id">F</span><h2>交付之外，任务运维与数据治理怎样接入？</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>任务运维与数据治理是<strong>按需进入的两条旁路</strong>，不是每条交付需求都要经过的新节点。它们共用已接受的交付说明书。告警或治理问题带着任务名、表名进入时，Agent 可直接召回相关版本和出处；使用者不必先到知识库找说明书。召回的是历史依据，不是对当前事故的自动定论。</p>
+</div>
+<figure class="am-diagram am-flow"><svg viewBox="0 0 1127 205" width="1127" height="205" role="img" aria-label="流程图：已接受的交付、交付说明书、任务运维、数据治理、运维处理记录、治理处理记录、关联变更需求、开发、测试、评审、发布" xmlns="http://www.w3.org/2000/svg"><defs><marker id="am4-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="am-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs><g></g><g><g data-step="0"><path class="am-edge" d="M132,102.5 L143.5,102.5 Q155,102.5 166.5,102.5 L178,102.5" marker-end="url(#am4-arrow)"/></g><g data-step="1"><path class="am-edge" d="M266.4,127 L306.2,150.3 Q346,173.5 383.5,173.5 L421,173.5" marker-end="url(#am4-arrow)"/><g class="am-edge-label"><rect x="295" y="164.5" width="102" height="18" rx="3"/><text x="346" y="173.5" text-anchor="middle" dominant-baseline="central">按任务或表名召回</text></g></g><g data-step="1"><path class="am-edge" d="M271,88.9 L308.5,78 Q346,67 383.5,67 L421,67" marker-end="url(#am4-arrow)"/><g class="am-edge-label"><rect x="295" y="58" width="102" height="18" rx="3"/><text x="346" y="67" text-anchor="middle" dominant-baseline="central">按任务或表名召回</text></g></g><g data-step="2"><path class="am-edge" d="M501,173.5 L550,173.5 Q599,173.5 648,173.5 L697,173.5" marker-end="url(#am4-arrow)"/><g class="am-edge-label"><rect x="536.5" y="164.5" width="125" height="18" rx="3"/><text x="599" y="173.5" text-anchor="middle" dominant-baseline="central">告警、处置、恢复证据</text></g></g><g data-step="3"><path class="am-edge" d="M501,77.3 L550,89.9 Q599,102.5 648,102.5 L697,102.5" marker-end="url(#am4-arrow)"/><g class="am-edge-label"><rect x="525" y="93.5" width="148" height="18" rx="3"/><text x="599" y="102.5" text-anchor="middle" dominant-baseline="central">问题、口径确认、质量证据</text></g></g><g data-step="4"><path class="am-edge" d="M501,56.7 L550,44.1 Q599,31.5 648,31.5 L697,31.5" marker-end="url(#am4-arrow)"/><g class="am-edge-label"><rect x="553.8" y="22.5" width="90.5" height="18" rx="3"/><text x="599" y="31.5" text-anchor="middle" dominant-baseline="central">结构或口径需改</text></g></g><g data-step="5"><path class="am-edge" d="M803,31.5 L834.8,31.5 Q866.5,31.5 898.3,31.5 L930,31.5" marker-end="url(#am4-arrow)"/><g class="am-edge-label"><rect x="827" y="22.5" width="79" height="18" rx="3"/><text x="866.5" y="31.5" text-anchor="middle" dominant-baseline="central">返回交付主线</text></g></g></g><g><g class="am-node am-node--round" data-key="已接受的交付" data-step="0"><rect class="am-node-shape" x="14" y="85" width="118" height="35" rx="17.5"/><text x="73" y="102.5" text-anchor="middle" dominant-baseline="central">已接受的交付</text></g><g class="am-node am-node--db" data-key="交付说明书" data-step="0"><path class="am-node-shape" d="M178,85 A46.5,7 0 0 1 271,85 V120 A46.5,7 0 0 1 178,120 Z"/><path class="am-node-shape" d="M178,85 A46.5,7 0 0 0 271,85"/><text x="224.5" y="106.5" text-anchor="middle" dominant-baseline="central">交付说明书</text></g><g class="am-node am-node--rect" data-key="任务运维" data-step="1"><rect class="am-node-shape" x="421" y="156" width="80" height="35" rx="3"/><text x="461" y="173.5" text-anchor="middle" dominant-baseline="central">任务运维</text></g><g class="am-node am-node--rect" data-key="数据治理" data-step="1"><rect class="am-node-shape" x="421" y="49.5" width="80" height="35" rx="3"/><text x="461" y="67" text-anchor="middle" dominant-baseline="central">数据治理</text></g><g class="am-node am-node--rect" data-key="运维处理记录" data-step="2"><rect class="am-node-shape" x="697" y="156" width="106" height="35" rx="3"/><text x="750" y="173.5" text-anchor="middle" dominant-baseline="central">运维处理记录</text></g><g class="am-node am-node--rect" data-key="治理处理记录" data-step="3"><rect class="am-node-shape" x="697" y="85" width="106" height="35" rx="3"/><text x="750" y="102.5" text-anchor="middle" dominant-baseline="central">治理处理记录</text></g><g class="am-node am-node--rect" data-key="关联变更需求" data-step="4"><rect class="am-node-shape" x="697" y="14" width="106" height="35" rx="3"/><text x="750" y="31.5" text-anchor="middle" dominant-baseline="central">关联变更需求</text></g><g class="am-node am-node--round" data-key="开发、测试、评审、发布" data-step="5"><rect class="am-node-shape" x="930" y="14" width="183" height="35" rx="17.5"/><text x="1021.5" y="31.5" text-anchor="middle" dominant-baseline="central">开发、测试、评审、发布</text></g></g></svg></figure>
+<div class="am-md"><div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>旁路</th>
+<th>进入问题与历史引用</th>
+<th>当次待确认</th>
+<th>处理结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>任务运维</td>
+<td><code>channel_trade_daily</code> 的上游退款分区迟到；引用交付第 1 版的 09:00 目标、退款按发生日统计、订单与退款依赖及调度配置</td>
+<td>数据开发 用分区到达时间和调度日志确认影响日期、补齐状态及是否需要授权重跑</td>
+<td>独立保存告警、处置、运行证据与恢复验证</td>
+</tr>
+<tr>
+<td>数据治理</td>
+<td><code>ads_channel_trade_di</code> 出现渠道金额异常或退款口径疑问；引用交付第 1 版的日期 × 渠道粒度、来源、口径及数据测试</td>
+<td>数据分析 确认业务口径，一线业务 确认目标，数据开发 核验样本、质量规则、表与 SQL</td>
+<td>独立保存问题、证据、负责人和治理结论</td>
+</tr>
+</tbody></table></div>
+<p>Agent 提供匹配结果、引用和处理建议；人核对当前事实并确认动作。运行故障解决后，运维记录附上恢复证据。如果治理发现需要调整表结构、SQL 或业务口径，则创建<strong>关联变更需求</strong>，按主线重新开发、测试、评审和授权发布。</p>
+<p>旁路记录不会改写旧说明书；只有新交付完成，才追加新的交付版本。这减少了每次从聊天和文档重新拼装目标、依赖、负责人、旧决定的工作。</p>
+<p>这些案例说明产品目标动线。公开 Demo 以浏览器本地状态演示两条旁路。它先生成独立的待确认建议记录，人确认后显示模拟结果并归档旁路记录。它不会修改需求或交付说明书。真实调度告警、质量监测、知识检索与生产执行仍待接入。</p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-G">
+<header class="am-panel-head"><span class="am-panel-id">G</span><h2>三类角色的工作重心如何变化？</h2></header>
 <div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
 <thead>
 <tr>
@@ -876,8 +908,8 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <p>这不是把责任交给 Agent。业务规则由相关人员确认，产物质量由 Owner 把关，评审和发布有独立动作。角色共享上下文，责任仍有明确归属。</p>
 </div></div>
 </section>
-<section class="am-panel" id="panel-G">
-<header class="am-panel-head"><span class="am-panel-id">G</span><h2>读者可以怎样看 Demo？</h2></header>
+<section class="am-panel" id="panel-H">
+<header class="am-panel-head"><span class="am-panel-id">H</span><h2>读者可以怎样看 Demo？</h2></header>
 <div class="am-panel-body"><div class="am-md"><p>打开<a href="https://cirsever.github.io/aide-workbench/">公开演示：Aide 数据工作台</a>，沿下面六站体验产品动线。示例数据均为虚构。</p>
 <ol>
 <li><strong>需求总览</strong>：看我的待办、受阻需求与下一步；试着切换成员和个性化首页。</li>
@@ -889,10 +921,10 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 </ol>
 </div></div>
 </section>
-<section class="am-panel" id="panel-H">
-<header class="am-panel-head"><span class="am-panel-id">H</span><h2>这页展示了什么边界？</h2></header>
+<section class="am-panel" id="panel-I">
+<header class="am-panel-head"><span class="am-panel-id">I</span><h2>这页展示了什么边界？</h2></header>
 <div class="am-panel-body"><div class="am-callout am-callout--info" role="note"><div class="am-callout-title">原型与产品设计</div><div class="am-callout-body am-md"><p><strong>原型已演示</strong>：浏览器内的需求状态、成员切换、节点依赖与转交。也演示了版本评审、固定样本测试、可编辑 HTML 总览、模拟发布与首跑验收。交付说明书、示意飞书项目需求进入、定时发现与自动召回使用固定场景和浏览器内的本地状态模拟；定时检查只在演示页打开时运行。</p>
-<p><strong>生产设计仍待接入</strong>：飞书项目空间/项目绑定与真实工作项读取。大模型、知识检索、Hive、生产调度，以及在线多人身份与权限也待接入。页面说明的是产品动线。演示中的 SQL 和首跑结果不能作为真实数据交付证明。</p>
+<p><strong>生产设计仍待接入</strong>：飞书项目空间/项目绑定与真实工作项读取。大模型、知识检索、Hive、生产调度、运维 / 治理旁路的真实告警与质量监测，以及在线多人身份与权限也待接入。页面说明的是产品动线。演示中的 SQL 和首跑结果不能作为真实数据交付证明。</p>
 </div></div></div>
 </section>
 </div>
@@ -913,7 +945,7 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <div class="am-lightbox-canvas am-diagram"></div>
 </div>
 </div>
-<footer class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.4.14 · 2026-10-11 23:43</footer>
+<footer class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.4.14 · 2026-10-12 11:17</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
 template: doc
 theme: shadcn
@@ -1038,7 +1070,31 @@ Agent --&gt; 需求节点: 保存修改候选
 
 店铺字段来源与退款如何关联店铺属于新规则，需由相关人员确认。随后 Agent 生成候选，数据开发 检查 SQL、字段、依赖和测试影响；按需评审当前候选，由 Owner 确认后重测，再经明确授权发布。交付成功才追加新说明书版本。原版本保留，原评审与测试不能自动证明修改后的 SQL。
 
-## F 三类角色的工作重心如何变化？
+## F 交付之外，任务运维与数据治理怎样接入？
+
+任务运维与数据治理是**按需进入的两条旁路**，不是每条交付需求都要经过的新节点。它们共用已接受的交付说明书。告警或治理问题带着任务名、表名进入时，Agent 可直接召回相关版本和出处；使用者不必先到知识库找说明书。召回的是历史依据，不是对当前事故的自动定论。
+
+```flow LR
+(已接受的交付) -&gt; [(交付说明书)]
+[(交付说明书)] -&gt; 任务运维 &amp; 数据治理: 按任务或表名召回
+任务运维 -&gt; 运维处理记录: 告警、处置、恢复证据
+数据治理 -&gt; 治理处理记录: 问题、口径确认、质量证据
+数据治理 -&gt; 关联变更需求: 结构或口径需改
+关联变更需求 -&gt; (开发、测试、评审、发布): 返回交付主线
+```
+
+| 旁路 | 进入问题与历史引用 | 当次待确认 | 处理结果 |
+|---|---|---|---|
+| 任务运维 | `channel_trade_daily` 的上游退款分区迟到；引用交付第 1 版的 09:00 目标、退款按发生日统计、订单与退款依赖及调度配置 | 数据开发 用分区到达时间和调度日志确认影响日期、补齐状态及是否需要授权重跑 | 独立保存告警、处置、运行证据与恢复验证 |
+| 数据治理 | `ads_channel_trade_di` 出现渠道金额异常或退款口径疑问；引用交付第 1 版的日期 × 渠道粒度、来源、口径及数据测试 | 数据分析 确认业务口径，一线业务 确认目标，数据开发 核验样本、质量规则、表与 SQL | 独立保存问题、证据、负责人和治理结论 |
+
+Agent 提供匹配结果、引用和处理建议；人核对当前事实并确认动作。运行故障解决后，运维记录附上恢复证据。如果治理发现需要调整表结构、SQL 或业务口径，则创建**关联变更需求**，按主线重新开发、测试、评审和授权发布。
+
+旁路记录不会改写旧说明书；只有新交付完成，才追加新的交付版本。这减少了每次从聊天和文档重新拼装目标、依赖、负责人、旧决定的工作。
+
+这些案例说明产品目标动线。公开 Demo 以浏览器本地状态演示两条旁路。它先生成独立的待确认建议记录，人确认后显示模拟结果并归档旁路记录。它不会修改需求或交付说明书。真实调度告警、质量监测、知识检索与生产执行仍待接入。
+
+## G 三类角色的工作重心如何变化？
 
 | 角色 | 常见路径中的负担 | 在需求节点中的主要动作 |
 |---|---|---|
@@ -1048,7 +1104,7 @@ Agent --&gt; 需求节点: 保存修改候选
 
 这不是把责任交给 Agent。业务规则由相关人员确认，产物质量由 Owner 把关，评审和发布有独立动作。角色共享上下文，责任仍有明确归属。
 
-## G 读者可以怎样看 Demo？
+## H 读者可以怎样看 Demo？
 
 打开[公开演示：Aide 数据工作台](https://cirsever.github.io/aide-workbench/)，沿下面六站体验产品动线。示例数据均为虚构。
 
@@ -1059,12 +1115,12 @@ Agent --&gt; 需求节点: 保存修改候选
 5. **发布与验收**：审阅发布包，明确授权模拟发布，再看首跑结果和交付记录。
 6. **交付后变更**：查看定时发现的示意飞书项目需求，也可手动选择已有工作项；再看召回结果，确认新规则和证据。
 
-## H 这页展示了什么边界？
+## I 这页展示了什么边界？
 
 ```callout info 原型与产品设计
 **原型已演示**：浏览器内的需求状态、成员切换、节点依赖与转交。也演示了版本评审、固定样本测试、可编辑 HTML 总览、模拟发布与首跑验收。交付说明书、示意飞书项目需求进入、定时发现与自动召回使用固定场景和浏览器内的本地状态模拟；定时检查只在演示页打开时运行。
 
-**生产设计仍待接入**：飞书项目空间/项目绑定与真实工作项读取。大模型、知识检索、Hive、生产调度，以及在线多人身份与权限也待接入。页面说明的是产品动线。演示中的 SQL 和首跑结果不能作为真实数据交付证明。
+**生产设计仍待接入**：飞书项目空间/项目绑定与真实工作项读取。大模型、知识检索、Hive、生产调度、运维 / 治理旁路的真实告警与质量监测，以及在线多人身份与权限也待接入。页面说明的是产品动线。演示中的 SQL 和首跑结果不能作为真实数据交付证明。
 ```
 </textarea>
 <script>
