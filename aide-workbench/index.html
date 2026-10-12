@@ -1821,6 +1821,32 @@ tbody tr:last-child td {
 .sidepath-evidence > div { background:#f7f9fd; border:1px solid #e8ecf5; padding:13px; border-radius:9px; min-width:0; overflow-wrap:anywhere; }
 .sidepath-history { margin-top:16px; }
 .sidepath-history button { display:block; width:100%; text-align:left; margin-top:8px; }
+.ops-layout { display:grid; grid-template-columns:minmax(310px, 1fr) minmax(0, 1.45fr); gap:14px; margin-top:16px; }
+.ops-list { padding:0; overflow:hidden; }
+.ops-list h3, .ops-inspector h3 { margin:0; padding:14px 16px; border-bottom:1px solid #e8ecf5; }
+.ops-instance { width:100%; display:block; text-align:left; padding:12px 15px; border:0; border-bottom:1px solid #edf0f6; background:#fff; }
+.ops-instance:hover, .ops-instance.active { background:#f2f5ff; }
+.ops-instance strong, .ops-instance small { display:block; overflow-wrap:anywhere; }
+.ops-instance small { margin-top:5px; color:#687386; line-height:1.5; }
+.ops-badge { display:inline-block; padding:2px 7px; border-radius:5px; background:#edf0f7; color:#4b5871; font-size:11px; margin-left:6px; }
+.ops-badge.failed { background:#fff0ed; color:#ae4536; }
+.ops-badge.running { background:#e9f5ff; color:#146b98; }
+.ops-badge.success { background:#eaf7ef; color:#247548; }
+.ops-inspector { min-width:0; }
+.ops-tabs { display:flex; flex-wrap:wrap; gap:6px; padding:12px 16px 0; }
+.ops-tabs button.active { background:#e9edff; color:#3545a1; border-color:#9da8e5; }
+.ops-body { padding:0 16px 16px; }
+.ops-facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:13px 0; }
+.ops-facts div { padding:9px; background:#f7f9fd; border:1px solid #e8ecf5; border-radius:6px; overflow-wrap:anywhere; }
+.ops-facts small { display:block; color:#778198; margin-bottom:3px; }
+.ops-dag { display:flex; align-items:stretch; flex-wrap:wrap; gap:7px; margin:14px 0; }
+.ops-dag span { padding:9px; background:#f7f9fd; border:1px solid #dfe5f3; border-radius:6px; }
+.ops-log { white-space:pre-wrap; overflow:auto; max-height:230px; padding:12px; background:#192338; color:#e8ecf4; border-radius:7px; font-size:11px; line-height:1.6; }
+.ops-action { padding:15px; margin-top:15px; border:1px solid #dfe5f3; border-radius:9px; background:#fafbff; }
+.ops-action button { margin:6px 6px 0 0; }
+.ops-timeline { margin:12px 0; padding-left:19px; line-height:1.8; }
+.ops-note { font-size:12px; color:#687386; line-height:1.6; }
+@media(max-width:900px) { .ops-layout { grid-template-columns:1fr; } }
 @media(max-width:700px) { .sidepath-cards, .sidepath-evidence { grid-template-columns:1fr; } }
 </style>
   </head>
@@ -4721,7 +4747,7 @@ var AideKnowledgeUI = (() => {
 var AideSidepaths = (() => {
   const e = Aide.escape;
   const config = {
-    operations: { title: '任务运维', asset: 'task:channel_trade_daily', event: '虚构告警：channel_trade_daily 今日 09:00 未按时产出。', role: '数据开发' },
+    operations: { title: '任务运维', asset: 'task:channel_trade_daily', event: '虚构告警：2026-10-12 09:00 渠道日报交付目标未达成。', role: '数据开发' },
     governance: { title: '数据治理', asset: 'table:ads_channel_trade_di', event: '虚构反馈：ads_channel_trade_di 的店铺指标口径或质量待核查。', role: '数据分析' },
   };
   const date = (at) => new Date(at).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
@@ -4755,12 +4781,166 @@ var AideSidepaths = (() => {
       result: '本地模拟复核：说明书仍未定义店铺粒度；待确认清单与变更建议已归档。未批准新口径，未修改表、数据或交付说明书。',
     };
   }
+  // These fixtures model scheduler instances, not production tasks or current telemetry.
+  const opsInstances = [
+    { id:'demo-refund-1011', task:'dwd_refund_detail_di', businessDate:'2026-10-11', status:'failed', runType:'系统调度', version:'V3', planned:'2026-10-12 07:50', submitted:'07:50:08', started:'07:51:02', ended:'08:20:16', retry:0, queue:'demo-etl', priority:'P2', partition:'dt=2026-10-11', log:'07:51:02 实例开始，申请 demo-etl 资源\n08:19:49 worker 节点失联，执行容器被回收；此尝试终止\n08:20:16 本次运行失败；退款分区未产出。' },
+    { id:'demo-daily-1011', task:'channel_trade_daily', businessDate:'2026-10-11', status:'waiting', runType:'系统调度', version:'V2', planned:'2026-10-12 08:30', submitted:'08:30:03', started:'—', ended:'—', retry:0, queue:'demo-etl', priority:'P1', partition:'dt=2026-10-11', log:'08:30:03 已创建调度实例\n08:30:05 等待依赖：dwd_refund_detail_di / dt=2026-10-11 尚未成功。' },
+    { id:'demo-report-1011', task:'ads_channel_trade_di', businessDate:'2026-10-11', status:'waiting', runType:'系统调度', version:'V2', planned:'2026-10-12 08:50', submitted:'08:50:02', started:'—', ended:'—', retry:0, queue:'demo-report', priority:'P2', partition:'dt=2026-10-11', log:'08:50:02 等待依赖：channel_trade_daily / dt=2026-10-11 尚未成功。' },
+    { id:'demo-orders-1011', task:'dwd_order_detail_di', businessDate:'2026-10-11', status:'success', runType:'系统调度', version:'V4', planned:'2026-10-12 08:05', submitted:'08:05:04', started:'08:06:11', ended:'08:17:20', retry:0, queue:'demo-etl', priority:'P2', partition:'dt=2026-10-11', log:'08:17:20 本业务日期订单上游成功，分区已产出。' },
+    { id:'demo-catalog-1011', task:'dwd_catalog_snapshot_di', businessDate:'2026-10-11', status:'running', runType:'系统调度', version:'V1', planned:'2026-10-12 08:25', submitted:'08:25:04', started:'08:26:11', ended:'—', retry:0, queue:'demo-etl', priority:'P3', partition:'dt=2026-10-11', log:'08:26:11 独立目录任务运行中；不在渠道日报依赖链上。' },
+    { id:'demo-daily-1010', task:'channel_trade_daily', businessDate:'2026-10-10', status:'success', runType:'系统调度', version:'V2', planned:'2026-10-11 08:30', submitted:'08:30:02', started:'08:30:19', ended:'08:36:42', retry:0, queue:'demo-etl', priority:'P1', partition:'dt=2026-10-10', log:'08:36:42 实例成功；该记录只对应 2026-10-10 业务日期。' },
+    { id:'demo-daily-1012', task:'channel_trade_daily', businessDate:'2026-10-12', status:'scheduled', runType:'系统调度', version:'V2', planned:'2026-10-13 08:30', submitted:'—', started:'—', ended:'—', retry:0, queue:'demo-etl', priority:'P1', partition:'dt=2026-10-12', log:'尚未到计划触发时间；没有运行日志。' },
+  ];
+  const opsStatus = {failed:'失败',waiting:'等待依赖',running:'运行中',success:'成功',scheduled:'等待计划时间'};
+  const opsPhaseLabel = {proposed:'待确认建议',running:'上游重试中','dependency-running':'日报依赖重评并运行','awaiting-verification':'待独立复核',verified:'已复核归档',simulated:'旧版模拟记录'};
+  function opsRuntime(db) {
+    return (db.sidepathCases || []).filter((entry) => entry.kind === 'operations' && entry.instanceId === 'demo-refund-1011' &&
+      ['running','dependency-running','awaiting-verification','verified'].includes(entry.status)).at(-1);
+  }
+  function opsState(instance, runtime) {
+    if (!runtime || instance.businessDate !== '2026-10-11') return instance.status;
+    if (instance.id === 'demo-refund-1011') return runtime.status === 'running' ? 'running' : 'success';
+    if (instance.id === 'demo-daily-1011') return ['awaiting-verification','verified'].includes(runtime.status) ? 'success' : runtime.status === 'dependency-running' ? 'running' : 'waiting';
+    if (instance.id === 'demo-report-1011') return ['awaiting-verification','verified'].includes(runtime.status) ? 'success' : 'waiting';
+    return instance.status;
+  }
+  function opsFacts(instance, state, runtime) {
+    const facts = [
+      ['实例 ID',instance.id],['任务 / 版本',instance.task + ' ' + instance.version],
+      ['业务日期 / 分区',instance.businessDate + ' / ' + instance.partition],
+      ['当前演示状态 / 原运行类型',opsStatus[state] + ' / ' + instance.runType],
+      ['计划触发',instance.planned],['提交 / 开始 / 结束',instance.submitted + ' / ' + instance.started + ' / ' + instance.ended],
+      ['原尝试重试次数 / 优先级',instance.retry + ' / ' + instance.priority],['资源队列',instance.queue],
+    ];
+    if (runtime && state !== instance.status && ['demo-refund-1011','demo-daily-1011','demo-report-1011'].includes(instance.id))
+      facts.push(['本地模拟的新尝试',instance.id === 'demo-refund-1011' ? '重试第 1 次；' + opsStatus[state] + '；无真实起止时刻' : '依赖重评后' + opsStatus[state] + '；无真实起止时刻']);
+    return '<div class="ops-facts">' + facts.map(([name, value]) => '<div><small>' + e(name) + '</small>' + e(value) + '</div>').join('') + '</div>';
+  }
+  function opsLog(instance, state) {
+    if (state === instance.status) return instance.log;
+    if (instance.id === 'demo-refund-1011') return '[原调度尝试]\n' + instance.log + '\n[本地模拟的新尝试]\n重试第 1 次：' + opsStatus[state] + '；未采集真实日志或起止时间。';
+    return '[原调度尝试]\n' + instance.log + '\n[本地模拟的依赖重评]\n状态：' + opsStatus[state] + '；未采集真实日志或起止时间。';
+  }
+  function opsTabs(instance, state, tab, db, entry) {
+    const tabs = [['overview','概览'],['dependencies','上下游依赖'],['delay','延迟分析'],['logs','运行日志'],['records','运行记录']];
+    const onIncidentChain = ['demo-refund-1011','demo-orders-1011','demo-daily-1011','demo-report-1011'].includes(instance.id);
+    let content = '';
+    if (tab === 'dependencies') content = onIncidentChain
+      ? '<p class="ops-note">2026-10-11 事故链路的实例级依赖；日报同时等待退款与订单上游，订单已成功。</p><div class="ops-dag"><span>dwd_refund_detail_di · ' + e(opsStatus[opsState(opsInstances[0],opsRuntime(db))]) + '</span><span>＋</span><span>dwd_order_detail_di · 成功</span><span>→</span><span>channel_trade_daily · ' + e(opsStatus[opsState(opsInstances[1],opsRuntime(db))]) + '</span><span>→</span><span>ads_channel_trade_di · ' + e(opsStatus[opsState(opsInstances[2],opsRuntime(db))]) + '</span></div><p>当前选中：' + e(instance.task) + ' / ' + e(instance.businessDate) + '。</p>'
+      : '<p>当前选中 ' + e(instance.task) + ' / ' + e(instance.businessDate) + '，不属于 2026-10-11 渠道日报事故链路。其状态为' + e(opsStatus[state]) + '；此视图不套用另一业务日期的依赖结论。</p>';
+    else if (tab === 'delay') content = !onIncidentChain
+      ? '<p>当前选中 ' + e(instance.task) + ' / ' + e(instance.businessDate) + '，不在 2026-10-11 渠道日报延迟链路上。请选中该日期的退款、订单、日报或报表实例查看事故延迟分解。</p>'
+      : '<p class="ops-note">合成观测时点 2026-10-12 09:15。实际最晚完成链路：退款上游 → 渠道日报 → 下游报表；以下时长只描述该观测时点，不推算模拟推进后的真实完成时间。</p>' +
+      '<div class="ops-facts"><div><small>上游执行</small>07:51–08:20 失败，约 29 分钟；历史同任务约 12 分钟</div><div><small>排队等待</small>提交 07:50:08 → 开始 07:51:02，约 54 秒</div><div><small>日报依赖等待</small>08:30 计划触发 → 09:15 仍等待，至少 45 分钟</div><div><small>下游基线影响</small>报表原计划 08:50；09:00 业务交付目标已错过，09:15 仍无产出</div></div>' +
+      '<p class="ops-note">历史结束时间用于比较基线，不是本次完成证据。模拟复核完成后仍保留 SLA 逾期；因为没有真实完成时间，不给出精确逾期分钟数。</p>';
+    else if (tab === 'logs') content = '<p class="ops-note">实例日志摘录为合成数据。原调度尝试与新模拟尝试分开显示。</p><pre class="ops-log">' + e(opsLog(instance,state)) + '</pre>';
+    else if (tab === 'records') {
+      const records = (db.sidepathCases || []).filter((item) => item.kind === 'operations' && item.instanceId === instance.id).slice().reverse();
+      content = '<p class="ops-note">每次操作按实例和交付说明书快照独立保存；原失败尝试不会被覆盖。</p>' +
+        '<div class="ops-facts"><div><small>原调度尝试</small>' + e(instance.runType + ' · 重试 ' + instance.retry + ' 次 · ' + opsStatus[instance.status]) + '</div>' +
+        (records.map((item) => '<div><small>' + e(date(item.createdAt)) + '</small>' + e(item.id) + ' · ' + e(opsPhaseLabel[item.status] || item.status) + ' · 快照 ' + e(item.sourceId) + '</div>').join('') || '<div><small>旁路记录</small>尚无</div>') + '</div>';
+    } else content = opsFacts(instance,state,opsRuntime(db)) + '<p class="ops-note">计划触发是调度配置时点；提交、开始、结束为原调度尝试。后续模拟状态没有真实时间戳。</p>';
+    return '<div class="ops-tabs" role="tablist" aria-label="实例详情">' + tabs.map(([key,label]) => '<button type="button" role="tab" aria-selected="' + (tab === key) + '" class="' + (tab === key ? 'active' : '') + '" data-action="ops-tab" data-id="' + key + '">' + label + '</button>').join('') + '</div><div class="ops-body">' + content + '</div>';
+  }
+  function opsAction(entry, selected, stale, db) {
+    const runtime = opsRuntime(db);
+    if (entry && !entry.instanceId) return '<div class="ops-action"><strong>旧版旁路记录</strong><p>此历史记录没有绑定单次实例、分区和执行范围，保留供回看。请重新选择失败实例生成新建议。</p><p class="ops-note">旧记录 ' + e(entry.id) + ' · 来源快照 ' + e(entry.sourceId) + '</p></div>';
+    if (!entry || entry.instanceId !== selected.id) {
+      return selected.status === 'failed' && opsState(selected,runtime) === 'failed'
+        ? '<div class="ops-action"><strong>诊断此失败实例</strong><p>读取当前实例状态、失败日志及交付说明书后生成建议。</p><button type="button" class="primary" data-action="ops-analyze">检索交付依据并分析此实例</button></div>'
+        : '<div class="ops-action"><strong>当前不可重试</strong><p>只有已失败的精确实例可进入重试提案。等待依赖需检查上游；运行中、成功或未到计划时间的实例不能重试。</p></div>';
+    }
+    const phase = entry.status, actionable = !stale && opsState(selected,runtime) === 'failed';
+    const scope = '<div class="ops-facts"><div><small>重试对象</small>' + e(entry.instanceId) + '</div><div><small>业务日期 / 目标分区</small>2026-10-11 / dt=2026-10-11</div><div><small>资源队列 / 并发</small>demo-etl / 1</div><div><small>影响边界</small>仅失败上游实例；下游不自动重跑</div></div>';
+    const evidence = '<div class="sidepath-evidence"><div><strong>当前实例证据 · 合成调度观测</strong><p>原尝试日志显示 worker 节点失联、容器被回收；退款分区未产出。订单上游已成功，日报仍等待退款依赖。</p><p class="ops-note">这是临时节点故障的线索；操作前仍须核验队列恢复与无活跃尝试。</p></div><div><strong>召回的交付记忆 · 历史交付</strong><p>来源快照 ' + e(entry.sourceId) + ' · V' + e(entry.sourceEdition) + '。记录任务、退款依赖、口径和验收目标。</p><p class="ops-note">交付记忆没有当天实例状态，也不能证明当天退款分区存在。</p></div></div>';
+    let controls = '';
+    if (phase === 'proposed') controls = '<p>建议只重试此失败的上游实例。先检查执行范围和资源约束。</p>' + (!actionable ? '<p class="notice">该实例已有新运行状态或来源快照失效，旧提案不可执行。</p>' : '<button type="button" data-action="ops-preflight">核验队列恢复与无活跃尝试</button>' + (entry.preflightChecked ? '<p class="ops-note">合成前置核验：demo-etl 队列健康；该实例无活跃尝试。此结果仅用于本地演示。</p><button type="button" data-action="ops-scope">' + (entry.scopeOpen ? '收起' : '查看') + '精确执行范围</button>' + (entry.scopeOpen ? scope + '<button type="button" class="primary" data-action="ops-confirm">确认并启动本地模拟重试</button>' : '') : ''));
+    else if (phase === 'running') controls = scope + '<p>模拟重试运行中；下游仍等待依赖。原失败尝试和日志保留。</p><button type="button" class="primary" data-action="ops-advance" ' + (stale ? 'disabled' : '') + '>完成上游重试并重新评估依赖</button>';
+    else if (phase === 'dependency-running') controls = '<p>上游重试已成功；日报依赖重新评估后进入运行，下游报表仍等待日报。</p><button type="button" class="primary" data-action="ops-advance" ' + (stale ? 'disabled' : '') + '>完成日报与报表的模拟执行</button>';
+    else if (phase === 'awaiting-verification') controls = '<p>上游、日报与报表模拟执行已结束。仍须分别复核退款分区、日报质量和交付 SLA。</p><button type="button" class="primary" data-action="ops-verify" ' + (stale ? 'disabled' : '') + '>执行独立复核并归档</button>';
+    else if (phase === 'verified') controls = '<div class="notice" id="sidepath-result"><strong>复核记录已归档 · ' + e(date(entry.verifiedAt)) + '</strong><p>退款分区存在；日报样本行数、金额与退款口径检查通过；下游依赖已重新评估。</p><p>09:00 交付目标已错过，SLA 仍标为逾期，不因最终成功而抹除。</p><p class="ops-note">确认人 ' + e(entry.confirmedBy) + ' · 仅本地模拟；关联快照 ' + e(entry.sourceId) + ' / 实例 ' + e(entry.instanceId) + '。</p></div>';
+    else controls = '<p>这是旧版演示记录，缺少精确实例和执行范围。请重新选择失败实例分析。</p>';
+    return '<div class="ops-action" id="ops-action"><h3>Agent 诊断与操作建议 · ' + e(opsPhaseLabel[phase] || phase) + '</h3>' + evidence + (stale ? '<div class="notice" id="sidepath-stale">交付说明书引用已失效或更新；此记录不可继续执行，请重新分析。</div>' : '') + controls +
+      '<ol class="ops-timeline">' + (entry.audit || []).map((event) => '<li>' + e(event.at) + ' · ' + e(event.text) + '</li>').join('') + '</ol></div>';
+  }
+  function operationsPage(db, ui) {
+    const selected = opsInstances.find((item) => item.id === ui.opsInstanceId) || opsInstances[1];
+    const tab = ['overview','dependencies','delay','logs','records'].includes(ui.opsTab) ? ui.opsTab : 'overview';
+    const entry = (db.sidepathCases || []).find((item) => item.id === ui.sidepathCaseId && item.kind === 'operations');
+    const snapshot = source(db,'operations');
+    const cited = entry ? AideKnowledge.find(db,entry.sourceId) : snapshot;
+    const stale = !!entry && entry.status === 'proposed' && (!cited || snapshot.id !== entry.sourceId || AideKnowledge.latest(db,cited.rootRequestId)?.id !== entry.sourceId);
+    const runtime = opsRuntime(db);
+    const historyRows = (db.sidepathCases || []).filter((item) => item.kind === 'operations').slice().reverse();
+    return '<main class="page sidepath-page"><div class="page-heading"><div class="eyebrow">OPERATIONS · 合成实例沙盘</div><h1>任务运维工作台</h1><p class="subtitle">按业务日期定位单次调度实例，核对依赖、日志与执行范围，再复核结果。</p></div>' + cards('operations') +
+      '<section class="panel sidepath-panel" id="sidepath-panel" data-kind="operations"><div class="flex between"><div><h2>渠道日报延迟 · 2026-10-11 业务日期</h2><p class="tiny muted">合成时间线：09:00 业务交付目标；退款上游 08:20 失败，日报等待依赖。</p></div><span class="pill">本地模拟</span></div>' +
+      '<div class="notice">任务是调度定义，下面每行是一个业务日期上的实例。案例时间固定为 2026-10-12，所有 ID、队列和日志均为虚构。</div>' +
+      '<div class="ops-layout"><div class="panel ops-list"><h3>实例列表 · ' + opsInstances.length + '</h3>' + opsInstances.map((item) => {
+        const state = opsState(item,runtime);
+        return '<button type="button" class="ops-instance ' + (selected.id === item.id ? 'active' : '') + '" data-action="ops-select" data-id="' + e(item.id) + '"><strong>' + e(item.task) + '<span class="ops-badge ' + e(state) + '">' + e(opsStatus[state]) + '</span></strong><small>' + e(item.businessDate) + ' · 计划 ' + e(item.planned) + '<br>' + e(item.id) + '</small></button>';
+      }).join('') + '</div><div class="panel ops-inspector"><h3>实例详情 · ' + e(selected.id) + '</h3>' + opsTabs(selected,opsState(selected,runtime),tab,db,entry) + '</div></div>' +
+      (cited ? '<h3>关联交付说明书</h3><p>《' + e(cited.title) + '》V' + cited.edition + ' · 快照 ' + e(cited.id) + ' · ' + (cited.provenance === 'accepted' ? '模拟首跑验收沉淀' : '历史演示归档') + '</p>' + details(cited,'operations') + '<button type="button" data-action="sidepath-source" data-id="' + e(cited.id) + '">查看来源说明书 →</button>' : '<div class="notice">来源快照已失效；已启动记录仍保留固定快照 ID 供审计。</div>') +
+      opsAction(entry,selected,stale,db) + '</section><section class="panel sidepath-history" id="sidepath-history"><h2>独立操作记录 · ' + historyRows.length + '</h2>' + (historyRows.map((item) => '<button type="button" data-action="sidepath-select" data-id="' + e(item.id) + '">' + e(date(item.createdAt)) + ' · ' + e(item.instanceId || '旧版未绑定实例') + ' · ' + e(opsPhaseLabel[item.status] || item.status) + ' · 快照 V' + e(item.sourceEdition) + (item.id === ui.sidepathCaseId ? ' · 正在查看' : '') + '</button>').join('') || '<p class="tiny muted">尚无操作记录。</p>') + '</section><p class="bottom-note">此页不连接 Dorado、Hive 或生产调度。重试、依赖变化、质量复核均为本地状态模拟。</p></main>';
+  }
+  function operationsHandle(action,id,db,ui,helpers) {
+    if (action === 'ops-select') {
+      if (!opsInstances.some((item) => item.id === id)) throw Error('实例不存在');
+      ui.opsInstanceId = id; ui.opsTab = 'overview'; ui.sidepathCaseId = null; return true;
+    }
+    if (action === 'ops-tab') {
+      if (!['overview','dependencies','delay','logs','records'].includes(id)) throw Error('未知实例详情页');
+      ui.opsTab = id; return true;
+    }
+    if (!['ops-analyze','ops-preflight','ops-scope','ops-confirm','ops-advance','ops-verify'].includes(action)) return false;
+    const selected = opsInstances.find((item) => item.id === ui.opsInstanceId) || opsInstances[1];
+    if (action === 'ops-analyze') {
+      if (selected.status !== 'failed' || opsState(selected,opsRuntime(db)) !== 'failed') throw Error('仅能对失败的实例生成重试建议');
+      const snapshot = source(db,'operations'), asset = snapshot.assets.find((item) => item.id === config.operations.asset);
+      const entry = { id:'sidepath:' + Date.now() + ':' + Math.random().toString(36).slice(2,6), kind:'operations', instanceId:selected.id,
+        businessDate:selected.businessDate, partition:selected.partition, sourceId:snapshot.id, sourceEdition:snapshot.edition,
+        assetVersion:asset?.version || 1, createdAt:Date.now(), status:'proposed', scopeOpen:false,
+        audit:[{at:date(Date.now()),text:'基于合成失败实例日志和交付快照生成精确重试建议'}] };
+      (db.sidepathCases ||= []).push(entry); ui.sidepathCaseId = entry.id;
+      helpers.toast('已生成实例级诊断与待确认范围'); return true;
+    }
+    const entry = (db.sidepathCases || []).find((item) => item.id === ui.sidepathCaseId && item.kind === 'operations');
+    if (!entry || entry.instanceId !== selected.id) throw Error('请先选择并分析失败实例');
+    const snapshot = AideKnowledge.find(db,entry.sourceId);
+    if (entry.status === 'proposed' && (!snapshot || source(db,'operations').id !== entry.sourceId || AideKnowledge.latest(db,snapshot.rootRequestId)?.id !== entry.sourceId))
+      throw Error('来源说明书已变化，请重新分析');
+    if (action === 'ops-preflight') {
+      if (entry.status !== 'proposed' || opsState(selected,opsRuntime(db)) !== 'failed') throw Error('实例状态已变化，不能继续前置核验');
+      entry.preflightChecked = true; entry.audit.push({at:date(Date.now()),text:'合成前置核验：队列健康且无活跃尝试'});
+      helpers.toast('合成前置核验通过'); return true;
+    }
+    if (action === 'ops-scope') { if (entry.status !== 'proposed' || !entry.preflightChecked) throw Error('请先核验队列和活跃尝试'); entry.scopeOpen = !entry.scopeOpen; return true; }
+    if (action === 'ops-confirm') {
+      if (entry.status !== 'proposed' || !entry.preflightChecked || !entry.scopeOpen || selected.status !== 'failed' || opsState(selected,opsRuntime(db)) !== 'failed') throw Error('请先核验队列、活跃尝试及精确执行范围；当前实例可能已变化');
+      entry.status = 'running'; entry.confirmedAt = Date.now(); entry.confirmedBy = db.member;
+      entry.audit.push({at:date(Date.now()),text:'确认仅重试 ' + entry.instanceId + '；队列 demo-etl，并发 1；不自动重跑下游'});
+      helpers.toast('本地模拟重试已开始'); return true;
+    }
+    if (action === 'ops-advance') {
+      if (entry.status === 'running') { entry.status = 'dependency-running'; entry.audit.push({at:date(Date.now()),text:'上游重试成功；日报依赖重新评估并进入运行'}); }
+      else if (entry.status === 'dependency-running') { entry.status = 'awaiting-verification'; entry.audit.push({at:date(Date.now()),text:'日报和报表模拟执行结束；等待质量与 SLA 复核'}); }
+      else throw Error('当前没有可推进的模拟运行');
+      return true;
+    }
+    if (action === 'ops-verify') {
+      if (entry.status !== 'awaiting-verification') throw Error('执行尚未完成，不能复核');
+      entry.status = 'verified'; entry.verifiedAt = Date.now();
+      entry.audit.push({at:date(Date.now()),text:'复核分区、样本质量和依赖通过；09:00 SLA 保持逾期'});
+      helpers.toast('模拟复核已归档，SLA 仍为逾期'); return true;
+    }
+    return false;
+  }
   function history(db, kind, ui) {
     const cases = (db.sidepathCases || []).filter((entry) => entry.kind === kind).slice().reverse();
     return `<section class="panel sidepath-history" id="sidepath-history"><h2>独立旁路记录 · ${cases.length}</h2>${cases.map((entry) => `<button type="button" data-action="sidepath-select" data-id="${e(entry.id)}">${date(entry.createdAt)} · ${entry.status === 'simulated' ? '已归档模拟结果' : '待确认建议'} · 来源 V${entry.sourceEdition} <span class="tiny muted">${e(entry.sourceId)}</span>${entry.id === ui.sidepathCaseId ? ' · 正在查看' : ''}</button>`).join('') || '<p class="tiny muted">尚无分析记录。打开告警后点击“检索交付依据并分析”。</p>'}</section>`;
   }
   function page(db, ui) {
     const kind = config[ui.sidepathKind] ? ui.sidepathKind : 'operations';
+    if (kind === 'operations') return operationsPage(db, ui);
     const snapshot = source(db, kind);
     const entry = (db.sidepathCases || []).find((item) => item.id === ui.sidepathCaseId && item.kind === kind);
     const cited = entry ? AideKnowledge.find(db, entry.sourceId) : snapshot;
@@ -4774,14 +4954,17 @@ var AideSidepaths = (() => {
     return `<main class="page sidepath-page"><div class="page-heading"><div class="eyebrow">DELIVERY SIDE PATHS · 本地模拟</div><h1>交付后的协作</h1><p class="subtitle">一线业务、数据分析、数据开发可沿交付说明书处理告警与治理反馈；记录独立保存。</p></div>${cards(kind)}<section class="panel sidepath-panel" id="sidepath-panel" data-kind="${kind}"><div class="flex between"><div><h2>${config[kind].title}</h2><p class="tiny muted">${e(config[kind].event)}</p></div><span class="pill">虚构事件</span></div><div class="notice">${entry ? `分析记录 ${e(entry.id)} · ${date(entry.createdAt)}` : '先检索交付说明书。分析不会改动需求、任务、数据表或已接受快照。'}</div>${cited ? `<h3>召回的交付说明书</h3><p>《${e(cited.title)}》V${cited.edition} · 快照 ${e(cited.id)} · ${provenance} · ${date(cited.deliveredAt)}</p>${details(cited, kind)}<button type="button" data-action="sidepath-source" data-id="${e(cited.id)}">查看来源说明书 →</button>` : '<p class="notice">引用快照已失效，请重新分析。</p>'}${entry && issue ? `<h3>定位与建议 · ${entry.status === 'simulated' ? '已记录' : '待确认'}</h3><p>${e(issue.finding)}</p><p>${e(issue.proposal)}</p><p class="tiny muted">依据：交付说明书 V${entry.sourceEdition}、${e(config[kind].asset)} V${entry.assetVersion}；告警和异常是虚构输入，不是历史交付证据。</p>${stale ? '<div class="notice" id="sidepath-stale">交付说明书已有新版本或引用失效，旧确认不可沿用。请重新检索分析。</div>' : ''}${entry.status === 'proposed' ? `<button type="button" class="primary" data-action="sidepath-confirm" ${stale ? 'disabled' : ''}>${kind === 'operations' ? '确认本地模拟恢复' : '确认记录治理建议并模拟复核'}</button>` : `<div class="notice" id="sidepath-result"><strong>模拟结果 · ${date(entry.confirmedAt)}</strong><p>${e(entry.result)}</p><p class="tiny muted">确认人 ${e(entry.confirmedBy)} · 仅归档此旁路记录。口径或表结构变更需另建关联需求，经过原有开发、测试、发布授权。</p></div>`}` : ''}<div class="toolbar" style="margin-top:18px"><button type="button" data-action="sidepath-analyze">${entry ? '重新检索并分析' : '检索交付依据并分析'}</button>${kind === 'governance' ? '<button type="button" data-action="sidepath-change">到交付知识提出关联变更 →</button>' : ''}</div></section>${history(db, kind, ui)}<p class="bottom-note">所有告警、定位、验证与恢复均为本地虚构演示；生产调度、数据与已接受交付快照不会改变。</p></main>`;
   }
   function handle(action, id, db, ui, helpers) {
+    if (operationsHandle(action, id, db, ui, helpers)) return true;
     if (action === 'sidepath-open') {
       if (!config[id]) throw Error('未知旁路场景');
       ui.tab = 'sidepaths'; ui.requestId = null; ui.sidepathKind = id; ui.sidepathCaseId = null; ui.drawer = null;
+      if (id === 'operations') { ui.opsInstanceId = 'demo-daily-1011'; ui.opsTab = 'overview'; }
       source(db, id);
       return true;
     }
     if (action === 'sidepath-analyze') {
       const kind = config[ui.sidepathKind] ? ui.sidepathKind : 'operations';
+      if (kind === 'operations') return operationsHandle('ops-analyze', id, db, ui, helpers);
       const snapshot = source(db, kind);
       const asset = snapshot.assets.find((item) => item.id === config[kind].asset);
     const analysis = diagnosis(snapshot, kind);
@@ -4797,10 +4980,12 @@ var AideSidepaths = (() => {
       const entry = (db.sidepathCases || []).find((item) => item.id === id);
       if (!entry) throw Error('旁路记录不存在');
       ui.sidepathKind = entry.kind; ui.sidepathCaseId = id;
+      if (entry.kind === 'operations') { ui.opsInstanceId = entry.instanceId || 'demo-refund-1011'; ui.opsTab = 'records'; }
       return true;
     }
     if (action === 'sidepath-confirm') {
       const entry = (db.sidepathCases || []).find((item) => item.id === ui.sidepathCaseId);
+      if (entry?.kind === 'operations') throw Error('旧版一键确认不可用于实例运维，请按精确重试与独立复核流程操作');
       const snapshot = entry && AideKnowledge.find(db, entry.sourceId);
       if (!entry || entry.status !== 'proposed') throw Error('请先完成分析');
       if (!snapshot || source(db, entry.kind).id !== snapshot.id || AideKnowledge.latest(db, snapshot.rootRequestId)?.id !== snapshot.id)
