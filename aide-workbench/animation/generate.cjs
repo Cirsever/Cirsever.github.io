@@ -170,8 +170,8 @@ function themeSvg(theme) {
     ${keyframes}
     .oldText{animation:oldFade ${animationDuration}s linear infinite}
     .newText{animation:newAppear ${animationDuration}s linear infinite}
-    @keyframes oldFade{0%,75%{opacity:1}81%,100%{opacity:.35}}
-    @keyframes newAppear{0%,80%{opacity:0}86%,100%{opacity:1}}
+    @keyframes oldFade{0%,74%{opacity:1}80%,100%{opacity:.35}}
+    @keyframes newAppear{0%,78%{opacity:0}82%,100%{opacity:1}}
     @media(prefers-reduced-motion:reduce){.event,.oldText,.newText{animation:none;opacity:1}}
   ]]></style>
   <rect class="shell" width="1000" height="${height}" rx="18"/>

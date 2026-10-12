@@ -49,8 +49,8 @@
       @keyframes reveal-11{0%,71.80%{opacity:0}72.00%,100%{opacity:1}}
     .oldText{animation:oldFade 18s linear infinite}
     .newText{animation:newAppear 18s linear infinite}
-    @keyframes oldFade{0%,75%{opacity:1}81%,100%{opacity:.35}}
-    @keyframes newAppear{0%,80%{opacity:0}86%,100%{opacity:1}}
+    @keyframes oldFade{0%,74%{opacity:1}80%,100%{opacity:.35}}
+    @keyframes newAppear{0%,78%{opacity:0}82%,100%{opacity:1}}
     @media(prefers-reduced-motion:reduce){.event,.oldText,.newText{animation:none;opacity:1}}
   ]]></style>
   <rect class="shell" width="1000" height="986" rx="18"/>

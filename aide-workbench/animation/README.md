@@ -20,3 +20,14 @@ node animation/generate.cjs
 时间由 `performance.now()` 在本机记录，保留到 0.001 毫秒。每行右端的逐步耗时包含操作函数、页面渲染及采集脚本的检查开销；部分行的小字分别列出操作函数和页面渲染/文字提取耗时，其余行显示采集到的提示。时间反映这次 Node VM 本地模拟，不能推断浏览器交互、网络、生产调度、重跑或回填时延。`run.json` 的 `productionTimingMs` 为 `null`，SVG 明示“生产耗时 未采集”。业务数据、实例和人物均为演示样本；最终复核归档也是本地状态推进，不代表真实生产执行或数据交付。
 
 SVG 中较长的返回与页面新增内容使用带省略号的摘录；完整前后页面文本、原始 HTML、状态、提示和精确数值均在 `run.json`。如源页面变化，先重新采集，再重新生成，避免把旧事件误当成当前结果。
+
+## README 双主题嵌入
+
+以下路径适用于 `aide-workbench/README.md`：
+
+```html
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="animation/demo-dark.svg">
+  <img src="animation/demo-light.svg" width="1000" alt="Aide 本地运维场景实测回放">
+</picture>
+```
