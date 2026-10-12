@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-labelledby="title desc" width="1000" height="986" viewBox="0 0 1000 986">
+  <title id="title">Aide 工作台：本地实测操作时间线（浅色）</title>
+  <desc id="desc">12 个真实本地模拟操作事件、逐步返回摘录、状态旁白和前后文本差异。动画在 18 秒内完成；减少动态效果时完整显示。</desc>
+  <style><![CDATA[
+    :root{color-scheme:light}
+    .shell{fill:#f7f5fb} .panel{fill:#ffffff;stroke:#e7e0ee;stroke-width:1}
+    .top{fill:#faf8fd} .rule{stroke:#e7e0ee;stroke-width:1}
+    text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans Mono CJK SC","PingFang SC","Microsoft YaHei",monospace;font-variant-numeric:tabular-nums}
+    .title{font-size:27px;font-weight:700;fill:#21192e;letter-spacing:-.7px}
+    .subtitle{font-size:12.8px;fill:#736b80}
+    .pill{font-size:12px;font-weight:700;fill:#7144cf}
+    .header{font-size:11px;font-weight:700;fill:#8e8699;letter-spacing:1.2px}
+    .index{font-size:12px;fill:#8e8699}
+    .prompt{font-size:18px;font-weight:700;fill:#7144cf}
+    .action{font-size:13.7px;font-weight:650;fill:#21192e}
+    .time{font-size:12px;fill:#7144cf}
+    .raw{font-size:11.2px;fill:#40364d}
+    .aside{font-size:11.6px;fill:#736b80}
+    .subtle{font-size:10px;fill:#8e8699}
+    .diffTitle{font-size:14px;font-weight:700;fill:#21192e}
+    .diffMeta{font-size:10.6px;fill:#8e8699}
+    .minus{font-size:13px;fill:#b54d62;text-decoration:line-through}
+    .plus{font-size:13px;fill:#286f51}
+    .footer{font-size:10.6px;fill:#8e8699}
+    .event{opacity:0}
+    .event-0{animation:reveal-0 18s linear infinite}
+      @keyframes reveal-0{0%,5.80%{opacity:0}6.00%,100%{opacity:1}}
+.event-1{animation:reveal-1 18s linear infinite}
+      @keyframes reveal-1{0%,11.80%{opacity:0}12.00%,100%{opacity:1}}
+.event-2{animation:reveal-2 18s linear infinite}
+      @keyframes reveal-2{0%,17.80%{opacity:0}18.00%,100%{opacity:1}}
+.event-3{animation:reveal-3 18s linear infinite}
+      @keyframes reveal-3{0%,23.80%{opacity:0}24.00%,100%{opacity:1}}
+.event-4{animation:reveal-4 18s linear infinite}
+      @keyframes reveal-4{0%,29.80%{opacity:0}30.00%,100%{opacity:1}}
+.event-5{animation:reveal-5 18s linear infinite}
+      @keyframes reveal-5{0%,35.80%{opacity:0}36.00%,100%{opacity:1}}
+.event-6{animation:reveal-6 18s linear infinite}
+      @keyframes reveal-6{0%,41.80%{opacity:0}42.00%,100%{opacity:1}}
+.event-7{animation:reveal-7 18s linear infinite}
+      @keyframes reveal-7{0%,47.80%{opacity:0}48.00%,100%{opacity:1}}
+.event-8{animation:reveal-8 18s linear infinite}
+      @keyframes reveal-8{0%,53.80%{opacity:0}54.00%,100%{opacity:1}}
+.event-9{animation:reveal-9 18s linear infinite}
+      @keyframes reveal-9{0%,59.80%{opacity:0}60.00%,100%{opacity:1}}
+.event-10{animation:reveal-10 18s linear infinite}
+      @keyframes reveal-10{0%,65.80%{opacity:0}66.00%,100%{opacity:1}}
+.event-11{animation:reveal-11 18s linear infinite}
+      @keyframes reveal-11{0%,71.80%{opacity:0}72.00%,100%{opacity:1}}
+    .oldText{animation:oldFade 18s linear infinite}
+    .newText{animation:newAppear 18s linear infinite}
+    @keyframes oldFade{0%,75%{opacity:1}81%,100%{opacity:.35}}
+    @keyframes newAppear{0%,80%{opacity:0}86%,100%{opacity:1}}
+    @media(prefers-reduced-motion:reduce){.event,.oldText,.newText{animation:none;opacity:1}}
+  ]]></style>
+  <rect class="shell" width="1000" height="986" rx="18"/>
+  <rect class="panel" x="18" y="18" width="964" height="950" rx="15"/>
+  <path class="top" d="M33 19h934a14 14 0 0 1 14 14v96H19V33a14 14 0 0 1 14-14z"/>
+  <line class="rule" x1="19" x2="981" y1="129" y2="129"/>
+  <circle cx="47" cy="44" r="5" fill="#e17783"/><circle cx="65" cy="44" r="5" fill="#e7b463"/><circle cx="83" cy="44" r="5" fill="#78c9a2"/>
+  <text x="111" y="49" class="pill">AIDE / LOCAL CAPTURE</text>
+  <text x="47" y="88" class="title">一次数据工作台操作，逐步可见</text>
+  <text x="48" y="113" class="subtitle">12 个采集事件 · 本地逐步耗时合计（含采集开销）23.439 ms · 生产耗时 未采集</text>
+  <text x="48" y="149" class="header">事件 / 捕获返回</text>
+  <text x="667" y="149" class="header">灰色旁白 / 状态变化</text>
+  <g class="event event-0">
+      <line x1="38" x2="962" y1="211" y2="211" class="rule"/>
+      <text x="48" y="177" class="index">01</text>
+      <text x="88" y="177" class="prompt">›</text>
+      <text x="109" y="177" class="action">打开任务运维工作台</text>
+      <text x="616" y="177" text-anchor="end" class="time">1.946 ms</text>
+      <text x="110" y="197" class="raw">↳ 返回 true</text>
+      <text x="667" y="177" class="aside">尚未生成操作建议</text>
+      <text x="667" y="197" class="aside subtle">操作 1.474 ms · 渲染 0.313 ms</text>
+    </g>
+<g class="event event-1">
+      <line x1="38" x2="962" y1="263" y2="263" class="rule"/>
+      <text x="48" y="229" class="index">02</text>
+      <text x="88" y="229" class="prompt">›</text>
+      <text x="109" y="229" class="action">选中失败的退款上游实例</text>
+      <text x="616" y="229" text-anchor="end" class="time">0.343 ms</text>
+      <text x="110" y="249" class="raw">↳ 返回 true  ·  页面新增 实例详情 · demo-refund-1011</text>
+      <text x="667" y="229" class="aside">尚未生成操作建议</text>
+      <text x="667" y="249" class="aside subtle">操作 0.007 ms · 渲染 0.335 ms</text>
+    </g>
+<g class="event event-2">
+      <line x1="38" x2="962" y1="315" y2="315" class="rule"/>
+      <text x="48" y="281" class="index">03</text>
+      <text x="88" y="281" class="prompt">›</text>
+      <text x="109" y="281" class="action">查看延迟分析</text>
+      <text x="616" y="281" text-anchor="end" class="time">0.083 ms</text>
+      <text x="110" y="301" class="raw">↳ 返回 true  ·  页面新增 合成观测时点 2026-10-12 09:15。实际最晚完成链路…</text>
+      <text x="667" y="281" class="aside">尚未生成操作建议</text>
+      <text x="667" y="301" class="aside subtle">操作 0.002 ms · 渲染 0.080 ms</text>
+    </g>
+<g class="event event-3">
+      <line x1="38" x2="962" y1="367" y2="367" class="rule"/>
+      <text x="48" y="333" class="index">04</text>
+      <text x="88" y="333" class="prompt">›</text>
+      <text x="109" y="333" class="action">查看原运行日志</text>
+      <text x="616" y="333" text-anchor="end" class="time">0.712 ms</text>
+      <text x="110" y="353" class="raw">↳ 返回 true  ·  页面新增 实例日志摘录为合成数据。原调度尝试与新模拟尝试…</text>
+      <text x="667" y="333" class="aside">尚未生成操作建议</text>
+      <text x="667" y="353" class="aside subtle">操作 0.001 ms · 渲染 0.710 ms</text>
+    </g>
+<g class="event event-4">
+      <line x1="38" x2="962" y1="419" y2="419" class="rule"/>
+      <text x="48" y="385" class="index">05</text>
+      <text x="88" y="385" class="prompt">›</text>
+      <text x="109" y="385" class="action">检索交付依据并分析失败实例</text>
+      <text x="616" y="385" text-anchor="end" class="time">19.091 ms</text>
+      <text x="110" y="405" class="raw">↳ 返回 true  ·  页面新增 Agent 诊断与操作建议 · 待确认建议</text>
+      <text x="667" y="385" class="aside">未记录 → proposed</text>
+      <text x="667" y="405" class="aside subtle">提示 已生成实例级诊断与待确认范围</text>
+    </g>
+<g class="event event-5">
+      <line x1="38" x2="962" y1="471" y2="471" class="rule"/>
+      <text x="48" y="437" class="index">06</text>
+      <text x="88" y="437" class="prompt">›</text>
+      <text x="109" y="437" class="action">提前确认被流程拒绝</text>
+      <text x="616" y="437" text-anchor="end" class="time">0.214 ms</text>
+      <text x="110" y="457" class="raw">↳ 返回 Error: 请先核验队列、活跃尝试及精确执行范围；当前实例可能已变化</text>
+      <text x="667" y="437" class="aside">状态保持 proposed</text>
+      <text x="667" y="457" class="aside subtle">操作 0.044 ms · 渲染 0.119 ms</text>
+    </g>
+<g class="event event-6">
+      <line x1="38" x2="962" y1="523" y2="523" class="rule"/>
+      <text x="48" y="489" class="index">07</text>
+      <text x="88" y="489" class="prompt">›</text>
+      <text x="109" y="489" class="action">核验队列恢复与活跃尝试</text>
+      <text x="616" y="489" text-anchor="end" class="time">0.160 ms</text>
+      <text x="110" y="509" class="raw">↳ 返回 true  ·  页面新增 合成前置核验：demo-etl 队列健康；该实例无活跃尝…</text>
+      <text x="667" y="489" class="aside">状态保持 proposed</text>
+      <text x="667" y="509" class="aside subtle">提示 合成前置核验通过</text>
+    </g>
+<g class="event event-7">
+      <line x1="38" x2="962" y1="575" y2="575" class="rule"/>
+      <text x="48" y="541" class="index">08</text>
+      <text x="88" y="541" class="prompt">›</text>
+      <text x="109" y="541" class="action">查看精确执行范围</text>
+      <text x="616" y="541" text-anchor="end" class="time">0.104 ms</text>
+      <text x="110" y="561" class="raw">↳ 返回 true  ·  页面新增 收起精确执行范围</text>
+      <text x="667" y="541" class="aside">状态保持 proposed</text>
+      <text x="667" y="561" class="aside subtle">操作 0.006 ms · 渲染 0.097 ms</text>
+    </g>
+<g class="event event-8">
+      <line x1="38" x2="962" y1="627" y2="627" class="rule"/>
+      <text x="48" y="593" class="index">09</text>
+      <text x="88" y="593" class="prompt">›</text>
+      <text x="109" y="593" class="action">确认并启动本地模拟重试</text>
+      <text x="616" y="593" text-anchor="end" class="time">0.174 ms</text>
+      <text x="110" y="613" class="raw">↳ 返回 true  ·  页面新增 dwd_refund_detail_di运行中</text>
+      <text x="667" y="593" class="aside">proposed → running</text>
+      <text x="667" y="613" class="aside subtle">提示 本地模拟重试已开始</text>
+    </g>
+<g class="event event-9">
+      <line x1="38" x2="962" y1="679" y2="679" class="rule"/>
+      <text x="48" y="645" class="index">10</text>
+      <text x="88" y="645" class="prompt">›</text>
+      <text x="109" y="645" class="action">完成上游模拟重试并重评依赖</text>
+      <text x="616" y="645" text-anchor="end" class="time">0.204 ms</text>
+      <text x="110" y="665" class="raw">↳ 返回 true  ·  页面新增 dwd_refund_detail_di成功</text>
+      <text x="667" y="645" class="aside">running → dependency-running</text>
+      <text x="667" y="665" class="aside subtle">操作 0.072 ms · 渲染 0.130 ms</text>
+    </g>
+<g class="event event-10">
+      <line x1="38" x2="962" y1="731" y2="731" class="rule"/>
+      <text x="48" y="697" class="index">11</text>
+      <text x="88" y="697" class="prompt">›</text>
+      <text x="109" y="697" class="action">完成日报与报表模拟执行</text>
+      <text x="616" y="697" text-anchor="end" class="time">0.222 ms</text>
+      <text x="110" y="717" class="raw">↳ 返回 true  ·  页面新增 ads_channel_trade_di成功</text>
+      <text x="667" y="697" class="aside">dependency-running → awaiting-verification</text>
+      <text x="667" y="717" class="aside subtle">操作 0.079 ms · 渲染 0.141 ms</text>
+    </g>
+<g class="event event-11">
+      <line x1="38" x2="962" y1="783" y2="783" class="rule"/>
+      <text x="48" y="749" class="index">12</text>
+      <text x="88" y="749" class="prompt">›</text>
+      <text x="109" y="749" class="action">独立复核并归档</text>
+      <text x="616" y="749" text-anchor="end" class="time">0.186 ms</text>
+      <text x="110" y="769" class="raw">↳ 返回 true  ·  页面新增 Agent 诊断与操作建议 · 已复核归档</text>
+      <text x="667" y="749" class="aside">awaiting-verification → verified</text>
+      <text x="667" y="769" class="aside subtle">提示 模拟复核已归档，SLA 仍为逾期</text>
+    </g>
+  <rect x="37" y="802" width="926" height="121" rx="10" fill="#eee7fc"/>
+  <text x="54" y="825" class="diffTitle">状态文字变化 · 独立复核并归档</text>
+  <text x="947" y="825" text-anchor="end" class="diffMeta">基于 before.phaseLabel / after.phaseLabel 计算</text>
+  <text x="55" y="850" class="diffMeta">字符差异：移除 5 · 新增 5 · 共同上下文  ┊ </text>
+  <g class="oldText"><text x="55" y="877" class="minus">− 待独立复核</text></g>
+  <g class="newText"><text x="55" y="904" class="plus">+ 已复核归档</text></g>
+  <text x="48" y="938" class="footer">来源 ../index.html · SHA-256 823f13a9602d… · 2026-10-12T07:57:01.023Z</text>
+  <text x="48" y="957" class="footer">返回内容为采集摘录；旁白为状态摘要。播放 18 秒循环，末尾保留完整时间线。</text>
+</svg>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aide 动画预览</title>
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+    body { margin: 0; padding: clamp(18px, 4vw, 44px); background: #ebe7f2; color: #241b31; }
+    header { max-width: 1000px; margin: 0 auto 22px; display: flex; gap: 16px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; }
+    h1 { margin: 0 0 6px; font-size: 24px; }
+    p { margin: 0; color: #756b80; font-size: 14px; }
+    button { border: 1px solid #cabce4; border-radius: 8px; padding: 10px 15px; background: #fff; color: #6034bd; font: inherit; font-weight: 700; cursor: pointer; }
+    button:hover { background: #f5efff; }
+    main { max-width: 1000px; margin: auto; display: grid; gap: 28px; }
+    figure { margin: 0; }
+    figcaption { margin: 0 0 10px; font-weight: 700; }
+    img { width: 100%; height: auto; display: block; border-radius: 18px; box-shadow: 0 12px 42px #25123b19; }
+  </style>
+</head>
+<body>
+  <header>
+    <div><h1>Aide 工作台 · 操作时间线</h1><p>两个版本读取同一次本地采集。点击重新播放可从首行同步查看。</p></div>
+    <button id="replay" type="button">重新播放两版</button>
+  </header>
+  <main>
+    <figure><figcaption>浅色</figcaption><img src="demo-light.svg" alt="浅色 Aide 操作时间线动画"></figure>
+    <figure><figcaption>深色</figcaption><img src="demo-dark.svg" alt="深色 Aide 操作时间线动画"></figure>
+  </main>
+  <script>
+    document.querySelector('#replay').addEventListener('click', () => {
+      for (const image of document.querySelectorAll('main img')) {
+        const source = image.getAttribute('src').split('?')[0];
+        image.setAttribute('src', `${source}?replay=${Date.now()}`);
+      }
+    });
+  </script>
+</body>
+</html>

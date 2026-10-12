@@ -1,5 +1,17 @@
 # Aide 数据工作台演示
 
+## 一次真实采集的本地演示
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="animation/demo-dark.svg">
+  <img src="animation/demo-light.svg" alt="Aide 运维演示的实测事件：失败实例诊断、前置核验、模拟重试、依赖恢复与复核归档。生产耗时未采集。" width="1000">
+</picture>
+
+[查看双主题动画](animation/preview.html) · [采集数据](animation/run.json) · [采集与生成方法](animation/README.md)
+
+动画读取真实执行 Demo 状态机所得的 JSON；显示的毫秒数仅衡量本机处理与渲染字符串生成，不是大模型推理或生产任务耗时。灰色旁白用于解释，输出与状态变化来自采集记录。动画播放节奏经过编排，启用“减少动态效果”时显示静态完整结果。
+
+
 - `index.html`：数据需求从口径确认、方案、开发、测试到模拟发布与首跑验收的交互演示。
 - `product-explainer.html`：产品介绍、协作对比与持续演进的画面说明。“理解需求”以两张关联卡片展示 Meego 业务原话如何转为业务目标与负责人待确认问题。
 - `product-explainer-detail.html`：详细产品动线说明。
